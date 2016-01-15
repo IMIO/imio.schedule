@@ -33,6 +33,14 @@ class TestInstallDependencies(unittest.TestCase):
         applyProfile(self.portal, 'urban.schedule:default')
         self.assertTrue(self.installer.isProductInstalled('collective.z3cform.datagridfield'))
 
+    def test_collectivetask_is_dependency_of_urban_schedule(self):
+        """
+        collective.task should be installed when we install urban.schedule
+        """
+        self.assertTrue(not self.installer.isProductInstalled('collective.task'))
+        applyProfile(self.portal, 'urban.schedule:default')
+        self.assertTrue(self.installer.isProductInstalled('collective.task'))
+
 
 class TestSetup(unittest.TestCase):
     """Test that urban.schedule is properly installed."""
