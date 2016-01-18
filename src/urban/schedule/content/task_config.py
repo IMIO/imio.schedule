@@ -25,6 +25,11 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
+    content_types = schema.Choice(
+        title=_(u'Associated content types'),
+        required=True,
+    )
+
     allowed_states = schema.Choice(
         title=_(u'Allowed states'),
         required=True,
@@ -75,7 +80,7 @@ class ConfigurableTaskConfig(Container, BaseTaskConfig):
         """
         Evaluate 'task' and 'kwargs' to return the boolean end condition of a task.
         This should be checked in a zope event to automatically close/reopen a task.
-        All
+        Also checks subtasks of this task.
         """
         task_done = super(ConfigurableTaskConfig, self).evaluate_end_condition()
         if not task_done:
