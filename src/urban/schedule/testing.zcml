@@ -13,4 +13,11 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:importStep
+      name="urban.schedule-example_install"
+      title="urban.schedule testing install import step"
+      description="Create example task and task config objects for unit test purpose"
+      handler=".tests.setup.schedule_example_install">
+  </genericsetup:importStep>
+
 </configure>

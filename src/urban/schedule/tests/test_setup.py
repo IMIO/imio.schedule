@@ -43,24 +43,39 @@ class TestInstallDependencies(unittest.TestCase):
 
 
 class TestSetup(unittest.TestCase):
-    """Test that urban.schedule is properly installed."""
+    """
+    Test that urban.schedule is properly installed.
+    """
 
     layer = TEST_INSTALL_INTEGRATION
 
     def setUp(self):
-        """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
         self.installer = api.portal.get_tool('portal_quickinstaller')
 
     def test_product_installed(self):
-        """Test if urban.schedule is installed."""
+        """
+        Test if urban.schedule is installed.
+        """
         self.assertTrue(self.installer.isProductInstalled('urban.schedule'))
 
     def test_browserlayer(self):
-        """Test that IUrbanScheduleLayer is registered."""
+        """
+        Test that IUrbanScheduleLayer is registered.
+        """
         from urban.schedule.interfaces import IUrbanScheduleLayer
         from plone.browserlayer import utils
         self.assertIn(IUrbanScheduleLayer, utils.registered_layers())
+
+    def test_testing_profile_is_registered(self):
+        """
+        Test testing profile is registered.
+        """
+        portal_setup = api.portal.get_tool(name='portal_setup')
+        demo_profile_name = u'urban.schedule:testing'
+        profile_ids = [info['id'] for info in portal_setup.listProfileInfo()]
+        msg = 'testing profile is not registered'
+        self.assertTrue(demo_profile_name in profile_ids, msg)
 
 
 class TestUninstall(unittest.TestCase):

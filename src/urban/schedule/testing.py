@@ -68,3 +68,30 @@ TEST_INSTALL_FUNCTIONAL = FunctionalTesting(
     bases=(TEST_INSTALL_FIXTURE,),
     name='TEST_INSTALL_FUNCTIONAL'
 )
+
+
+class ExampleScheduleLayer(UrbanScheduleLayer):
+
+    def setUpPloneSite(self, portal):
+        super(ExampleScheduleLayer, self).setUpPloneSite(portal)
+
+        applyProfile(portal, 'urban.schedule:testing')
+
+        # Commit so that the test browser sees these objects
+        transaction.commit()
+
+
+EXAMPLE_SCHEDULE_FIXTURE = UrbanScheduleLayer(
+    name='EXAMPLE_SCHEDULE_FIXTURE'
+)
+
+EXAMPLE_SCHEDULE_INTEGRATION = IntegrationTesting(
+    bases=(EXAMPLE_SCHEDULE_FIXTURE,),
+    name='EXAMPLE_SCHEDULE_INTEGRATION'
+)
+
+
+EXAMPLE_SCHEDULE_FUNCTIONAL = FunctionalTesting(
+    bases=(EXAMPLE_SCHEDULE_FIXTURE,),
+    name='EXAMPLE_SCHEDULE_FUNCTIONAL'
+)
