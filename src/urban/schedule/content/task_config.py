@@ -15,26 +15,6 @@ class ITaskConfig(model.Schema):
     PODTemplate dexterity schema.
     """
 
-    start_condition = schema.Choice(
-        title=_(u'Start condition'),
-        required=True,
-    )
-
-    end_condition = schema.Choice(
-        title=_(u'End condition'),
-        required=True,
-    )
-
-    content_types = schema.Choice(
-        title=_(u'Associated content types'),
-        required=True,
-    )
-
-    allowed_states = schema.Choice(
-        title=_(u'Allowed states'),
-        required=True,
-    )
-
 
 class BaseTaskConfig(object):
     """
@@ -69,7 +49,7 @@ class TaskConfig(Item, BaseTaskConfig):
     implements(ITaskConfig)
 
 
-class ConfigurableTaskConfig(Container, BaseTaskConfig):
+class MacroTaskConfig(Container, BaseTaskConfig):
     """
     PODTemplate dexterity class.
     """
@@ -82,7 +62,7 @@ class ConfigurableTaskConfig(Container, BaseTaskConfig):
         This should be checked in a zope event to automatically close/reopen a task.
         Also checks subtasks of this task.
         """
-        task_done = super(ConfigurableTaskConfig, self).evaluate_end_condition()
+        task_done = super(MacroTaskConfig, self).evaluate_end_condition()
         if not task_done:
             return False
 

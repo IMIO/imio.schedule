@@ -13,6 +13,8 @@ from plone.testing import z2
 
 import transaction
 
+import unittest
+
 import urban.schedule
 
 
@@ -41,7 +43,7 @@ NAKED_PLONE_INTEGRATION = IntegrationTesting(
 )
 
 
-class UrbanScheduleLayer(NakedPloneLayer):
+class ScheduleLayer(NakedPloneLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'urban.schedule:default')
@@ -54,7 +56,7 @@ class UrbanScheduleLayer(NakedPloneLayer):
         transaction.commit()
 
 
-TEST_INSTALL_FIXTURE = UrbanScheduleLayer(
+TEST_INSTALL_FIXTURE = ScheduleLayer(
     name='TEST_INSTALL_FIXTURE'
 )
 
@@ -70,7 +72,7 @@ TEST_INSTALL_FUNCTIONAL = FunctionalTesting(
 )
 
 
-class ExampleScheduleLayer(UrbanScheduleLayer):
+class ExampleScheduleLayer(ScheduleLayer):
 
     def setUpPloneSite(self, portal):
         super(ExampleScheduleLayer, self).setUpPloneSite(portal)
@@ -81,7 +83,7 @@ class ExampleScheduleLayer(UrbanScheduleLayer):
         transaction.commit()
 
 
-EXAMPLE_SCHEDULE_FIXTURE = UrbanScheduleLayer(
+EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(
     name='EXAMPLE_SCHEDULE_FIXTURE'
 )
 
@@ -95,3 +97,11 @@ EXAMPLE_SCHEDULE_FUNCTIONAL = FunctionalTesting(
     bases=(EXAMPLE_SCHEDULE_FIXTURE,),
     name='EXAMPLE_SCHEDULE_FUNCTIONAL'
 )
+
+
+class ExampleScheduleIntegrationTestCase(unittest.TestCase):
+
+    layer = EXAMPLE_SCHEDULE_INTEGRATION
+
+    def setUp(self):
+        self.portal = self.layer['portal']
