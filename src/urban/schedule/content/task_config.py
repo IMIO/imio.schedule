@@ -2,6 +2,7 @@
 
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
+from plone.formwidget.masterselect import MasterSelectField
 from plone.supermodel import model
 
 from urban.schedule import _
@@ -10,10 +11,33 @@ from zope import schema
 from zope.interface import implements
 
 
+def get_states_vocabulary(selected_content_type):
+    """
+    Return workflow states of the selected content type
+    in the MasterSelectField 'content_types' as a vocabulary
+    for the slave field 'allowed_states'.
+    """
+
+
 class ITaskConfig(model.Schema):
     """
     PODTemplate dexterity schema.
     """
+
+    content_types = MasterSelectField(
+        title=_(u'Associated content types'),
+        description=_(u'Select the content type where the task will be created.'),
+        vocabulary='urban.schedule.content_types',
+        slave_fields=(
+            {
+                'name': 'allowed_states',
+                'action': 'vocabulary',
+                'vocab_method': get_states_vocabulary,
+                'control_param': 'selected_content_type',
+            },
+        ),
+        required=True,
+    )
 
 
 class BaseTaskConfig(object):

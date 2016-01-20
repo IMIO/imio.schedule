@@ -9,4 +9,12 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- Default vocabulary adapter for 'content_types' field -->
+    <adapter
+      for="plone.dexterity.interfaces.IDexterityFTI"
+      factory=".vocabulary.TaskConfigContentTypesVocabulary"
+      provides="urban.schedule.interfaces.IContentTypesVocabulary"
+      name="TaskConfig"
+    />
+
 </configure>

@@ -12,6 +12,8 @@
   <include package="collective.task" />
 
   <include package=".browser" />
+  <include package=".content" />
+  <include package=".events" />
 
 
   <genericsetup:registerProfile
@@ -27,6 +29,7 @@
       title="urban.schedule post_install import step"
       description="Post install import step from urban.schedule"
       handler=".setuphandlers.post_install">
+
   </genericsetup:importStep>
 
 </configure>

@@ -8,11 +8,10 @@ from plone.dexterity.content import Item
 from zope.interface import implements
 
 
-class ConfigurableTask(Item):
+class BaseConfigurableTask(object):
     """
+    Base class for ConfigurableTask content types.
     """
-
-    implements(ITask)
 
     def get_task_config(self):
         """
@@ -21,7 +20,7 @@ class ConfigurableTask(Item):
 
     def is_done(self):
         """
-        Return True is this task is considered as done.
+        Return True is this task is evaluated as done.
         """
         config = self.get_task_config()
         contexts = self.get_evaluation_contexts()
@@ -33,10 +32,25 @@ class ConfigurableTask(Item):
         Return additional objects and values to be passed to evaluate
         start and end condition of the task.
         """
+        return {}
 
 
-class ConfigurableMacroTask(Container):
+class ConfigurableTask(Item, BaseConfigurableTask):
     """
     """
 
     implements(ITask)
+
+
+class ConfigurableMacroTask(Container, BaseConfigurableTask):
+    """
+    """
+
+    implements(ITask)
+
+    def get_subtasks(self):
+        """
+        Return all sub tasks of this macro task.
+        """
+        sub_tasks = [obj for obj in self.objectValues() if ITask.providedBy(obj)]
+        return sub_tasks

@@ -105,3 +105,4 @@ class ExampleScheduleIntegrationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
+        self.taskconfig_1 = self.portal.config.taskconfig_1

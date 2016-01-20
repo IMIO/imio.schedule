@@ -16,12 +16,12 @@ def schedule_example_install(context):
         container=site,
         type='Folder',
         id='config',
-        Title='Task configs'
+        title='Task configs'
     )
 
     api.content.create(
-        container=site,
-        type='Folder',
-        id='config',
-        Title='Task configs'
+        container=cfg_folder,
+        type='TaskConfig',
+        id='taskconfig_1',
+        title='TaskConfig 1'
     )
