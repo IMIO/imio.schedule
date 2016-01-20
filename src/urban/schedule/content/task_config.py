@@ -24,6 +24,20 @@ class ITaskConfig(model.Schema):
     PODTemplate dexterity schema.
     """
 
+    start_condition = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select start conditions of the task'),
+        value_type=schema.Choice(source='urban.schedule.start_conditions'),
+        required=True,
+    )
+
+    end_condition = schema.List(
+        title=_(u'End conditions'),
+        description=_(u'Select end conditions of the task.'),
+        value_type=schema.Choice(source='urban.schedule.end_conditions'),
+        required=True,
+    )
+
     content_types = MasterSelectField(
         title=_(u'Associated content types'),
         description=_(u'Select the content type where the task will be created.'),
@@ -38,6 +52,14 @@ class ITaskConfig(model.Schema):
         ),
         required=True,
     )
+
+x = """
+    allowed_states = schema.List(
+        title=_(u'Allowed states'),
+        description=_(u'Select states'),
+        required=True,
+    )
+    """
 
 
 class BaseTaskConfig(object):

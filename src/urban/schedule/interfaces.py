@@ -22,6 +22,18 @@ class ICondition(Interface):
         """
 
 
+class IStartConditionsVocabulary(Interface):
+    """
+    Adapts a TaskConfig instance into a vocabulary.
+    """
+
+
+class IEndConditionsVocabulary(Interface):
+    """
+    Adapts a TaskConfig instance into a vocabulary.
+    """
+
+
 class IContentTypesVocabulary(Interface):
     """
     Adapts a TaskConfig instance into a vocabulary.
