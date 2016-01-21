@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-21 08:54+0000\n"
+"POT-Creation-Date: 2016-01-21 09:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 
 #: ../content/task_config.py:50
 msgid "End conditions"
-msgstr ""
+msgstr "Conditions de clôture"
 
 #: ../configure.zcml:25
 msgid "Installs the urban.schedule add-on."
-msgstr ""
+msgstr "Installe le produit 'échéancier'"
 
 #: ../content/vocabulary.py:88
 msgid "No value"
@@ -28,11 +28,11 @@ msgstr "Aucune valeur"
 
 #: ../content/task_config.py:51
 msgid "Select end conditions of the task."
-msgstr ""
+msgstr "Sélectionnez les conditions de clôture de la tâche"
 
 #: ../content/task_config.py:44
 msgid "Select start conditions of the task"
-msgstr ""
+msgstr "Sélectionnez les conditions de création de la tâche"
 
 #: ../content/task_config.py:29
 msgid "Select the content type where the task will be created."
@@ -40,7 +40,7 @@ msgstr "Type de contenu où créer la tâche"
 
 #: ../content/task_config.py:43
 msgid "Start conditions"
-msgstr ""
+msgstr "Conditions de création"
 
 #: ../testing.zcml:14
 msgid "Steps to ease tests of urban.schedule"
@@ -48,7 +48,7 @@ msgstr ""
 
 #: ../profiles/default/types/TaskConfig.xml
 msgid "Task configuration."
-msgstr ""
+msgstr "Configuration de tâche"
 
 #: ../content/task_config.py:28
 msgid "Task container content type"
@@ -56,7 +56,7 @@ msgstr "Récipient de la tâche"
 
 #: ../profiles/default/types/TaskConfig.xml
 msgid "TaskConfig"
-msgstr ""
+msgstr "Configuration de tâche"
 
 #: ../configure.zcml:25
 msgid "urban.schedule"

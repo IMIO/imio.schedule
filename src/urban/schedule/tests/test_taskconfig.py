@@ -55,6 +55,42 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'task_container' is not editable"
         self.assertTrue('Récipient de la tâche' in contents, msg)
 
+    def test_start_conditions_attribute(self):
+        test_taskconfig = aq_base(self.test_taskconfig)
+        self.assertTrue(hasattr(test_taskconfig, 'start_conditions'))
+
+    def test_start_conditions_field_display(self):
+        self.browser.open(self.test_taskconfig.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'start_conditions' is not displayed"
+        self.assertTrue('id="form-widgets-start_conditions"' in contents, msg)
+        msg = "field 'start_conditions' is not translated"
+        self.assertTrue('Conditions de création' in contents, msg)
+
+    def test_start_conditions_field_edit(self):
+        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'start_conditions' is not editable"
+        self.assertTrue('Conditions de création' in contents, msg)
+
+    def test_end_conditions_attribute(self):
+        test_taskconfig = aq_base(self.test_taskconfig)
+        self.assertTrue(hasattr(test_taskconfig, 'end_conditions'))
+
+    def test_end_conditions_field_display(self):
+        self.browser.open(self.test_taskconfig.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'end_conditions' is not displayed"
+        self.assertTrue('id="form-widgets-end_conditions"' in contents, msg)
+        msg = "field 'end_conditions' is not translated"
+        self.assertTrue('Conditions de clôture' in contents, msg)
+
+    def test_end_conditions_field_edit(self):
+        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'end_conditions' is not editable"
+        self.assertTrue('Conditions de clôture' in contents, msg)
+
 
 class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     """

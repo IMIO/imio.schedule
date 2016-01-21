@@ -39,14 +39,14 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    start_condition = schema.List(
+    start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
         value_type=schema.Choice(source='urban.schedule.start_conditions'),
         required=True,
     )
 
-    end_condition = schema.List(
+    end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
         value_type=schema.Choice(source='urban.schedule.end_conditions'),
