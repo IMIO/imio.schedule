@@ -21,7 +21,7 @@ def get_states_vocabulary(selected_content_type):
 
 class ITaskConfig(model.Schema):
     """
-    PODTemplate dexterity schema.
+    TaskConfig dexterity schema.
     """
 
     start_condition = schema.List(
@@ -64,7 +64,7 @@ x = """
 
 class BaseTaskConfig(object):
     """
-    PODTemplate dexterity class.
+    TaskConfig dexterity class.
     """
 
     def evaluate_start_condition(self, **kwargs):
@@ -89,7 +89,7 @@ class BaseTaskConfig(object):
 
 class TaskConfig(Item, BaseTaskConfig):
     """
-    PODTemplate dexterity class.
+    TaskConfig dexterity class.
     """
 
     implements(ITaskConfig)
@@ -97,7 +97,7 @@ class TaskConfig(Item, BaseTaskConfig):
 
 class MacroTaskConfig(Container, BaseTaskConfig):
     """
-    PODTemplate dexterity class.
+    TaskConfig dexterity class.
     """
 
     implements(ITaskConfig)
