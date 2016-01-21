@@ -26,7 +26,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.content_types'
+        factory_name = 'urban.schedule.content_type'
         self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_content_types_default_vocabulary_registration(self):
@@ -36,7 +36,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         from urban.schedule.interfaces import IContentTypesVocabulary
 
-        portal_type = self.taskconfig_1.portal_type
+        portal_type = self.test_taskconfig.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
@@ -50,9 +50,9 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Test some content_types values.
         """
 
-        voc_name = 'urban.schedule.content_types'
+        voc_name = 'urban.schedule.content_type'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.taskconfig_1)
+        vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('--NOVALUE--' in vocabulary)
 
     def test_start_conditions_vocabulary_factory_registration(self):
@@ -69,7 +69,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         from urban.schedule.interfaces import IStartConditionsVocabulary
 
-        portal_type = self.taskconfig_1.portal_type
+        portal_type = self.test_taskconfig.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
@@ -85,7 +85,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
 
         voc_name = 'urban.schedule.start_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.taskconfig_1)
+        vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('--NOVALUE--' in vocabulary)
 
     def test_end_conditions_vocabulary_factory_registration(self):
@@ -102,7 +102,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         from urban.schedule.interfaces import IEndConditionsVocabulary
 
-        portal_type = self.taskconfig_1.portal_type
+        portal_type = self.test_taskconfig.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
@@ -118,5 +118,5 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
 
         voc_name = 'urban.schedule.end_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.taskconfig_1)
+        vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('--NOVALUE--' in vocabulary)

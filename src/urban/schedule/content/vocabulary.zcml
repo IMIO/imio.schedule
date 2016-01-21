@@ -2,6 +2,21 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="collective.documentgenerator">
 
+    <!-- TaskConfig 'content_type' field Vocabulary -->
+    <utility
+        factory=".vocabulary.ContentTypeVocabularyFactory"
+        name="urban.schedule.content_type"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- Default vocabulary adapter for 'content_type' field -->
+    <adapter
+      for="plone.dexterity.interfaces.IDexterityFTI"
+      factory=".vocabulary.TaskConfigContentTypeVocabulary"
+      provides="urban.schedule.interfaces.IContentTypeVocabulary"
+      name="TaskConfig"
+    />
+
     <!-- TaskConfig 'start_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.StartConditionVocabularyFactory"
@@ -29,21 +44,6 @@
       for="plone.dexterity.interfaces.IDexterityFTI"
       factory=".vocabulary.TaskConfigEndConditionsVocabulary"
       provides="urban.schedule.interfaces.IEndConditionsVocabulary"
-      name="TaskConfig"
-    />
-
-    <!-- TaskConfig 'content_types' field Vocabulary -->
-    <utility
-        factory=".vocabulary.ContentTypesVocabularyFactory"
-        name="urban.schedule.content_types"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-    />
-
-    <!-- Default vocabulary adapter for 'content_types' field -->
-    <adapter
-      for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.TaskConfigContentTypesVocabulary"
-      provides="urban.schedule.interfaces.IContentTypesVocabulary"
       name="TaskConfig"
     />
 

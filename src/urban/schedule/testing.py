@@ -9,6 +9,7 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
 
 import transaction
@@ -99,10 +100,39 @@ EXAMPLE_SCHEDULE_FUNCTIONAL = FunctionalTesting(
 )
 
 
-class ExampleScheduleIntegrationTestCase(unittest.TestCase):
+class BaseTest(unittest.TestCase):
+    """
+    Helper class for tests.
+    """
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+
+
+class BrowserTest(BaseTest):
+    """
+    Helper class for Browser tests.
+    """
+
+    def setUp(self):
+        super(BrowserTest, self).setUp()
+        self.browser = z2.Browser(self.portal)
+        self.browser.handleErrors = False
+
+    def browser_login(self, user, password):
+        login(self.portal, user)
+        self.browser.open(self.portal.absolute_url() + '/logout')
+        self.browser.open(self.portal.absolute_url() + '/login_form')
+        self.browser.getControl(name='__ac_name').value = user
+        self.browser.getControl(name='__ac_password').value = password
+        self.browser.getControl(name='submit').click()
+
+
+class ExampleScheduleIntegrationTestCase(BrowserTest):
 
     layer = EXAMPLE_SCHEDULE_INTEGRATION
 
     def setUp(self):
-        self.portal = self.layer['portal']
-        self.taskconfig_1 = self.portal.config.taskconfig_1
+        super(ExampleScheduleIntegrationTestCase, self).setUp()
+        self.test_taskconfig = self.portal.config.test_taskconfig
+        self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)

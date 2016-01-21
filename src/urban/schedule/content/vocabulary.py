@@ -2,7 +2,7 @@
 
 from plone import api
 
-from urban.schedule.interfaces import IContentTypesVocabulary
+from urban.schedule.interfaces import IContentTypeVocabulary
 from urban.schedule.interfaces import IEndConditionsVocabulary
 from urban.schedule.interfaces import IStartConditionsVocabulary
 
@@ -44,37 +44,37 @@ class BaseVocabularyFactory(object):
         return fti
 
 
-class ContentTypesVocabularyFactory(BaseVocabularyFactory):
+class ContentTypeVocabularyFactory(BaseVocabularyFactory):
     """
-    Vocabulary factory for 'content_types' field.
+    Vocabulary factory for 'content_type' field.
     Return all the content types that can be associated
-    to a task config and therefore should implements ITaskContainer
+    to a task config (=> should implements ITaskContainer).
     """
 
     def __call__(self, context):
         """
-        Call the adapter vocabulary for the 'content_types' field
+        Call the adapter vocabulary for the 'content_type' field
         and returns it.
         """
         portal_type = self.get_portal_type(context)
         fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IContentTypesVocabulary, portal_type)
+        voc_adapter = getAdapter(fti, IContentTypeVocabulary, portal_type)
         vocabulary = voc_adapter()
 
         return vocabulary
 
 
-class TaskConfigContentTypesVocabulary(object):
+class TaskConfigContentTypeVocabulary(object):
     """
     !!! To register for more specific TaskConfig subclasses !!!
     !!! The name of this adapter should be the portal_type  !!!
     eg: here it's TaskConfig
 
     Adapts a TaskConfig fti to return a specific
-    vocabulary for the 'content_types' field.
+    vocabulary for the 'content_type' field.
     """
 
-    implements(IContentTypesVocabulary)
+    implements(IContentTypeVocabulary)
 
     def __init__(self, fti):
         """ """
@@ -105,7 +105,7 @@ class StartConditionVocabularyFactory(BaseVocabularyFactory):
         """
         portal_type = self.get_portal_type(context)
         fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IContentTypesVocabulary, portal_type)
+        voc_adapter = getAdapter(fti, IStartConditionsVocabulary, portal_type)
         vocabulary = voc_adapter()
 
         return vocabulary
@@ -153,7 +153,7 @@ class EndConditionVocabularyFactory(BaseVocabularyFactory):
         """
         portal_type = self.get_portal_type(context)
         fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IContentTypesVocabulary, portal_type)
+        voc_adapter = getAdapter(fti, IEndConditionsVocabulary, portal_type)
         vocabulary = voc_adapter()
 
         return vocabulary

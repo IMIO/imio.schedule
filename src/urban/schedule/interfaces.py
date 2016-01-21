@@ -34,7 +34,7 @@ class IEndConditionsVocabulary(Interface):
     """
 
 
-class IContentTypesVocabulary(Interface):
+class IContentTypeVocabulary(Interface):
     """
     Adapts a TaskConfig instance into a vocabulary.
     """

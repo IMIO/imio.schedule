@@ -22,6 +22,6 @@ def schedule_example_install(context):
     api.content.create(
         container=cfg_folder,
         type='TaskConfig',
-        id='taskconfig_1',
-        title='TaskConfig 1'
+        id='test_taskconfig',
+        title='Test TaskConfig'
     )
