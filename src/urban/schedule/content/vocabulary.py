@@ -2,17 +2,17 @@
 
 from plone import api
 
-from urban.schedule.interfaces import ITaskContainerVocabulary
+from urban.schedule.content.task_config import ITaskConfig
 from urban.schedule.interfaces import IEndConditionsVocabulary
+from urban.schedule.interfaces import ITaskContainerVocabulary
 from urban.schedule.interfaces import IStartConditionsVocabulary
 
 from z3c.form.i18n import MessageFactory as _
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-
 from zope.component import getAdapter
-
+from zope.i18n import translate
 from zope.interface import implements
 
 
@@ -25,10 +25,15 @@ class BaseVocabularyFactory(object):
         """
         Return the portal_type of the (future?) context.
         """
+        request = context.REQUEST
         try:
-            add_view = context.REQUEST['PUBLISHED']
-            form = hasattr(add_view, 'form_instance') and add_view.form_instance or add_view.context.form_instance
-            portal_type = form.portal_type
+            add_view = request.get('PUBLISHED', request['PARENTS'][-1])
+            if hasattr(add_view, 'form_instance'):
+                form = add_view.form_instance
+                portal_type = form.portal_type
+            else:
+                form = add_view.context.form_instance
+                portal_type = form.portal_type
         except:
             portal_type = context.portal_type
 
@@ -66,12 +71,10 @@ class TaskContainerVocabularyFactory(BaseVocabularyFactory):
 
 class TaskContainerVocabulary(object):
     """
-    !!! To register for more specific TaskConfig subclasses !!!
-    !!! The name of this adapter should be the portal_type  !!!
-    eg: here it's TaskConfig
-
     Adapts a TaskConfig fti to return a specific
     vocabulary for the 'task_container' field.
+
+    Subclass and override __call__ in products using urban.schedule.
     """
 
     implements(ITaskContainerVocabulary)
@@ -81,12 +84,60 @@ class TaskContainerVocabulary(object):
 
     def __call__(self):
         """
-        - The key of a voc term is the class of the content type
-        - The display value is the translation of the content type
         """
 
         voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
         vocabulary = SimpleVocabulary(voc_terms)
+
+        return vocabulary
+
+    def to_vocabulary_key(self, portal_type, interface):
+        """
+        Return the module path of a class.
+        """
+        return (portal_type, interface.__module__, interface.__name__)
+
+
+def get_states_vocabulary(portal_type):
+    """
+    Return states of the default workflow of the given portal_type as
+    a vocabulary.
+    """
+    if not portal_type:
+        return SimpleVocabulary([])
+
+    wf_tool = api.portal.get_tool('portal_workflow')
+    request = api.portal.get().REQUEST
+
+    workfow = wf_tool.get(wf_tool.getChainForPortalType(portal_type)[0])
+    voc_terms = [
+        SimpleTerm(state_id, state_id, translate(state.title, 'plone', context=request))
+        for state_id, state in workfow.states.items()
+    ]
+
+    vocabulary = SimpleVocabulary(voc_terms)
+
+    return vocabulary
+
+
+class ContainerStateVocabularyFactory(BaseVocabularyFactory):
+    """
+    Vocabulary factory for 'container_state' field.
+    """
+
+    def __call__(self, context):
+        """
+        Call the adapter vocabulary for the 'container_state' field
+        and returns it.
+        """
+        # case of TaskConfig creation, we have no TaskConfig object yet
+        if not ITaskConfig.providedBy(context):
+            voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
+            vocabulary = SimpleVocabulary(voc_terms)
+            return  vocabulary
+
+        portal_type = context.get_container_portal_type()
+        vocabulary = get_states_vocabulary(portal_type)
 
         return vocabulary
 

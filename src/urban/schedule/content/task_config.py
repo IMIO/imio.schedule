@@ -10,13 +10,20 @@ from urban.schedule import _
 from zope import schema
 from zope.interface import implements
 
+import ast
 
-def get_states_vocabulary(selected_task_container):
+
+def get_container_state_vocabulary(selected_task_container):
     """
-    Return workflow states of the selected content type
-    in the MasterSelectField 'task_container' as a vocabulary
-    for the slave field 'allowed_states'.
+    Return workflow states of the selected task_container.
     """
+    # avoid circular import
+    from urban.schedule.content.vocabulary import get_states_vocabulary
+
+    portal_type, module_path, interface_name = ast.literal_eval(selected_task_container)
+    vocabulary = get_states_vocabulary(portal_type)
+
+    return vocabulary
 
 
 class ITaskConfig(model.Schema):
@@ -30,13 +37,20 @@ class ITaskConfig(model.Schema):
         vocabulary='urban.schedule.task_container',
         slave_fields=(
             {
-                'name': 'allowed_states',
+                'name': 'container_state',
                 'action': 'vocabulary',
-                'vocab_method': get_states_vocabulary,
+                'vocab_method': get_container_state_vocabulary,
                 'control_param': 'selected_task_container',
             },
         ),
         required=True,
+    )
+
+    container_state = schema.Choice(
+        title=_(u'Task container state'),
+        description=_(u'Select the state of the container where the task should start.'),
+        vocabulary='urban.schedule.container_state',
+        required=False,
     )
 
     start_conditions = schema.List(
@@ -58,6 +72,12 @@ class BaseTaskConfig(object):
     """
     TaskConfig dexterity class.
     """
+
+    def get_container_portal_type(self):
+        """
+        Return the portal_type of the selected task_container.
+        """
+        return self.task_container and self.task_container[0] or ''
 
     def evaluate_start_condition(self, **kwargs):
         """

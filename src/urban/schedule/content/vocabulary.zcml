@@ -17,6 +17,13 @@
       name="TaskConfig"
     />
 
+    <!-- TaskConfig 'container_state' field Vocabulary -->
+    <utility
+        factory=".vocabulary.ContainerStateVocabularyFactory"
+        name="urban.schedule.container_state"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'start_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.StartConditionVocabularyFactory"

@@ -26,7 +26,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.content_type'
+        factory_name = 'urban.schedule.task_container'
         self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_content_types_default_vocabulary_registration(self):
@@ -34,13 +34,13 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Voc values should be registered as a named adapter on the task
         config fti and name should be the fti portal_type.
         """
-        from urban.schedule.interfaces import IContentTypesVocabulary
+        from urban.schedule.interfaces import ITaskContainerVocabulary
 
         portal_type = self.test_taskconfig.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
-            IContentTypesVocabulary,
+            ITaskContainerVocabulary,
             portal_type
         )
         self.assertTrue(voc_adapter)
@@ -50,7 +50,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Test some content_types values.
         """
 
-        voc_name = 'urban.schedule.content_type'
+        voc_name = 'urban.schedule.task_container'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('--NOVALUE--' in vocabulary)
