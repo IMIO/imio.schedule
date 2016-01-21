@@ -2,18 +2,18 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="collective.documentgenerator">
 
-    <!-- TaskConfig 'content_type' field Vocabulary -->
+    <!-- TaskConfig 'task_container' field Vocabulary -->
     <utility
-        factory=".vocabulary.ContentTypeVocabularyFactory"
-        name="urban.schedule.content_type"
+        factory=".vocabulary.TaskContainerVocabularyFactory"
+        name="urban.schedule.task_container"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
-    <!-- Default vocabulary adapter for 'content_type' field -->
+    <!-- Default vocabulary adapter for 'task_container' field -->
     <adapter
       for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.TaskConfigContentTypeVocabulary"
-      provides="urban.schedule.interfaces.IContentTypeVocabulary"
+      factory=".vocabulary.TaskContainerVocabulary"
+      provides="urban.schedule.interfaces.ITaskContainerVocabulary"
       name="TaskConfig"
     />
 
@@ -27,7 +27,7 @@
     <!-- Default vocabulary adapter for 'start_conditions' field -->
     <adapter
       for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.TaskConfigStartConditionsVocabulary"
+      factory=".vocabulary.StartConditionsVocabulary"
       provides="urban.schedule.interfaces.IStartConditionsVocabulary"
       name="TaskConfig"
     />
@@ -42,7 +42,7 @@
     <!-- Default vocabulary adapter for 'end_conditions' field -->
     <adapter
       for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.TaskConfigEndConditionsVocabulary"
+      factory=".vocabulary.EndConditionsVocabulary"
       provides="urban.schedule.interfaces.IEndConditionsVocabulary"
       name="TaskConfig"
     />

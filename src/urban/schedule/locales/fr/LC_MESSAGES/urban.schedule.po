@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-21 08:34+0000\n"
+"POT-Creation-Date: 2016-01-21 08:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: ../content/task_config.py:29
 msgid "Select the content type where the task will be created."
-msgstr ""
+msgstr "Type de contenu où créer la tâche"
 
 #: ../content/task_config.py:43
 msgid "Start conditions"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: ../content/task_config.py:28
 msgid "Task container content type"
-msgstr "Type de contenu où créer la tâche"
+msgstr "Récipient de la tâche"
 
 #: ../profiles/default/types/TaskConfig.xml
 msgid "TaskConfig"

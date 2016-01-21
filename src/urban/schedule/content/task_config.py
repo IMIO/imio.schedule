@@ -11,10 +11,10 @@ from zope import schema
 from zope.interface import implements
 
 
-def get_states_vocabulary(selected_content_type):
+def get_states_vocabulary(selected_task_container):
     """
     Return workflow states of the selected content type
-    in the MasterSelectField 'content_type' as a vocabulary
+    in the MasterSelectField 'task_container' as a vocabulary
     for the slave field 'allowed_states'.
     """
 
@@ -24,16 +24,16 @@ class ITaskConfig(model.Schema):
     TaskConfig dexterity schema.
     """
 
-    content_type = MasterSelectField(
+    task_container = MasterSelectField(
         title=_(u'Task container content type'),
         description=_(u'Select the content type where the task will be created.'),
-        vocabulary='urban.schedule.content_type',
+        vocabulary='urban.schedule.task_container',
         slave_fields=(
             {
                 'name': 'allowed_states',
                 'action': 'vocabulary',
                 'vocab_method': get_states_vocabulary,
-                'control_param': 'selected_content_type',
+                'control_param': 'selected_task_container',
             },
         ),
         required=True,

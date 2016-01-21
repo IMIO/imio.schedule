@@ -2,7 +2,7 @@
 
 from plone import api
 
-from urban.schedule.interfaces import IContentTypeVocabulary
+from urban.schedule.interfaces import ITaskContainerVocabulary
 from urban.schedule.interfaces import IEndConditionsVocabulary
 from urban.schedule.interfaces import IStartConditionsVocabulary
 
@@ -44,37 +44,37 @@ class BaseVocabularyFactory(object):
         return fti
 
 
-class ContentTypeVocabularyFactory(BaseVocabularyFactory):
+class TaskContainerVocabularyFactory(BaseVocabularyFactory):
     """
-    Vocabulary factory for 'content_type' field.
+    Vocabulary factory for 'task_container' field.
     Return all the content types that can be associated
     to a task config (=> should implements ITaskContainer).
     """
 
     def __call__(self, context):
         """
-        Call the adapter vocabulary for the 'content_type' field
+        Call the adapter vocabulary for the 'task_container' field
         and returns it.
         """
         portal_type = self.get_portal_type(context)
         fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IContentTypeVocabulary, portal_type)
+        voc_adapter = getAdapter(fti, ITaskContainerVocabulary, portal_type)
         vocabulary = voc_adapter()
 
         return vocabulary
 
 
-class TaskConfigContentTypeVocabulary(object):
+class TaskContainerVocabulary(object):
     """
     !!! To register for more specific TaskConfig subclasses !!!
     !!! The name of this adapter should be the portal_type  !!!
     eg: here it's TaskConfig
 
     Adapts a TaskConfig fti to return a specific
-    vocabulary for the 'content_type' field.
+    vocabulary for the 'task_container' field.
     """
 
-    implements(IContentTypeVocabulary)
+    implements(ITaskContainerVocabulary)
 
     def __init__(self, fti):
         """ """
@@ -111,7 +111,7 @@ class StartConditionVocabularyFactory(BaseVocabularyFactory):
         return vocabulary
 
 
-class TaskConfigStartConditionsVocabulary(object):
+class StartConditionsVocabulary(object):
     """
     !!! To register for more specific TaskConfig subclasses !!!
     !!! The name of this adapter should be the portal_type  !!!
@@ -159,7 +159,7 @@ class EndConditionVocabularyFactory(BaseVocabularyFactory):
         return vocabulary
 
 
-class TaskConfigEndConditionsVocabulary(object):
+class EndConditionsVocabulary(object):
     """
     !!! To register for more specific TaskConfig subclasses !!!
     !!! The name of this adapter should be the portal_type  !!!

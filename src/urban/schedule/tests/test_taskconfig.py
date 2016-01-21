@@ -37,23 +37,23 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         taskconfig_type = portal_types.get(self.test_taskconfig.portal_type)
         self.assertTrue('ITaskConfig' in taskconfig_type.schema)
 
-    def test_content_type_attribute(self):
+    def test_task_container_attribute(self):
         test_taskconfig = aq_base(self.test_taskconfig)
-        self.assertTrue(hasattr(test_taskconfig, 'content_type'))
+        self.assertTrue(hasattr(test_taskconfig, 'task_container'))
 
-    def test_content_type_field_display(self):
+    def test_task_container_field_display(self):
         self.browser.open(self.test_taskconfig.absolute_url())
         contents = self.browser.contents
-        msg = "field 'content_type' is not displayed"
-        self.assertTrue('id="form-widgets-content_type"' in contents, msg)
-        msg = "field 'content_type' is not translated"
-        self.assertTrue('Type de contenu où créer la tâche' in contents, msg)
+        msg = "field 'task_container' is not displayed"
+        self.assertTrue('id="form-widgets-task_container"' in contents, msg)
+        msg = "field 'task_container' is not translated"
+        self.assertTrue('Récipient de la tâche' in contents, msg)
 
-    def test_content_type_field_edit(self):
+    def test_task_container_field_edit(self):
         self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
         contents = self.browser.contents
-        msg = "field 'content_type' is not editable"
-        self.assertTrue('Type de contenu où créer la tâche' in contents, msg)
+        msg = "field 'task_container' is not editable"
+        self.assertTrue('Récipient de la tâche' in contents, msg)
 
 
 class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
