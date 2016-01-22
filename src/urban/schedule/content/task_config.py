@@ -94,7 +94,7 @@ class BaseTaskConfig(object):
         """
         return self.task_container and self.task_container[0] or ''
 
-    def get_container_registration_interface(self):
+    def get_container_interface(self):
         """
         Return the portal_type of the selected task_container.
         """

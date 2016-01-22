@@ -150,13 +150,13 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         expected_type = 'Folder'
         self.assertTrue(portal_type == expected_type)
 
-    def test_get_container_registration_interface(self):
+    def test_get_container_interface(self):
         """
         Sould return the Interface (or a class) of the content type selected
         on the field 'task_container'.
         """
         from Products.ATContentTypes.interfaces import IATFolder
 
-        type_interface = self.test_taskconfig.get_container_registration_interface()
+        type_interface = self.test_taskconfig.get_container_interface()
         expected_interface = IATFolder
         self.assertTrue(type_interface == expected_interface)
