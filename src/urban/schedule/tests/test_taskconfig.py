@@ -73,6 +73,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_conditions' is not editable"
         self.assertTrue('Conditions de création' in contents, msg)
 
+    def test_starting_state_attribute(self):
+        test_taskconfig = aq_base(self.test_taskconfig)
+        self.assertTrue(hasattr(test_taskconfig, 'starting_state'))
+
+    def test_starting_state_field_display(self):
+        self.browser.open(self.test_taskconfig.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'starting_state' is not displayed"
+        self.assertTrue('id="form-widgets-starting_state"' in contents, msg)
+        msg = "field 'starting_state' is not translated"
+        self.assertTrue('État de création de la tâche' in contents, msg)
+
+    def test_starting_state_field_edit(self):
+        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'starting_state' is not editable"
+        self.assertTrue('État de création de la tâche' in contents, msg)
+
     def test_end_conditions_attribute(self):
         test_taskconfig = aq_base(self.test_taskconfig)
         self.assertTrue(hasattr(test_taskconfig, 'end_conditions'))
@@ -90,6 +108,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         contents = self.browser.contents
         msg = "field 'end_conditions' is not editable"
         self.assertTrue('Conditions de clôture' in contents, msg)
+
+    def test_ending_states_attribute(self):
+        test_taskconfig = aq_base(self.test_taskconfig)
+        self.assertTrue(hasattr(test_taskconfig, 'ending_states'))
+
+    def test_ending_states_field_display(self):
+        self.browser.open(self.test_taskconfig.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'ending_states' is not displayed"
+        self.assertTrue('id="form-widgets-ending_states"' in contents, msg)
+        msg = "field 'ending_states' is not translated"
+        self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
+
+    def test_ending_states_field_edit(self):
+        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'ending_states' is not editable"
+        self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
 
 
 class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):

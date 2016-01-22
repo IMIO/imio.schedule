@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-21 09:06+0000\n"
+"POT-Creation-Date: 2016-01-22 09:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
-#: ../content/task_config.py:50
+#: ../content/task_config.py:70
 msgid "End conditions"
 msgstr ""
 
@@ -25,23 +25,31 @@ msgstr ""
 msgid "Installs the urban.schedule add-on."
 msgstr ""
 
-#: ../content/vocabulary.py:88
+#: ../content/vocabulary.py:89
 msgid "No value"
 msgstr ""
 
-#: ../content/task_config.py:51
+#: ../content/task_config.py:71
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:44
+#: ../content/task_config.py:57
 msgid "Select start conditions of the task"
 msgstr ""
 
-#: ../content/task_config.py:29
+#: ../content/task_config.py:36
 msgid "Select the content type where the task will be created."
 msgstr ""
 
-#: ../content/task_config.py:43
+#: ../content/task_config.py:64
+msgid "Select the state of the container where the task is automatically created."
+msgstr ""
+
+#: ../content/task_config.py:78
+msgid "Select the states of the container where the task is automatically closed."
+msgstr ""
+
+#: ../content/task_config.py:56
 msgid "Start conditions"
 msgstr ""
 
@@ -53,8 +61,16 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:28
+#: ../content/task_config.py:35
 msgid "Task container content type"
+msgstr ""
+
+#: ../content/task_config.py:77
+msgid "Task container end states"
+msgstr ""
+
+#: ../content/task_config.py:63
+msgid "Task container start state"
 msgstr ""
 
 #: ../profiles/default/types/TaskConfig.xml

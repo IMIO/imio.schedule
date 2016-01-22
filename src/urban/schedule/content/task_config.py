@@ -37,20 +37,19 @@ class ITaskConfig(model.Schema):
         vocabulary='urban.schedule.task_container',
         slave_fields=(
             {
-                'name': 'container_state',
+                'name': 'starting_state',
+                'action': 'vocabulary',
+                'vocab_method': get_container_state_vocabulary,
+                'control_param': 'selected_task_container',
+            },
+            {
+                'name': 'ending_states',
                 'action': 'vocabulary',
                 'vocab_method': get_container_state_vocabulary,
                 'control_param': 'selected_task_container',
             },
         ),
         required=True,
-    )
-
-    container_state = schema.Choice(
-        title=_(u'Task container state'),
-        description=_(u'Select the state of the container where the task should start.'),
-        vocabulary='urban.schedule.container_state',
-        required=False,
     )
 
     start_conditions = schema.List(
@@ -60,11 +59,25 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
+    starting_state = schema.Choice(
+        title=_(u'Task container start state'),
+        description=_(u'Select the state of the container where the task is automatically created.'),
+        vocabulary='urban.schedule.container_state',
+        required=False,
+    )
+
     end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
         value_type=schema.Choice(source='urban.schedule.end_conditions'),
         required=True,
+    )
+
+    ending_states = schema.Set(
+        title=_(u'Task container end states'),
+        description=_(u'Select the states of the container where the task is automatically closed.'),
+        value_type=schema.Choice(source='urban.schedule.container_state'),
+        required=False,
     )
 
 
