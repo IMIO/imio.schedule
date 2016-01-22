@@ -2,12 +2,13 @@
 
 from plone import api
 
+from Products.CMFPlone import PloneMessageFactory
+from Products.CMFPlone import PloneMessageFactory as _
+
 from urban.schedule.content.task_config import ITaskConfig
 from urban.schedule.interfaces import IEndConditionsVocabulary
 from urban.schedule.interfaces import ITaskContainerVocabulary
 from urban.schedule.interfaces import IStartConditionsVocabulary
-
-from z3c.form.i18n import MessageFactory as _
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -74,7 +75,8 @@ class TaskContainerVocabulary(object):
     Adapts a TaskConfig fti to return a specific
     vocabulary for the 'task_container' field.
 
-    Subclass and override __call__ in products using urban.schedule.
+    Subclass and override allowed_types() and get_message_factory()
+    in products using urban.schedule.
     """
 
     implements(ITaskContainerVocabulary)
@@ -84,12 +86,41 @@ class TaskContainerVocabulary(object):
 
     def __call__(self):
         """
+        Return a vocabulary from a n explicit set content types.
         """
 
-        voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
+        voc_terms = []
+        content_types = self.content_types()
+        message_factory = self.get_message_factory()
+
+        for portal_type, interface in content_types.iteritems():
+            key = self.to_vocabulary_key(portal_type, interface)
+            voc_terms.append(
+                SimpleTerm(key, key, message_factory(portal_type))
+            )
+
         vocabulary = SimpleVocabulary(voc_terms)
 
         return vocabulary
+
+    def content_types(self):
+        """
+        To override.
+        Explicitely efine here the content types alowed in the field
+        'task_container'
+
+        eg:
+        from Products.ATContentTypes.interfaces import IATFolder
+        return{'Folder': IATFolder}
+        """
+        return {}
+
+    def get_message_factory(self):
+        """
+        To override.
+        By default return plone MessageFactory.
+        """
+        return PloneMessageFactory
 
     def to_vocabulary_key(self, portal_type, interface):
         """

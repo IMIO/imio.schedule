@@ -29,10 +29,18 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
     """
 
     def test_class_registration(self):
+        """
+        Check if the class of the content type TaskConfig is the
+        correct one.
+        """
         from urban.schedule.content.task_config import TaskConfig
         self.assertTrue(self.test_taskconfig.__class__ == TaskConfig)
 
     def test_schema_registration(self):
+        """
+        Check if the schema Interface of the content type TaskConfig is the
+        correct one.
+        """
         portal_types = api.portal.get_tool('portal_types')
         taskconfig_type = portal_types.get(self.test_taskconfig.portal_type)
         self.assertTrue('ITaskConfig' in taskconfig_type.schema)
@@ -132,3 +140,23 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
+
+    def test_get_container_portal_type(self):
+        """
+        Sould return the portal_type of the content type selected on the field
+        'task_container'.
+        """
+        portal_type = self.test_taskconfig.get_container_portal_type()
+        expected_type = 'Folder'
+        self.assertTrue(portal_type == expected_type)
+
+    def test_get_container_registration_interface(self):
+        """
+        Sould return the Interface (or a class) of the content type selected
+        on the field 'task_container'.
+        """
+        from Products.ATContentTypes.interfaces import IATFolder
+
+        type_interface = self.test_taskconfig.get_container_registration_interface()
+        expected_interface = IATFolder
+        self.assertTrue(type_interface == expected_interface)

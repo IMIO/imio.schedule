@@ -38,3 +38,10 @@ class IEndConditionsVocabulary(Interface):
     """
     Adapts a TaskConfig instance into a vocabulary.
     """
+
+
+class IAllTaskConfigs(Interface):
+    """
+    Interface for subscribers returning the task configs of
+    a context providing ITaskContainer.
+    """

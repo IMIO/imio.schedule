@@ -53,7 +53,8 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         voc_name = 'urban.schedule.task_container'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.test_taskconfig)
-        self.assertTrue('--NOVALUE--' in vocabulary)
+        expected_key = "('Folder', 'Products.ATContentTypes.interfaces.folder', 'IATFolder')"
+        self.assertTrue(expected_key in vocabulary.by_token.keys())
 
     def test_start_conditions_vocabulary_factory_registration(self):
         """

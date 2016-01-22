@@ -10,6 +10,17 @@ def schedule_example_install(context):
     if context.readDataFile('urbanschedule_testing.txt') is None:
         return
 
+    # Monkey patch the default vocabulary for the field 'task_container'
+    # to be able to select 'Folder' content type so we can test methods of this
+    # field.
+    from Products.ATContentTypes.interfaces import IATFolder
+    from urban.schedule.content.vocabulary import TaskContainerVocabulary
+
+    def monkey_allowed_types(self):
+        return{'Folder': IATFolder}
+    TaskContainerVocabulary.content_types = monkey_allowed_types
+    # Monkey patch end.
+
     site = api.portal.get()
 
     cfg_folder = api.content.create(
@@ -19,9 +30,9 @@ def schedule_example_install(context):
         title='Task configs'
     )
 
-    api.content.create(
+    test_taskconfig = api.content.create(
         container=cfg_folder,
         type='TaskConfig',
         id='test_taskconfig',
-        title='Test TaskConfig'
+        title='Test TaskConfig',
     )

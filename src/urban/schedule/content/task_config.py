@@ -12,6 +12,8 @@ from zope.interface import implements
 
 import ast
 
+import importlib
+
 
 def get_container_state_vocabulary(selected_task_container):
     """
@@ -91,6 +93,15 @@ class BaseTaskConfig(object):
         Return the portal_type of the selected task_container.
         """
         return self.task_container and self.task_container[0] or ''
+
+    def get_container_registration_interface(self):
+        """
+        Return the portal_type of the selected task_container.
+        """
+        folder_type, module_path, interface_name = self.task_container
+        interface_module = importlib.import_module(module_path)
+        container_interface = getattr(interface_module, interface_name, None)
+        return container_interface
 
     def evaluate_start_condition(self, **kwargs):
         """
