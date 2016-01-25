@@ -4,6 +4,7 @@
 
    <property name="title">Controls the available content types in your portal</property>
 
+   <object name="ScheduleConfig" meta_type="Dexterity FTI"/>
    <object name="TaskConfig" meta_type="Dexterity FTI"/>
 
 </object>

@@ -2,57 +2,19 @@
 
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
-from plone.formwidget.masterselect import MasterSelectField
 from plone.supermodel import model
 
 from urban.schedule import _
+from urban.schedule.content.schedule_config import IScheduleConfig
 
 from zope import schema
 from zope.interface import implements
-
-import ast
-
-import importlib
-
-
-def get_container_state_vocabulary(selected_task_container):
-    """
-    Return workflow states of the selected task_container.
-    """
-    # avoid circular import
-    from urban.schedule.content.vocabulary import get_states_vocabulary
-
-    portal_type, module_path, interface_name = ast.literal_eval(selected_task_container)
-    vocabulary = get_states_vocabulary(portal_type)
-
-    return vocabulary
 
 
 class ITaskConfig(model.Schema):
     """
     TaskConfig dexterity schema.
     """
-
-    task_container = MasterSelectField(
-        title=_(u'Task container content type'),
-        description=_(u'Select the content type where the task will be created.'),
-        vocabulary='urban.schedule.task_container',
-        slave_fields=(
-            {
-                'name': 'starting_state',
-                'action': 'vocabulary',
-                'vocab_method': get_container_state_vocabulary,
-                'control_param': 'selected_task_container',
-            },
-            {
-                'name': 'ending_states',
-                'action': 'vocabulary',
-                'vocab_method': get_container_state_vocabulary,
-                'control_param': 'selected_task_container',
-            },
-        ),
-        required=True,
-    )
 
     start_conditions = schema.List(
         title=_(u'Start conditions'),
@@ -88,20 +50,28 @@ class BaseTaskConfig(object):
     TaskConfig dexterity class.
     """
 
-    def get_container_portal_type(self):
+    def get_schedule_config(self):
         """
-        Return the portal_type of the selected task_container.
         """
-        return self.task_container and self.task_container[0] or ''
+        context = self
+        while(not IScheduleConfig.providedBy(context)):
+            context = context.aq_parent
 
-    def get_container_interface(self):
+        return context
+
+    def get_scheduled_portal_type(self):
         """
         Return the portal_type of the selected task_container.
         """
-        folder_type, module_path, interface_name = self.task_container
-        interface_module = importlib.import_module(module_path)
-        container_interface = getattr(interface_module, interface_name, None)
-        return container_interface
+        schedule_config = self.get_schedule_config()
+        return schedule_config.get_scheduled_portal_type()
+
+    def get_scheduled_interface(self):
+        """
+        Return the registration interface of the selected task_container.
+        """
+        schedule_config = self.get_schedule_config()
+        return schedule_config.get_scheduled_interface()
 
     def evaluate_start_condition(self, **kwargs):
         """

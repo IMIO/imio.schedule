@@ -22,9 +22,9 @@ class ICondition(Interface):
         """
 
 
-class ITaskContainerVocabulary(Interface):
+class IScheduledContentTypeVocabulary(Interface):
     """
-    Adapts a TaskConfig instance into a vocabulary.
+    Adapts a ScheduleConfig instance into a vocabulary.
     """
 
 

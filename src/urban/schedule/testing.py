@@ -140,14 +140,15 @@ class ExampleScheduleIntegrationTestCase(BrowserTest):
 
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
 
-        self.test_taskconfig = self.portal.config.test_taskconfig
+        self.test_scheduleconfig = self.portal.config.test_scheduleconfig
+        self.test_taskconfig = self.test_scheduleconfig.test_taskconfig
 
         # set the task_container field to the 'Folder' value
-        voc_name = 'urban.schedule.task_container'
+        voc_name = 'urban.schedule.scheduled_contenttype'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_taskconfig)
+        vocabulary = voc_factory(self.test_scheduleconfig)
         self.task_container_vocabulary = vocabulary
-        self.test_taskconfig.task_container = vocabulary.by_value.keys()[0]
+        self.test_scheduleconfig.scheduled_contenttype = vocabulary.by_value.keys()[0]
 
         # Commit to save these changes for the test
         transaction.commit()

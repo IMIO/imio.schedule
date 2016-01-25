@@ -5,10 +5,10 @@ from plone import api
 from Products.CMFPlone import PloneMessageFactory
 from Products.CMFPlone import PloneMessageFactory as _
 
-from urban.schedule.content.task_config import ITaskConfig
 from urban.schedule.interfaces import IEndConditionsVocabulary
-from urban.schedule.interfaces import ITaskContainerVocabulary
+from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartConditionsVocabulary
+from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -50,36 +50,36 @@ class BaseVocabularyFactory(object):
         return fti
 
 
-class TaskContainerVocabularyFactory(BaseVocabularyFactory):
+class ScheduledContentTypeVocabularyFactory(BaseVocabularyFactory):
     """
-    Vocabulary factory for 'task_container' field.
+    Vocabulary factory for 'scheduled_contenttype' field.
     Return all the content types that can be associated
-    to a task config (=> should implements ITaskContainer).
+    to a task config (=> should implements IScheduledContentType).
     """
 
     def __call__(self, context):
         """
-        Call the adapter vocabulary for the 'task_container' field
+        Call the adapter vocabulary for the 'scheduled_contenttype' field
         and returns it.
         """
         portal_type = self.get_portal_type(context)
         fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, ITaskContainerVocabulary, portal_type)
+        voc_adapter = getAdapter(fti, IScheduledContentTypeVocabulary, portal_type)
         vocabulary = voc_adapter()
 
         return vocabulary
 
 
-class TaskContainerVocabulary(object):
+class ScheduledContentTypeVocabulary(object):
     """
     Adapts a TaskConfig fti to return a specific
-    vocabulary for the 'task_container' field.
+    vocabulary for the 'scheduled_contenttype' field.
 
     Subclass and override allowed_types() and get_message_factory()
     in products using urban.schedule.
     """
 
-    implements(ITaskContainerVocabulary)
+    implements(IScheduledContentTypeVocabulary)
 
     def __init__(self, fti):
         """ """
@@ -107,7 +107,7 @@ class TaskContainerVocabulary(object):
         """
         To override.
         Explicitely efine here the content types alowed in the field
-        'task_container'
+        'scheduled_contenttype'
 
         eg:
         from Products.ATContentTypes.interfaces import IATFolder
@@ -126,7 +126,7 @@ class TaskContainerVocabulary(object):
         """
         Return the module path of a class.
         """
-        return (portal_type, interface.__module__, interface.__name__)
+        return (portal_type, interface_to_tuple(interface))
 
 
 def get_states_vocabulary(portal_type):
@@ -161,13 +161,7 @@ class ContainerStateVocabularyFactory(BaseVocabularyFactory):
         Call the adapter vocabulary for the 'container_state' field
         and returns it.
         """
-        # case of TaskConfig creation, we have no TaskConfig object yet
-        if not ITaskConfig.providedBy(context):
-            voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
-            vocabulary = SimpleVocabulary(voc_terms)
-            return  vocabulary
-
-        portal_type = context.get_container_portal_type()
+        portal_type = context.get_scheduled_portal_type()
         vocabulary = get_states_vocabulary(portal_type)
 
         return vocabulary

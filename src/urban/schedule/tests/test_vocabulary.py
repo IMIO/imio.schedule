@@ -26,7 +26,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.task_container'
+        factory_name = 'urban.schedule.scheduled_contenttype'
         self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_content_types_default_vocabulary_registration(self):
@@ -34,13 +34,13 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Voc values should be registered as a named adapter on the task
         config fti and name should be the fti portal_type.
         """
-        from urban.schedule.interfaces import ITaskContainerVocabulary
+        from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 
-        portal_type = self.test_taskconfig.portal_type
+        portal_type = self.test_scheduleconfig.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
-            ITaskContainerVocabulary,
+            IScheduledContentTypeVocabulary,
             portal_type
         )
         self.assertTrue(voc_adapter)
@@ -50,11 +50,15 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Test some content_types values.
         """
 
-        voc_name = 'urban.schedule.task_container'
+        voc_name = 'urban.schedule.scheduled_contenttype'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_taskconfig)
-        expected_key = "('Folder', 'Products.ATContentTypes.interfaces.folder', 'IATFolder')"
-        self.assertTrue(expected_key in vocabulary.by_token.keys())
+        vocabulary = voc_factory(self.test_scheduleconfig)
+        expected_key = "('Folder', ('Products.ATContentTypes.interfaces.folder', 'IATFolder'))"
+        msg = 'expected key:\n{expected}\nwas not found in voc_keys:\n{voc}'.format(
+            expected=expected_key,
+            voc=vocabulary.by_token.keys()
+        )
+        self.assertTrue(expected_key in vocabulary.by_token.keys(), msg)
 
     def test_start_conditions_vocabulary_factory_registration(self):
         """

@@ -2,19 +2,19 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="collective.documentgenerator">
 
-    <!-- TaskConfig 'task_container' field Vocabulary -->
+    <!-- TaskConfig 'scheduled_contenttype' field Vocabulary -->
     <utility
-        factory=".vocabulary.TaskContainerVocabularyFactory"
-        name="urban.schedule.task_container"
+        factory=".vocabulary.ScheduledContentTypeVocabularyFactory"
+        name="urban.schedule.scheduled_contenttype"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
-    <!-- Default vocabulary adapter for 'task_container' field -->
+    <!-- Default vocabulary adapter for 'scheduled_contenttype' field -->
     <adapter
       for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.TaskContainerVocabulary"
-      provides="urban.schedule.interfaces.ITaskContainerVocabulary"
-      name="TaskConfig"
+      factory=".vocabulary.ScheduledContentTypeVocabulary"
+      provides="urban.schedule.interfaces.IScheduledContentTypeVocabulary"
+      name="ScheduleConfig"
     />
 
     <!-- TaskConfig 'container_state' field Vocabulary -->

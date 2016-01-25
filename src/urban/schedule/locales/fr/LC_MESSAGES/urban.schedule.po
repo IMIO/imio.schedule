@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-22 09:08+0000\n"
+"POT-Creation-Date: 2016-01-25 10:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-#: ../content/task_config.py:70
+#: ../content/task_config.py:34
 msgid "End conditions"
 msgstr "Conditions de clôture"
 
@@ -22,31 +22,43 @@ msgstr "Conditions de clôture"
 msgid "Installs the urban.schedule add-on."
 msgstr "Installe le produit 'échéancier'"
 
-#: ../content/vocabulary.py:89
+#: ../content/vocabulary.py:212
 msgid "No value"
 msgstr "Aucune valeur"
 
-#: ../content/task_config.py:71
+#: ../profiles/default/types/ScheduleConfig.xml
+msgid "Schedule configuration."
+msgstr "Configuration d'échéances"
+
+#: ../profiles/default/types/ScheduleConfig.xml
+msgid "ScheduleConfig"
+msgstr "Configuration d'échéances"
+
+#: ../content/schedule_config.py:34
+msgid "Scheduled content type"
+msgstr "Type de contenu associé"
+
+#: ../content/task_config.py:35
 msgid "Select end conditions of the task."
 msgstr "Sélectionnez les conditions de clôture de la tâche"
 
-#: ../content/task_config.py:57
+#: ../content/task_config.py:21
 msgid "Select start conditions of the task"
 msgstr "Sélectionnez les conditions de création de la tâche"
 
-#: ../content/task_config.py:36
-msgid "Select the content type where the task will be created."
-msgstr "Type de contenu où créer la tâche"
+#: ../content/schedule_config.py:35
+msgid "Select the content type to apply schedule."
+msgstr "Sélectionnez le type de contenu de l'échéancier"
 
-#: ../content/task_config.py:64
+#: ../content/task_config.py:28
 msgid "Select the state of the container where the task is automatically created."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement créée"
 
-#: ../content/task_config.py:78
+#: ../content/task_config.py:42
 msgid "Select the states of the container where the task is automatically closed."
 msgstr "Sélectionnez les états du récipient pour lequel la tâche est automatiquement clôturée"
 
-#: ../content/task_config.py:56
+#: ../content/task_config.py:20
 msgid "Start conditions"
 msgstr "Conditions de création"
 
@@ -58,15 +70,11 @@ msgstr ""
 msgid "Task configuration."
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:35
-msgid "Task container content type"
-msgstr "Récipient de la tâche"
-
-#: ../content/task_config.py:77
+#: ../content/task_config.py:41
 msgid "Task container end states"
 msgstr "État(s) de clôture de la tâche"
 
-#: ../content/task_config.py:63
+#: ../content/task_config.py:27
 msgid "Task container start state"
 msgstr "État de création de la tâche"
 
