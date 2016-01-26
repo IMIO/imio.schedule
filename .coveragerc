@@ -4,3 +4,11 @@ include =
 omit =
     */test*
     */upgrades/*
+    [report]
+omit =
+    */test*
+    src/urban/__init__.py
+    src/urban/schedule/__init__.py
+    src/urban/schedule/browser/__init__.py
+    src/urban/schedule/content/__init__.py
+    src/urban/schedule/events/__init__.py
