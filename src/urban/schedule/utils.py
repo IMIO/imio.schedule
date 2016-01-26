@@ -22,7 +22,7 @@ def tuple_to_interface(interface_tuple):
     """
     Turn a tuple of strings:
     ('interface.module.path', 'Interface')
-    into an Interface object.
+    into an Interface class.
     """
     module_path, interface_name = interface_tuple
     interface_module = importlib.import_module(module_path)
