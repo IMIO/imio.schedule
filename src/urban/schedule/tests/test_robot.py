@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from urban.schedule.testing import URBAN_SCHEDULE_ACCEPTANCE_TESTING  # noqa
+# from urban.schedule.testing import URBAN_SCHEDULE_ACCEPTANCE_TESTING  # noqa
 from plone.app.testing import ROBOT_TEST_LEVEL
 from plone.testing import layered
 
@@ -8,6 +8,7 @@ import robotsuite
 import unittest
 
 
+"""
 def test_suite():
     suite = unittest.TestSuite()
     current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -26,3 +27,4 @@ def test_suite():
             ),
         ])
     return suite
+"""
