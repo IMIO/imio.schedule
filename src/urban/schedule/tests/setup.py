@@ -2,6 +2,8 @@
 
 from plone import api
 
+from urban.schedule.utils import interface_to_tuple
+
 
 def schedule_example_install(context):
     """
@@ -35,9 +37,10 @@ def schedule_example_install(context):
         type='ScheduleConfig',
         id='test_scheduleconfig',
         title='Test ScheduleConfig',
+        scheduled_contenttype=('Folder', interface_to_tuple(IATFolder)),
     )
 
-    test_taskconfig = api.content.create(
+    api.content.create(
         container=test_scheduleconfig,
         type='TaskConfig',
         id='test_taskconfig',

@@ -69,6 +69,15 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
     Test ScheduleConfig methods.
     """
 
+    def test_get_all_task_configs(self):
+        """
+        Should return all TaskConfig contained in the ScheduleConfig.
+        """
+        expected_taskconfigs = [self.test_taskconfig]
+        task_configs = self.test_scheduleconfig.get_all_task_configs()
+        msg = 'expected {} but got {}'.format(expected_taskconfigs, task_configs)
+        self.assertTrue(task_configs == expected_taskconfigs, msg)
+
     def test_get_scheduled_portal_type(self):
         """
         Sould return the portal_type of the content type selected on the field
@@ -76,7 +85,8 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         """
         portal_type = self.test_scheduleconfig.get_scheduled_portal_type()
         expected_type = 'Folder'
-        self.assertTrue(portal_type == expected_type)
+        msg = 'expected {} but got {}'.format(expected_type, portal_type)
+        self.assertTrue(portal_type == expected_type, msg)
 
     def test_get_scheduled_interface(self):
         """
@@ -87,4 +97,5 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
 
         type_interface = self.test_scheduleconfig.get_scheduled_interface()
         expected_interface = IATFolder
-        self.assertTrue(type_interface == expected_interface)
+        msg = 'expected {} but got {}'.format(expected_interface, type_interface)
+        self.assertTrue(type_interface == expected_interface, msg)

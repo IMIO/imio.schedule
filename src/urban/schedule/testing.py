@@ -12,9 +12,6 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
 
-from zope.component import queryUtility
-from zope.schema.interfaces import IVocabularyFactory
-
 import transaction
 
 import unittest
@@ -83,9 +80,6 @@ class ExampleScheduleLayer(ScheduleLayer):
 
         applyProfile(portal, 'urban.schedule:testing')
 
-        # Commit so that the test browser sees these objects
-        transaction.commit()
-
 
 EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(
     name='EXAMPLE_SCHEDULE_FIXTURE'
@@ -131,26 +125,28 @@ class BrowserTest(BaseTest):
         self.browser.getControl(name='submit').click()
 
 
-class ExampleScheduleIntegrationTestCase(BrowserTest):
-
-    layer = EXAMPLE_SCHEDULE_INTEGRATION
+class ExampleScheduleTestBase(BrowserTest):
 
     def setUp(self):
-        super(ExampleScheduleIntegrationTestCase, self).setUp()
+        super(ExampleScheduleTestBase, self).setUp()
 
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
 
         self.test_scheduleconfig = self.portal.config.test_scheduleconfig
         self.test_taskconfig = self.test_scheduleconfig.test_taskconfig
 
-        # set the task_container field to the 'Folder' value
-        voc_name = 'urban.schedule.scheduled_contenttype'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_scheduleconfig)
-        self.task_container_vocabulary = vocabulary
-        self.test_scheduleconfig.scheduled_contenttype = vocabulary.by_value.keys()[0]
-
         # Commit to save these changes for the test
         transaction.commit()
 
         self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)
+
+
+class ExampleScheduleIntegrationTestCase(ExampleScheduleTestBase):
+
+    layer = EXAMPLE_SCHEDULE_INTEGRATION
+
+
+class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
+
+    layer = EXAMPLE_SCHEDULE_FUNCTIONAL
+

@@ -18,10 +18,9 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         from urban.schedule.utils import get_task_configs
 
         folder = self.portal.config
-        expected_taskconfigs = [self.test_taskconfig]
-        task_configs = get_task_configs(folder)
-        self.assertEqual(len(task_configs), len(expected_taskconfigs))
-        self.assertEqual(task_configs[0].UID(), expected_taskconfigs[0].UID())
+        expected_UIDS = [task_configs.UID() for task_configs in self.test_scheduleconfig.objectValues()]
+        task_config_UIDS = [task_config.UID() for task_config in get_task_configs(folder)]
+        self.assertEqual(set(task_config_UIDS), set(expected_UIDS))
 
     def test_tuple_to_interface(self):
         """

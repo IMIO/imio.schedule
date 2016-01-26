@@ -1,0 +1,27 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="urban.schedule">
+
+
+  <subscriber for="Products.CMFCore.interfaces.ISiteRoot
+                   zope.traversing.interfaces.IBeforeTraverseEvent"
+              handler=".zope_registration.subscribe_task_configs_at_instance_startup"/>
+
+  <subscriber for="urban.schedule.content.schedule_config.IScheduleConfig
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".zope_registration.update_task_configs_subscriptions"/>
+
+  <subscriber for="urban.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectAddedEvent"
+              handler=".zope_registration.subscribe_task_configs_for_content_type"/>
+
+  <subscriber for="urban.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectRemovedEvent"
+              handler=".zope_registration.unsubscribe_task_configs_for_content_type"/>
+
+  <subscriber for="collective.task.behaviors.ITaskContainer
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".create_task.create_new_tasks"/>
+
+</configure>

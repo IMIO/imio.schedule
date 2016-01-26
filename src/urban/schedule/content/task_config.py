@@ -5,7 +5,6 @@ from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from urban.schedule import _
-from urban.schedule.content.schedule_config import IScheduleConfig
 
 from zope import schema
 from zope.interface import implements
@@ -52,10 +51,13 @@ class BaseTaskConfig(object):
 
     def get_schedule_config(self):
         """
+        Return the parent ScheduleConfig.
         """
+        from urban.schedule.content.schedule_config import IScheduleConfig
+
         context = self
         while(not IScheduleConfig.providedBy(context)):
-            context = context.aq_parent
+            context = context.getParentNode()
 
         return context
 

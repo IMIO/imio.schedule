@@ -40,8 +40,8 @@ class IEndConditionsVocabulary(Interface):
     """
 
 
-class IAllTaskConfigs(Interface):
+class IToTaskConfig(Interface):
     """
-    Interface for subscribers returning the task configs of
+    Interface for adapters returning the task config of
     a context providing ITaskContainer.
     """
