@@ -3,16 +3,18 @@
 from plone import api
 
 from Products.CMFPlone import PloneMessageFactory
-from Products.CMFPlone import PloneMessageFactory as _
 
-from urban.schedule.interfaces import IEndConditionsVocabulary
+from urban.schedule import _
+from urban.schedule.interfaces import ICondition
+from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
-from urban.schedule.interfaces import IStartConditionsVocabulary
+from urban.schedule.interfaces import IStartCondition
 from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.component import getAdapter
+from zope.component import getGlobalSiteManager
 from zope.i18n import translate
 from zope.interface import implements
 
@@ -129,28 +131,6 @@ class ScheduledContentTypeVocabulary(object):
         return (portal_type, interface_to_tuple(interface))
 
 
-def get_states_vocabulary(portal_type):
-    """
-    Return states of the default workflow of the given portal_type as
-    a vocabulary.
-    """
-    if not portal_type:
-        return SimpleVocabulary([])
-
-    wf_tool = api.portal.get_tool('portal_workflow')
-    request = api.portal.get().REQUEST
-
-    workfow = wf_tool.get(wf_tool.getChainForPortalType(portal_type)[0])
-    voc_terms = [
-        SimpleTerm(state_id, state_id, translate(state.title, 'plone', context=request))
-        for state_id, state in workfow.states.items()
-    ]
-
-    vocabulary = SimpleVocabulary(voc_terms)
-
-    return vocabulary
-
-
 class ContainerStateVocabularyFactory(BaseVocabularyFactory):
     """
     Vocabulary factory for 'container_state' field.
@@ -162,102 +142,68 @@ class ContainerStateVocabularyFactory(BaseVocabularyFactory):
         and returns it.
         """
         portal_type = context.get_scheduled_portal_type()
-        vocabulary = get_states_vocabulary(portal_type)
+        if not portal_type:
+            return SimpleVocabulary([])
+
+        wf_tool = api.portal.get_tool('portal_workflow')
+        request = api.portal.get().REQUEST
+
+        workfow = wf_tool.get(wf_tool.getChainForPortalType(portal_type)[0])
+        voc_terms = [
+            SimpleTerm(state_id, state_id, translate(state.title, 'plone', context=request))
+            for state_id, state in workfow.states.items()
+        ]
+
+        vocabulary = SimpleVocabulary(voc_terms)
 
         return vocabulary
 
 
-class StartConditionVocabularyFactory(BaseVocabularyFactory):
+class ConditionVocabularyFactory(object):
+    """
+    Base class for ConditionVocabularyFactory
+    Return available conditions of a task config.
+    """
+
+    # to override
+    condition_interface = ICondition
+
+    def __call__(self, context):
+        """
+        Look for all the conditions registered for scheduled_contenttype,
+        implementing 'condition_interface' and return them as a vocabulary.
+        """
+
+        gsm = getGlobalSiteManager()
+        scheduled_interface = context.get_scheduled_interface()
+
+        condition_adapters = []
+        for adapter in gsm.registeredAdapters():
+            implements_ICondition = adapter.provided is self.condition_interface
+            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                issubclass(adapter.required[0], scheduled_interface)
+            if implements_ICondition and specific_enough:
+                condition_adapters.append(
+                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                )
+
+        vocabulary = SimpleVocabulary(condition_adapters)
+        return vocabulary
+
+
+class StartConditionVocabularyFactory(ConditionVocabularyFactory):
     """
     Vocabulary factory for 'start_conditions' field.
-    Return all the start conditions that can be associated
-    to a task config.
+    Return available start conditions of a task config.
     """
 
-    def __call__(self, context):
-        """
-        Call the adapter vocabulary for the 'start_conditions' field
-        and returns it.
-        """
-        portal_type = self.get_portal_type(context)
-        fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IStartConditionsVocabulary, portal_type)
-        vocabulary = voc_adapter()
-
-        return vocabulary
+    condition_interface = IStartCondition
 
 
-class StartConditionsVocabulary(object):
-    """
-    !!! To register for more specific TaskConfig subclasses !!!
-    !!! The name of this adapter should be the portal_type  !!!
-    eg: here it's TaskConfig
-
-    Adapts a TaskConfig fti to return a specific
-    vocabulary for the 'start_conditions' field.
-    """
-
-    implements(IStartConditionsVocabulary)
-
-    def __init__(self, fti):
-        """ """
-
-    def __call__(self):
-        """
-        - The key of a voc term is the regsitration name of the condition
-          (utility).
-        - The display value is the title of the condition.
-        """
-
-        voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
-        vocabulary = SimpleVocabulary(voc_terms)
-
-        return vocabulary
-
-
-class EndConditionVocabularyFactory(BaseVocabularyFactory):
+class EndConditionVocabularyFactory(ConditionVocabularyFactory):
     """
     Vocabulary factory for 'end_conditions' field.
-    Return all the end conditions that can be associated
-    to a task config.
+    Return available end conditions of a task config.
     """
 
-    def __call__(self, context):
-        """
-        Call the adapter vocabulary for the 'end_conditions' field
-        and returns it.
-        """
-        portal_type = self.get_portal_type(context)
-        fti = self.get_fti(context)
-        voc_adapter = getAdapter(fti, IEndConditionsVocabulary, portal_type)
-        vocabulary = voc_adapter()
-
-        return vocabulary
-
-
-class EndConditionsVocabulary(object):
-    """
-    !!! To register for more specific TaskConfig subclasses !!!
-    !!! The name of this adapter should be the portal_type  !!!
-    eg: here it's TaskConfig
-
-    Adapts a TaskConfig fti to return a specific
-    vocabulary for the 'end_conditions' field.
-    """
-
-    implements(IEndConditionsVocabulary)
-
-    def __init__(self, fti):
-        """ """
-
-    def __call__(self):
-        """
-        - The key of a voc term is the regsitration name of the condition
-          (utility).
-        - The display value is the title of the condition.
-        """
-
-        voc_terms = [SimpleTerm('--NOVALUE--', '--NOVALUE--', _('No value'))]
-        vocabulary = SimpleVocabulary(voc_terms)
-
-        return vocabulary
+    condition_interface = IEndCondition

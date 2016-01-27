@@ -5,12 +5,23 @@ from collective.task.behaviors import ITask
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from z3c.relationfield import schema
 from zope.interface import implements
 
 
-class BaseConfigurableTask(object):
+class IScheduleTask(ITask):
     """
-    Base class for ConfigurableTask content types.
+    ScheduleTask dexterity schema.
+    """
+
+    task_config = schema.Relation(
+        required=True,
+    )
+
+
+class BaseScheduleTask(object):
+    """
+    Base class for ScheduleTask content types.
     """
 
     def get_task_config(self):
@@ -35,18 +46,18 @@ class BaseConfigurableTask(object):
         return {}
 
 
-class ConfigurableTask(Item, BaseConfigurableTask):
+class ScheduleTask(Item, BaseScheduleTask):
     """
     """
 
-    implements(ITask)
+    implements(IScheduleTask)
 
 
-class ConfigurableMacroTask(Container, BaseConfigurableTask):
+class ScheduleMacroTask(Container, BaseScheduleTask):
     """
     """
 
-    implements(ITask)
+    implements(IScheduleTask)
 
     def get_subtasks(self):
         """

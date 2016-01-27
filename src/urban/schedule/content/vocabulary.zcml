@@ -31,27 +31,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
-    <!-- Default vocabulary adapter for 'start_conditions' field -->
-    <adapter
-      for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.StartConditionsVocabulary"
-      provides="urban.schedule.interfaces.IStartConditionsVocabulary"
-      name="TaskConfig"
-    />
-
     <!-- TaskConfig 'end_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.EndConditionVocabularyFactory"
         name="urban.schedule.end_conditions"
         provides="zope.schema.interfaces.IVocabularyFactory"
-    />
-
-    <!-- Default vocabulary adapter for 'end_conditions' field -->
-    <adapter
-      for="plone.dexterity.interfaces.IDexterityFTI"
-      factory=".vocabulary.EndConditionsVocabulary"
-      provides="urban.schedule.interfaces.IEndConditionsVocabulary"
-      name="TaskConfig"
     />
 
 </configure>

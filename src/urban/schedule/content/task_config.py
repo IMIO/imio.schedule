@@ -5,8 +5,11 @@ from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from urban.schedule import _
+from urban.schedule.interfaces import IEndCondition
+from urban.schedule.interfaces import IStartCondition
 
 from zope import schema
+from zope.component import getAdapter
 from zope.interface import implements
 
 
@@ -49,6 +52,12 @@ class BaseTaskConfig(object):
     TaskConfig dexterity class.
     """
 
+    def get_task_contenttype(self):
+        """
+        To override.
+        Return the content type of task to create.
+        """
+
     def get_schedule_config(self):
         """
         Return the parent ScheduleConfig.
@@ -63,29 +72,61 @@ class BaseTaskConfig(object):
 
     def get_scheduled_portal_type(self):
         """
-        Return the portal_type of the selected task_container.
+        Return the portal_type of the selected scheduled_contenttype.
         """
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_portal_type()
 
     def get_scheduled_interface(self):
         """
-        Return the registration interface of the selected task_container.
+        Return the registration interface of the selected scheduled_contenttype.
         """
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
-    def evaluate_start_condition(self, **kwargs):
+    def task_already_exists(self, task_container):
         """
-        Evaluate 'kwargs' to return the boolean condition of existence of a task.
+        Check if the task_container already has a task from this config.
+        """
+
+    def should_start_task(self, task_container, **kwargs):
+        """
+        Evaluate all the existence conditions of a task with 'kwargs'.
+        Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically create a task.
         """
 
-    def evaluate_end_condition(self, task, **kwargs):
+        if self.task_already_exists(task_container):
+            return False
+
+        for condition_name in self.start_conditions:
+            condition = getAdapter(
+                task_container,
+                interface=IStartCondition,
+                name=condition_name
+            )
+            if not condition.evaluate(**kwargs):
+                return False
+
+        return True
+
+    def should_end_task(self, task_container, task, **kwargs):
         """
-        Evaluate 'task' and 'kwargs' to return the boolean end condition of a task.
+        Evaluate all the end conditions of a task with 'kwargs'.
+        Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically close/reopen a task.
         """
+
+        for condition_name in self.end_conditions:
+            condition = getAdapter(
+                task_container,
+                interface=IEndCondition,
+                name=condition_name
+            )
+            if not condition.evaluate(task, **kwargs):
+                return False
+
+        return True
 
     def compute_due_date(self, task, **kwargs):
         """
@@ -101,6 +142,12 @@ class TaskConfig(Item, BaseTaskConfig):
     """
 
     implements(ITaskConfig)
+
+    def get_task_contenttype(self):
+        """
+        Return the content type of task to create.
+        """
+        return 'ScheduleTask'
 
 
 class MacroTaskConfig(Container, BaseTaskConfig):

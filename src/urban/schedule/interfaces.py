@@ -21,22 +21,19 @@ class ICondition(Interface):
         Represent the condition evaluation by returning True or False.
         """
 
+class IStartCondition(ICondition):
+    """
+    """
+
+
+class IEndCondition(ICondition):
+    """
+    """
+
 
 class IScheduledContentTypeVocabulary(Interface):
     """
     Adapts a ScheduleConfig instance into a vocabulary.
-    """
-
-
-class IStartConditionsVocabulary(Interface):
-    """
-    Adapts a TaskConfig instance into a vocabulary.
-    """
-
-
-class IEndConditionsVocabulary(Interface):
-    """
-    Adapts a TaskConfig instance into a vocabulary.
     """
 
 
