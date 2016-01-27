@@ -20,7 +20,7 @@
                    zope.lifecycleevent.IObjectRemovedEvent"
               handler=".zope_registration.unsubscribe_task_configs_for_content_type"/>
 
-  <subscriber for="collective.task.behaviors.ITaskContainer
+  <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"
               handler=".create_task.create_new_tasks"/>
 

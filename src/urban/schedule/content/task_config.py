@@ -52,7 +52,7 @@ class BaseTaskConfig(object):
     TaskConfig dexterity class.
     """
 
-    def get_task_contenttype(self):
+    def get_task_type(self):
         """
         To override.
         Return the content type of task to create.
@@ -143,7 +143,7 @@ class TaskConfig(Item, BaseTaskConfig):
 
     implements(ITaskConfig)
 
-    def get_task_contenttype(self):
+    def get_task_type(self):
         """
         Return the content type of task to create.
         """
