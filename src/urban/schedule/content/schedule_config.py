@@ -11,21 +11,6 @@ from urban.schedule.utils import tuple_to_interface
 from zope import schema
 from zope.interface import implements
 
-import ast
-
-
-def get_container_state_vocabulary(selected_task_container):
-    """
-    Return workflow states of the selected task_container.
-    """
-    # avoid circular import
-    from urban.schedule.content.vocabulary import get_states_vocabulary
-
-    portal_type, interface_tuple = ast.literal_eval(selected_task_container)
-    vocabulary = get_states_vocabulary(portal_type)
-
-    return vocabulary
-
 
 class IScheduleConfig(model.Schema):
     """
