@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-25 10:33+0000\n"
+"POT-Creation-Date: 2016-01-28 08:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,12 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
-#: ../content/task_config.py:34
+#: ../content/task_config.py:36
 msgid "End conditions"
 msgstr ""
 
 #: ../configure.zcml:25
 msgid "Installs the urban.schedule add-on."
-msgstr ""
-
-#: ../content/vocabulary.py:212
-msgid "No value"
 msgstr ""
 
 #: ../profiles/default/types/ScheduleConfig.xml
@@ -37,35 +33,35 @@ msgstr ""
 msgid "ScheduleConfig"
 msgstr ""
 
-#: ../content/schedule_config.py:34
+#: ../content/schedule_config.py:21
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:35
+#: ../content/task_config.py:37
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:21
+#: ../content/task_config.py:23
 msgid "Select start conditions of the task"
 msgstr ""
 
-#: ../content/schedule_config.py:35
+#: ../content/schedule_config.py:22
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:28
+#: ../content/task_config.py:30
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:42
+#: ../content/task_config.py:44
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
-#: ../content/task_config.py:20
+#: ../content/task_config.py:22
 msgid "Start conditions"
 msgstr ""
 
-#: ../testing.zcml:14
+#: ../testing.zcml:16
 msgid "Steps to ease tests of urban.schedule"
 msgstr ""
 
@@ -73,11 +69,11 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:41
+#: ../content/task_config.py:43
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:27
+#: ../content/task_config.py:29
 msgid "Task container start state"
 msgstr ""
 
@@ -89,6 +85,12 @@ msgstr ""
 msgid "urban.schedule"
 msgstr ""
 
-#: ../testing.zcml:14
+#: ../testing.zcml:16
 msgid "urban.schedule tests"
+msgstr ""
+
+msgid "urban.schedule.test_end_condition"
+msgstr ""
+
+msgid "urban.schedule.test_start_condition"
 msgstr ""

@@ -6,6 +6,7 @@ from urban.schedule.testing import ExampleScheduleIntegrationTestCase
 
 from zope.component import queryAdapter
 from zope.component import queryUtility
+from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 
@@ -76,6 +77,11 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('urban.schedule.test_start_condition' in vocabulary)
 
+        term = vocabulary.getTerm('urban.schedule.test_start_condition')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u'Condition de création TEST', msg)
+
     def test_end_conditions_vocabulary_factory_registration(self):
         """
         Content types voc factory should be registered as a named utility.
@@ -91,3 +97,8 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.test_taskconfig)
         self.assertTrue('urban.schedule.test_end_condition' in vocabulary)
+
+        term = vocabulary.getTerm('urban.schedule.test_end_condition')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u'Condition de fin TEST', msg)
