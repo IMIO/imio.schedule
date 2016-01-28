@@ -13,22 +13,32 @@ class IUrbanScheduleLayer(IDefaultBrowserLayer):
 
 class ICondition(Interface):
     """
-    Condition object.
+    Condition object adapting a TaskContainer.
     """
 
-    def evaluate(self):
-        """
-        Represent the condition evaluation by returning True or False.
-        """
 
 class IStartCondition(ICondition):
     """
+    Start/creation condition of task.
     """
+
+    def evaluate(self, **kwargs):
+        """
+        Do something with task_container and **kwargs to
+        evaluate if the condition is True or False
+        """
 
 
 class IEndCondition(ICondition):
     """
+    End condition of task.
     """
+
+    def evaluate(self, task, **kwargs):
+        """
+        Do something with task, task_container and **kwargs to
+        evaluate if the condition is True or False
+        """
 
 
 class IScheduledContentTypeVocabulary(Interface):
@@ -41,4 +51,10 @@ class IToTaskConfig(Interface):
     """
     Interface for adapters returning the task config of
     a context providing ITaskContainer.
+    """
+
+
+class NoTaskConfigFound(Exception):
+    """
+    Raised when a TaskConfig is not found.
     """

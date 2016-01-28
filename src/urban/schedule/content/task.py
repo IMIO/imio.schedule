@@ -2,10 +2,12 @@
 
 from collective.task.behaviors import ITask
 
+from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
-from z3c.relationfield import schema
+from urban.schedule.instances import NoTaskConfigFound
+
 from zope.interface import implements
 
 
@@ -14,20 +16,24 @@ class IScheduleTask(ITask):
     ScheduleTask dexterity schema.
     """
 
-    task_config = schema.Relation(
-        required=True,
-    )
-
 
 class BaseScheduleTask(object):
     """
     Base class for ScheduleTask content types.
     """
 
+    task_config_UID = None
+
     def get_task_config(self):
         """
         Return associated task config.
         """
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(UID=self.task_config_UID)
+        if brains:
+            return brains[0].getObject()
+        else:
+            raise NoTaskConfigFound(self.task_config_UID)
 
     def is_done(self):
         """

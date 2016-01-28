@@ -20,6 +20,7 @@ class Condition(object):
 
 class StartCondition(object):
     """
+    Start/creation condition of a ScheduleTask.
     """
 
     implements(IStartCondition)
@@ -34,6 +35,7 @@ class StartCondition(object):
 
 class EndCondition(object):
     """
+    End condition of a ScheduleTask.
     """
 
     implements(IEndCondition)
