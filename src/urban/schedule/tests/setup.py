@@ -15,7 +15,9 @@ def schedule_example_install(context):
         return
 
     monkey_patch_scheduled_conttentype_vocabulary(context)
+    add_empty_task_container(context)
     add_schedule_config(context)
+    add_task(context)
 
 
 def monkey_patch_scheduled_conttentype_vocabulary(context):
@@ -31,6 +33,20 @@ def monkey_patch_scheduled_conttentype_vocabulary(context):
     ScheduledContentTypeVocabulary.content_types = monkey_allowed_types
 
 
+def add_empty_task_container(context):
+    """
+    Add dummy empty task container (ATFolder)
+    """
+    site = api.portal.get()
+
+    api.content.create(
+        container=site,
+        type='Folder',
+        id='test_empty_taskcontainer',
+        title='Empty Task container'
+    )
+
+
 def add_schedule_config(context):
     """
     Add dummy ScheduleConfig, TaskConfig.
@@ -44,7 +60,7 @@ def add_schedule_config(context):
         title='Task configs'
     )
 
-    test_scheduleconfig = api.content.create(
+    schedule_config = api.content.create(
         container=cfg_folder,
         type='ScheduleConfig',
         id='test_scheduleconfig',
@@ -53,8 +69,37 @@ def add_schedule_config(context):
     )
 
     api.content.create(
-        container=test_scheduleconfig,
+        container=schedule_config,
         type='TaskConfig',
         id='test_taskconfig',
         title='Test TaskConfig',
     )
+
+
+def add_task(context):
+    """
+    Add dummy task container (ATFolder) and create
+    a ScheduleTask in it
+    """
+    site = api.portal.get()
+
+    task_container = api.content.create(
+        container=site,
+        type='Folder',
+        id='test_taskcontainer',
+        title='Task container'
+    )
+
+    # If no task was created automatically, create the task manually
+    # to keep ScheduleTask tests alive
+    if not task_container.objectIds():
+        portal_types = api.portal.get_tool('portal_types')
+        type_info = portal_types.getTypeInfo('ScheduleTask')
+        task_config = site.config.test_taskconfig
+
+        type_info._constructInstance(
+            container=task_container,
+            id='test_task',
+            title=task_config.Title(),
+            task_config_UID=task_config.UID()
+        )

@@ -99,7 +99,7 @@ class BaseTaskConfig(object):
         if self.task_already_exists(task_container):
             return False
 
-        for condition_name in self.start_conditions:
+        for condition_name in self.start_conditions or []:
             condition = getAdapter(
                 task_container,
                 interface=IStartCondition,
@@ -117,7 +117,7 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically close/reopen a task.
         """
 
-        for condition_name in self.end_conditions:
+        for condition_name in self.end_conditions or []:
             condition = getAdapter(
                 task_container,
                 interface=IEndCondition,

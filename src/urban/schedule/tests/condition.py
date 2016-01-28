@@ -6,17 +6,17 @@ from urban.schedule.content.condition import StartCondition
 
 class TestStartCondition(StartCondition):
     """
-    Test start condition.
+    Test task start condition.
     """
 
     def evaluate(self, **kwargs):
-        return True
+        return 'Should start'
 
 
 class TestEndCondition(EndCondition):
     """
-    Test start condition.
+    Test task end condition.
     """
 
     def evaluate(self, **kwargs):
-        return True
+        return 'Should end'

@@ -35,22 +35,6 @@ class BaseScheduleTask(object):
         else:
             raise NoTaskConfigFound(self.task_config_UID)
 
-    def is_done(self):
-        """
-        Return True is this task is evaluated as done.
-        """
-        config = self.get_task_config()
-        contexts = self.get_evaluation_contexts()
-        is_done = config.evaluate_end_condition(task=self, **contexts)
-        return is_done
-
-    def get_evaluation_contexts(self):
-        """
-        Return additional objects and values to be passed to evaluate
-        start and end condition of the task.
-        """
-        return {}
-
 
 class ScheduleTask(Item, BaseScheduleTask):
     """

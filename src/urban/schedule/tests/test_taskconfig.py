@@ -34,7 +34,7 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         from urban.schedule.content.task_config import TaskConfig
-        self.assertTrue(self.test_taskconfig.__class__ == TaskConfig)
+        self.assertTrue(self.task_config.__class__ == TaskConfig)
 
     def test_schema_registration(self):
         """
@@ -42,15 +42,15 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         portal_types = api.portal.get_tool('portal_types')
-        taskconfig_type = portal_types.get(self.test_taskconfig.portal_type)
+        taskconfig_type = portal_types.get(self.task_config.portal_type)
         self.assertTrue('ITaskConfig' in taskconfig_type.schema)
 
     def test_start_conditions_attribute(self):
-        test_taskconfig = aq_base(self.test_taskconfig)
-        self.assertTrue(hasattr(test_taskconfig, 'start_conditions'))
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'start_conditions'))
 
     def test_start_conditions_field_display(self):
-        self.browser.open(self.test_taskconfig.absolute_url())
+        self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
         msg = "field 'start_conditions' is not displayed"
         self.assertTrue('id="form-widgets-start_conditions"' in contents, msg)
@@ -58,17 +58,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('Conditions de création' in contents, msg)
 
     def test_start_conditions_field_edit(self):
-        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
         msg = "field 'start_conditions' is not editable"
         self.assertTrue('Conditions de création' in contents, msg)
 
     def test_starting_state_attribute(self):
-        test_taskconfig = aq_base(self.test_taskconfig)
-        self.assertTrue(hasattr(test_taskconfig, 'starting_state'))
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'starting_state'))
 
     def test_starting_state_field_display(self):
-        self.browser.open(self.test_taskconfig.absolute_url())
+        self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
         msg = "field 'starting_state' is not displayed"
         self.assertTrue('id="form-widgets-starting_state"' in contents, msg)
@@ -76,17 +76,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('État de création de la tâche' in contents, msg)
 
     def test_starting_state_field_edit(self):
-        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
         msg = "field 'starting_state' is not editable"
         self.assertTrue('État de création de la tâche' in contents, msg)
 
     def test_end_conditions_attribute(self):
-        test_taskconfig = aq_base(self.test_taskconfig)
-        self.assertTrue(hasattr(test_taskconfig, 'end_conditions'))
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'end_conditions'))
 
     def test_end_conditions_field_display(self):
-        self.browser.open(self.test_taskconfig.absolute_url())
+        self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
         msg = "field 'end_conditions' is not displayed"
         self.assertTrue('id="form-widgets-end_conditions"' in contents, msg)
@@ -94,17 +94,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('Conditions de clôture' in contents, msg)
 
     def test_end_conditions_field_edit(self):
-        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
         msg = "field 'end_conditions' is not editable"
         self.assertTrue('Conditions de clôture' in contents, msg)
 
     def test_ending_states_attribute(self):
-        test_taskconfig = aq_base(self.test_taskconfig)
-        self.assertTrue(hasattr(test_taskconfig, 'ending_states'))
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'ending_states'))
 
     def test_ending_states_field_display(self):
-        self.browser.open(self.test_taskconfig.absolute_url())
+        self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
         msg = "field 'ending_states' is not displayed"
         self.assertTrue('id="form-widgets-ending_states"' in contents, msg)
@@ -112,7 +112,7 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
 
     def test_ending_states_field_edit(self):
-        self.browser.open(self.test_taskconfig.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
         msg = "field 'ending_states' is not editable"
         self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
@@ -123,22 +123,30 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     Test TaskConfig methods.
     """
 
+    def test_get_task_type(self):
+        """
+        Should return 'ScheduleTask'
+        """
+        task_type = self.task_config.get_task_type()
+        expected_type = 'ScheduleTask'
+        self.assertEquals(task_type, expected_type)
+
     def test_get_schedule_config(self):
         """
         Should return the parent schedule config.
         """
-        config = self.test_taskconfig.get_schedule_config()
-        expected_config = self.test_scheduleconfig
-        self.assertTrue(config is expected_config)
+        config = self.task_config.get_schedule_config()
+        expected_config = self.schedule_config
+        self.assertEquals(config, expected_config)
 
     def test_get_scheduled_portal_type(self):
         """
         Sould return the portal_type of the content type selected on the field
         'scheduled_contenttype' of the parent ScheduleConfig.
         """
-        portal_type = self.test_taskconfig.get_scheduled_portal_type()
+        portal_type = self.task_config.get_scheduled_portal_type()
         expected_type = 'Folder'
-        self.assertTrue(portal_type == expected_type)
+        self.assertEquals(portal_type, expected_type)
 
     def test_get_scheduled_interface(self):
         """
@@ -147,6 +155,6 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         """
         from Products.ATContentTypes.interfaces import IATFolder
 
-        type_interface = self.test_taskconfig.get_scheduled_interface()
+        type_interface = self.task_config.get_scheduled_interface()
         expected_interface = IATFolder
-        self.assertTrue(type_interface == expected_interface)
+        self.assertEquals(type_interface, expected_interface)

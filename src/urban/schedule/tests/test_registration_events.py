@@ -40,8 +40,8 @@ class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
 
         task_config = api.content.create(
             type='TaskConfig',
-            id='test_taskconfig_2',
-            container=self.test_scheduleconfig
+            id='task_config_2',
+            container=self.schedule_config
         )
 
         folder = self.portal.config
@@ -60,8 +60,8 @@ class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
 
         task_config = api.content.create(
             type='TaskConfig',
-            id='test_taskconfig_2',
-            container=self.test_scheduleconfig
+            id='task_config_2',
+            container=self.schedule_config
         )
 
         # to test unregistration, we have to be sure something was registered
@@ -82,8 +82,8 @@ class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         each TaskConfig of this ScheduleConfig and register them back for the new
         portal_type.
         """
-        schedule_config = self.test_scheduleconfig
-        task_config = self.test_taskconfig
+        schedule_config = self.schedule_config
+        task_config = self.task_config
         folder = self.portal.config
         document = api.content.create(type='Document', id='doc', container=self.portal)
 

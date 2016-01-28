@@ -132,8 +132,11 @@ class ExampleScheduleTestBase(BrowserTest):
 
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
 
-        self.test_scheduleconfig = self.portal.config.test_scheduleconfig
-        self.test_taskconfig = self.test_scheduleconfig.test_taskconfig
+        self.schedule_config = self.portal.config.test_scheduleconfig
+        self.task_config = self.schedule_config.test_taskconfig
+        self.empty_task_container = self.portal.test_empty_taskcontainer
+        self.task_container = self.portal.test_taskcontainer
+        self.task = self.task_container.objectValues()[0]
 
         # Commit to save these changes for the test
         transaction.commit()
@@ -149,4 +152,3 @@ class ExampleScheduleIntegrationTestCase(ExampleScheduleTestBase):
 class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
 
     layer = EXAMPLE_SCHEDULE_FUNCTIONAL
-

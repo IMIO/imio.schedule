@@ -15,6 +15,9 @@ def create_new_tasks(task_container, event):
 
     task_configs = get_task_configs(task_container)
 
+    if not task_configs:
+        return
+
     for config in task_configs:
         if config.should_start_task(task_container):
 

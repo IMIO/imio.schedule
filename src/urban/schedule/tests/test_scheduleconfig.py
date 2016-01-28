@@ -34,7 +34,7 @@ class TestScheduleConfigFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         from urban.schedule.content.schedule_config import ScheduleConfig
-        self.assertTrue(self.test_scheduleconfig.__class__ == ScheduleConfig)
+        self.assertTrue(self.schedule_config.__class__ == ScheduleConfig)
 
     def test_schema_registration(self):
         """
@@ -42,15 +42,15 @@ class TestScheduleConfigFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         portal_types = api.portal.get_tool('portal_types')
-        scheduleconfig_type = portal_types.get(self.test_scheduleconfig.portal_type)
+        scheduleconfig_type = portal_types.get(self.schedule_config.portal_type)
         self.assertTrue('IScheduleConfig' in scheduleconfig_type.schema)
 
     def test_scheduled_contenttype_attribute(self):
-        test_scheduleconfig = aq_base(self.test_scheduleconfig)
-        self.assertTrue(hasattr(test_scheduleconfig, 'scheduled_contenttype'))
+        schedule_config = aq_base(self.schedule_config)
+        self.assertTrue(hasattr(schedule_config, 'scheduled_contenttype'))
 
     def test_scheduled_contenttype_field_display(self):
-        self.browser.open(self.test_scheduleconfig.absolute_url())
+        self.browser.open(self.schedule_config.absolute_url())
         contents = self.browser.contents
         msg = "field 'scheduled_contenttype' is not displayed"
         self.assertTrue('id="form-widgets-scheduled_contenttype"' in contents, msg)
@@ -58,7 +58,7 @@ class TestScheduleConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('Type de contenu associé' in contents, msg)
 
     def test_scheduled_contenttype_field_edit(self):
-        self.browser.open(self.test_scheduleconfig.absolute_url() + '/edit')
+        self.browser.open(self.schedule_config.absolute_url() + '/edit')
         contents = self.browser.contents
         msg = "field 'scheduled_contenttype' is not editable"
         self.assertTrue('Type de contenu associé' in contents, msg)
@@ -73,8 +73,8 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         """
         Should return all TaskConfig contained in the ScheduleConfig.
         """
-        expected_taskconfigs = [self.test_taskconfig]
-        task_configs = self.test_scheduleconfig.get_all_task_configs()
+        expected_taskconfigs = [self.task_config]
+        task_configs = self.schedule_config.get_all_task_configs()
         msg = 'expected {} but got {}'.format(expected_taskconfigs, task_configs)
         self.assertTrue(task_configs == expected_taskconfigs, msg)
 
@@ -83,7 +83,7 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         Sould return the portal_type of the content type selected on the field
         'scheduled_contenttype'.
         """
-        portal_type = self.test_scheduleconfig.get_scheduled_portal_type()
+        portal_type = self.schedule_config.get_scheduled_portal_type()
         expected_type = 'Folder'
         msg = 'expected {} but got {}'.format(expected_type, portal_type)
         self.assertTrue(portal_type == expected_type, msg)
@@ -95,7 +95,7 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         """
         from Products.ATContentTypes.interfaces import IATFolder
 
-        type_interface = self.test_scheduleconfig.get_scheduled_interface()
+        type_interface = self.schedule_config.get_scheduled_interface()
         expected_interface = IATFolder
         msg = 'expected {} but got {}'.format(expected_interface, type_interface)
         self.assertTrue(type_interface == expected_interface, msg)

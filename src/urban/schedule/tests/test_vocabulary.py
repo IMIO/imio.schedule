@@ -37,7 +37,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 
-        portal_type = self.test_scheduleconfig.portal_type
+        portal_type = self.schedule_config.portal_type
 
         voc_adapter = queryAdapter(
             self._get_fti(portal_type),
@@ -53,7 +53,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
 
         voc_name = 'urban.schedule.scheduled_contenttype'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_scheduleconfig)
+        vocabulary = voc_factory(self.schedule_config)
         expected_key = "('Folder', ('Products.ATContentTypes.interfaces.folder', 'IATFolder'))"
         msg = 'expected key:\n{expected}\nwas not found in voc_keys:\n{voc}'.format(
             expected=expected_key,
@@ -74,7 +74,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         voc_name = 'urban.schedule.start_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_taskconfig)
+        vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.test_start_condition' in vocabulary)
 
         term = vocabulary.getTerm('urban.schedule.test_start_condition')
@@ -95,7 +95,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         voc_name = 'urban.schedule.end_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        vocabulary = voc_factory(self.test_taskconfig)
+        vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.test_end_condition' in vocabulary)
 
         term = vocabulary.getTerm('urban.schedule.test_end_condition')
