@@ -73,6 +73,8 @@ def add_schedule_config(context):
         type='TaskConfig',
         id='test_taskconfig',
         title='Test TaskConfig',
+        start_conditions=('urban.schedule.test_start_condition',),
+        starting_state='private',
     )
 
 
@@ -95,7 +97,7 @@ def add_task(context):
     if not task_container.objectIds():
         portal_types = api.portal.get_tool('portal_types')
         type_info = portal_types.getTypeInfo('ScheduleTask')
-        task_config = site.config.test_taskconfig
+        task_config = site.config.test_scheduleconfig.test_taskconfig
 
         type_info._constructInstance(
             container=task_container,

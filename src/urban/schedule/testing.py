@@ -47,6 +47,7 @@ NAKED_PLONE_INTEGRATION = IntegrationTesting(
 class ScheduleLayer(NakedPloneLayer):
 
     def setUpPloneSite(self, portal):
+        applyProfile(portal, 'Products.CMFPlone:plone')
         applyProfile(portal, 'urban.schedule:default')
 
         # Login and create some test content

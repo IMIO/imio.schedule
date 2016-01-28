@@ -112,14 +112,22 @@ class BaseTaskConfig(object):
 
     def should_start_task(self, task_container, **kwargs):
         """
-        Evaluate all the existence conditions of a task with 'kwargs'.
-        Returns True only if ALL the conditions are matched.
+        Evaluate:
+         - If the task container is on the state selected on 'starting_state'
+         - All the existence conditions of a task with 'kwargs'.
+           Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically create a task.
         """
 
+        # does the Task already exists?
         if self.task_already_exists(task_container):
             return False
 
+        # task container state is allowed?
+        if api.content.get_state(task_container) != self.starting_state:
+            return False
+
+        # each conditions is macthed?
         for condition_name in self.start_conditions or []:
             condition = getAdapter(
                 task_container,

@@ -200,10 +200,17 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
 
         # normal case
         msg = "Task should be started"
-        self.assertTrue(task_config.should_start_task(empty_task_container), msg)
+        start = task_config.should_start_task(empty_task_container)
+        self.assertTrue(start, msg)
 
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
         task_config.start_conditions = ('urban.schedule.negative_start_condition',)
+        msg = "Task should not be started because it already exists"
+        self.assertFalse(task_config.should_start_task(empty_task_container), msg)
+
+        # set the task_config starting_state field to a state different from
+        # the task_container state => task should not start
+        task_config.starting_state = 'pending'
         msg = "Task should not be started because it already exists"
         self.assertFalse(task_config.should_start_task(empty_task_container), msg)
