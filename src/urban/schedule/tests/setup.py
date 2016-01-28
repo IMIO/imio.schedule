@@ -2,6 +2,8 @@
 
 from plone import api
 
+from Products.ATContentTypes.interfaces import IATFolder
+
 from urban.schedule.utils import interface_to_tuple
 
 
@@ -12,17 +14,27 @@ def schedule_example_install(context):
     if context.readDataFile('urbanschedule_testing.txt') is None:
         return
 
-    # Monkey patch the default vocabulary for the field 'task_container'
-    # to be able to select 'Folder' content type so we can test methods of this
-    # field.
-    from Products.ATContentTypes.interfaces import IATFolder
+    monkey_patch_scheduled_conttentype_vocabulary(context)
+    add_schedule_config(context)
+
+
+def monkey_patch_scheduled_conttentype_vocabulary(context):
+    """
+    Monkey patch the default vocabulary for the field 'scheduled_contenttype'
+    to be able to select 'Folder' content type so we can test methods of this
+    field.
+    """
     from urban.schedule.content.vocabulary import ScheduledContentTypeVocabulary
 
     def monkey_allowed_types(self):
         return{'Folder': IATFolder}
     ScheduledContentTypeVocabulary.content_types = monkey_allowed_types
-    # Monkey patch end.
 
+
+def add_schedule_config(context):
+    """
+    Add dummy ScheduleConfig, TaskConfig.
+    """
     site = api.portal.get()
 
     cfg_folder = api.content.create(

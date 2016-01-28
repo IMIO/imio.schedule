@@ -1,0 +1,19 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="urban.schedule">
+
+    <adapter
+        for="Products.ATContentTypes.interfaces.IATFolder"
+        provides="urban.schedule.interfaces.IStartCondition"
+        factory=".condition.TestStartCondition"
+        name="urban.schedule.test_start_condition"
+    />
+
+    <adapter
+        for="Products.ATContentTypes.interfaces.IATFolder"
+        provides="urban.schedule.interfaces.IEndCondition"
+        factory=".condition.TestEndCondition"
+        name="urban.schedule.test_end_condition"
+    />
+
+</configure>

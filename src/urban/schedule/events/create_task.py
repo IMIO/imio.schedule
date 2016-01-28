@@ -29,5 +29,5 @@ def create_new_tasks(task_container, event):
                     container=task_container,
                     id=task_id,
                     title=config.Title(),
-                    task_config=config.UID()
+                    task_config_UID=config.UID()
                 )

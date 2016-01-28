@@ -71,11 +71,10 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Test some start_conditions values.
         """
-
         voc_name = 'urban.schedule.start_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.test_taskconfig)
-        self.assertTrue('--NOVALUE--' in vocabulary)
+        self.assertTrue('urban.schedule.test_start_condition' in vocabulary)
 
     def test_end_conditions_vocabulary_factory_registration(self):
         """
@@ -88,8 +87,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Test some end_conditions values.
         """
-
         voc_name = 'urban.schedule.end_conditions'
         voc_factory = queryUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.test_taskconfig)
-        self.assertTrue('--NOVALUE--' in vocabulary)
+        self.assertTrue('urban.schedule.test_end_condition' in vocabulary)

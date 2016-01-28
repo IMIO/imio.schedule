@@ -6,7 +6,7 @@ from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
-from urban.schedule.instances import NoTaskConfigFound
+from urban.schedule.interfaces import NoTaskConfigFound
 
 from zope.interface import implements
 
