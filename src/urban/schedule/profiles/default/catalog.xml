@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object name="portal_catalog" meta_type="Plone Catalog Tool">
+  <index name="task_config_UID" meta_type="UUIDIndex">
+    <indexed_attr value="task_config_UID"/>
+  </index>
+  <column value="task_config_UID"/>
+</object>

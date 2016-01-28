@@ -54,7 +54,7 @@ class IToTaskConfig(Interface):
     """
 
 
-class NoTaskConfigFound(Exception):
+class TaskConfigNotFound(Exception):
     """
     Raised when a TaskConfig is not found.
     """

@@ -18,7 +18,7 @@ class Condition(object):
         self.task_container = task_container
 
 
-class StartCondition(object):
+class StartCondition(Condition):
     """
     Start/creation condition of a ScheduleTask.
     """
@@ -33,7 +33,7 @@ class StartCondition(object):
         """
 
 
-class EndCondition(object):
+class EndCondition(Condition):
     """
     End condition of a ScheduleTask.
     """

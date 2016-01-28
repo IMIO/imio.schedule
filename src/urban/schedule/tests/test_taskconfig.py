@@ -150,7 +150,7 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
 
     def test_get_scheduled_interface(self):
         """
-        Sould return the Interface (or a class) of the content type selected
+        Should return the Interface (or a class) of the content type selected
         on the field 'scheduled_contenttype' of the parent ScheduleConfig.
         """
         from Products.ATContentTypes.interfaces import IATFolder
@@ -158,3 +158,52 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         type_interface = self.task_config.get_scheduled_interface()
         expected_interface = IATFolder
         self.assertEquals(type_interface, expected_interface)
+
+    def test_query_task_instances(self):
+        """
+        Should return ScheduleTask brains in a container created from a given TaskConfig.
+        """
+        task_config = self.task_config
+
+        root = self.portal
+        tasks = task_config.query_task_instances(root, the_objects=True)
+        msg = "Should have found at least one ScheduleTask"
+        self.assertEquals(tasks, [self.task], msg)
+
+        root = self.empty_task_container
+        tasks = task_config.query_task_instances(root, the_objects=True)
+        msg = "Should not have found any ScheduleTask"
+        self.assertEquals(tasks, [], msg)
+
+    def test_task_already_exists(self):
+        """
+        Should tell wheter the task container already have a task from
+        this TaskConfig.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        empty_task_container = self.empty_task_container
+        self.assertTrue(task_config.task_already_exists(task_container))
+        self.assertFalse(task_config.task_already_exists(empty_task_container))
+
+    def test_should_start_task(self):
+        """
+        Test different cases for the 'should_start_task' methods.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        empty_task_container = self.empty_task_container
+
+        # case of task already existing
+        msg = "Task should not be started because it already exists"
+        self.assertFalse(task_config.should_start_task(task_container), msg)
+
+        # normal case
+        msg = "Task should be started"
+        self.assertTrue(task_config.should_start_task(empty_task_container), msg)
+
+        # set the task_config field 'start_conditions' with a negative condition
+        # => task should not start
+        task_config.start_conditions = ('urban.schedule.negative_start_condition',)
+        msg = "Task should not be started because it already exists"
+        self.assertFalse(task_config.should_start_task(empty_task_container), msg)

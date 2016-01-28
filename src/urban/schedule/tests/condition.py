@@ -13,6 +13,15 @@ class TestStartCondition(StartCondition):
         return 'Should start'
 
 
+class TestNegativeStartCondition(StartCondition):
+    """
+    Test task start condition.
+    """
+
+    def evaluate(self, **kwargs):
+        return False
+
+
 class TestEndCondition(EndCondition):
     """
     Test task end condition.
@@ -20,3 +29,12 @@ class TestEndCondition(EndCondition):
 
     def evaluate(self, **kwargs):
         return 'Should end'
+
+
+class TestNegativeEndCondition(EndCondition):
+    """
+    Test task end condition.
+    """
+
+    def evaluate(self, **kwargs):
+        return False

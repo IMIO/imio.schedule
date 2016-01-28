@@ -6,7 +6,7 @@ from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
-from urban.schedule.interfaces import NoTaskConfigFound
+from urban.schedule.interfaces import TaskConfigNotFound
 
 from zope.interface import implements
 
@@ -33,7 +33,7 @@ class BaseScheduleTask(object):
         if brains:
             return brains[0].getObject()
         else:
-            raise NoTaskConfigFound(self.task_config_UID)
+            raise TaskConfigNotFound(self.task_config_UID)
 
 
 class ScheduleTask(Item, BaseScheduleTask):

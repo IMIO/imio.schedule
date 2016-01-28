@@ -1,0 +1,8 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="urban.schedule">
+
+  <adapter name="task_config_UID" factory=".indexes.task_config_UID" />
+
+</configure>

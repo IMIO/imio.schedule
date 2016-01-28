@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from urban.schedule import _
+from urban.schedule.content.task import IScheduleTask
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
 
@@ -84,10 +86,29 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
+    def query_task_instances(self, root_container, the_objects=False):
+        """
+        Catalog query to return every ScheduleTask created
+        from this TaskConfig contained in 'root_container'.
+        """
+        catalog = api.portal.get_tool('portal_catalog')
+
+        task_brains = catalog(
+            object_provides=IScheduleTask.__identifier__,
+            path={'query': '/'.join(root_container.getPhysicalPath())},
+            task_config_UID=self.UID()
+        )
+
+        if the_objects:
+            return [brain.getObject() for brain in task_brains]
+
+        return task_brains
+
     def task_already_exists(self, task_container):
         """
         Check if the task_container already has a task from this config.
         """
+        return self.query_task_instances(task_container)
 
     def should_start_task(self, task_container, **kwargs):
         """
