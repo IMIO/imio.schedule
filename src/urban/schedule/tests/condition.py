@@ -27,7 +27,7 @@ class TestEndCondition(EndCondition):
     Test task end condition.
     """
 
-    def evaluate(self, **kwargs):
+    def evaluate(self, task, **kwargs):
         return 'Should end'
 
 
@@ -36,5 +36,5 @@ class TestNegativeEndCondition(EndCondition):
     Test task end condition.
     """
 
-    def evaluate(self, **kwargs):
+    def evaluate(self, task, **kwargs):
         return False

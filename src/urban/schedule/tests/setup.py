@@ -74,7 +74,9 @@ def add_schedule_config(context):
         id='test_taskconfig',
         title='Test TaskConfig',
         start_conditions=('urban.schedule.test_start_condition',),
+        end_conditions=('urban.schedule.test_end_condition',),
         starting_state='private',
+        ending_states=('pending',),
     )
 
 

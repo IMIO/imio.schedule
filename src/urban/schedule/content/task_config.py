@@ -108,7 +108,9 @@ class BaseTaskConfig(object):
         """
         Check if the task_container already has a task from this config.
         """
-        return self.query_task_instances(task_container)
+        tasks = self.query_task_instances(task_container, the_objects=True)
+        existing_task = tasks and tasks[0] or None
+        return existing_task
 
     def should_start_task(self, task_container, **kwargs):
         """
@@ -123,11 +125,11 @@ class BaseTaskConfig(object):
         if self.task_already_exists(task_container):
             return False
 
-        # task container state is allowed?
+        # task container state match starting_state value ?
         if api.content.get_state(task_container) != self.starting_state:
             return False
 
-        # each conditions is macthed?
+        # each conditions is matched?
         for condition_name in self.start_conditions or []:
             condition = getAdapter(
                 task_container,
@@ -141,11 +143,18 @@ class BaseTaskConfig(object):
 
     def should_end_task(self, task_container, task, **kwargs):
         """
-        Evaluate all the end conditions of a task with 'kwargs'.
-        Returns True only if ALL the conditions are matched.
-        This should be checked in a zope event to automatically close/reopen a task.
+        Evaluate:
+         - If the task container is on the state selected on 'ending_states'
+         - All the existence conditions of a task with 'task' and 'kwargs'.
+           Returns True only if ALL the conditions are matched.
+        This should be checked in a zope event to automatically close a task.
         """
 
+        # task container state match any ending_states value?
+        if api.content.get_state(task_container) not in  self.ending_states:
+            return False
+
+        # each conditions is matched?
         for condition_name in self.end_conditions or []:
             condition = getAdapter(
                 task_container,
