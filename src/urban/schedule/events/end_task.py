@@ -5,7 +5,7 @@ from plone import api
 from urban.schedule.utils import get_task_configs
 
 
-def create_new_tasks(task_container, event):
+def end_tasks(task_container, event):
     """
     For each task config associated to this task container content type
     check the task config start conditions:
@@ -32,6 +32,5 @@ def create_new_tasks(task_container, event):
                     container=task_container,
                     id=task_id,
                     title=config.Title(),
-                    task_config_UID=config.UID(),
-                    assigned_user=config.user_to_assign(task_container)
+                    task_config_UID=config.UID()
                 )

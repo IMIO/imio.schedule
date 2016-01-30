@@ -9,9 +9,11 @@ from urban.schedule import _
 from urban.schedule.content.task import IScheduleTask
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
+from urban.schedule.interfaces import IDefaultTaskUser
 
 from zope import schema
 from zope.component import getAdapter
+from zope.component import queryAdapter
 from zope.interface import implements
 
 
@@ -20,10 +22,10 @@ class ITaskConfig(model.Schema):
     TaskConfig dexterity schema.
     """
 
-    start_conditions = schema.List(
-        title=_(u'Start conditions'),
-        description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='urban.schedule.start_conditions'),
+    default_assigned_user = schema.Choice(
+        title=_(u'Assigned user'),
+        description=_(u'Select default user assigned to this task.'),
+        vocabulary='urban.schedule.assigned_user',
         required=True,
     )
 
@@ -34,10 +36,10 @@ class ITaskConfig(model.Schema):
         required=False,
     )
 
-    end_conditions = schema.List(
-        title=_(u'End conditions'),
-        description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='urban.schedule.end_conditions'),
+    start_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select start conditions of the task'),
+        value_type=schema.Choice(source='urban.schedule.start_conditions'),
         required=True,
     )
 
@@ -46,6 +48,13 @@ class ITaskConfig(model.Schema):
         description=_(u'Select the states of the container where the task is automatically closed.'),
         value_type=schema.Choice(source='urban.schedule.container_state'),
         required=False,
+    )
+
+    end_conditions = schema.List(
+        title=_(u'End conditions'),
+        description=_(u'Select end conditions of the task.'),
+        value_type=schema.Choice(source='urban.schedule.end_conditions'),
+        required=True,
     )
 
 
@@ -86,31 +95,66 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
-    def query_task_instances(self, root_container, the_objects=False):
+    def query_task_instances(self, root_container, states=[], the_objects=False):
         """
         Catalog query to return every ScheduleTask created
         from this TaskConfig contained in 'root_container'.
         """
         catalog = api.portal.get_tool('portal_catalog')
 
-        task_brains = catalog(
-            object_provides=IScheduleTask.__identifier__,
-            path={'query': '/'.join(root_container.getPhysicalPath())},
-            task_config_UID=self.UID()
-        )
+        query = {
+            'object_provides': IScheduleTask.__identifier__,
+            'path': {'query': '/'.join(root_container.getPhysicalPath())},
+            'task_config_UID': self.UID()
+        }
+        if states:
+            query['review_state'] = states
+
+        task_brains = catalog(**query)
 
         if the_objects:
             return [brain.getObject() for brain in task_brains]
 
         return task_brains
 
+    def get_task(self, task_container):
+        """
+        Return the unique ScheduleTask object created from this
+        TaskConfig contained in 'task_container' if it exists and is open.
+        """
+        tasks = self.query_task_instances(task_container)
+        task_instance = tasks and tasks[0].getObject() or None
+        return task_instance
+
+    def get_open_task(self, task_container):
+        """
+        Return the unique ScheduleTask object created from this
+        TaskConfig in 'task_container' if it exists and is open.
+        """
+        tasks = self.query_task_instances(
+            task_container,
+            states=['created', 'to_assign', 'realized']
+        )
+        task_instance = tasks and tasks[0].getObject() or None
+        return task_instance
+
+    def get_closed_task(self, task_container):
+        """
+        Return the unique ScheduleTask object created from this
+        TaskConfig in 'task_container' if it exists and is closed.
+        """
+        tasks = self.query_task_instances(
+            task_container,
+            states='closed'
+        )
+        task_instance = tasks and tasks[0].getObject() or None
+        return task_instance
+
     def task_already_exists(self, task_container):
         """
         Check if the task_container already has a task from this config.
         """
-        tasks = self.query_task_instances(task_container, the_objects=True)
-        existing_task = tasks and tasks[0] or None
-        return existing_task
+        return self.query_task_instances(task_container)
 
     def should_start_task(self, task_container, **kwargs):
         """
@@ -166,12 +210,41 @@ class BaseTaskConfig(object):
 
         return True
 
+    def end_task(self, task):
+        """
+        Default implementation is to put the task on the state 'closed'.
+        """
+        if api.content.get_state(task) == 'created':
+            api.content.transition(obj=task, transition='do_to_assign')
+        if api.content.get_state(task) == 'to_do':
+            api.content.transition(obj=task, transition='do_realized')
+        if api.content.get_state(task) == 'in_progress':
+            api.content.transition(obj=task, transition='do_closed')
+        if api.content.get_state(task) == 'realized':
+            api.content.transition(obj=task, transition='do_closed')
+
     def compute_due_date(self, task, **kwargs):
         """
         Evaluate 'task' and 'kwargs' to compute the due date of a task.
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
+
+    def user_to_assign(self, task_container):
+        """
+        Returns a default user to assign.
+        Adapts task_container to IAssignUser so this behaviour can easily
+        be customised for each task_container.
+        """
+        # the value could be either the name of an adapter to call or the id
+        # of an existing user
+        user_id = self.default_assigned_user
+        # try to get the adapter named 'user_id'
+        assign_user = queryAdapter(task_container, IDefaultTaskUser, name=user_id)
+        if assign_user:
+            return assign_user.user_id()
+        # else just return user_id
+        return user_id
 
 
 class TaskConfig(Item, BaseTaskConfig):

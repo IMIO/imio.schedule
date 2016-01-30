@@ -175,6 +175,78 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         msg = "Should not have found any ScheduleTask"
         self.assertEquals(tasks, [], msg)
 
+    def test_get_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        task_found = task_config.get_task(task_container)
+        self.assertEquals(task_found, task)
+        # round trip test
+        msg = "The TaskConfig of the task found should be the original one"
+        self.assertEquals(task_found.get_task_config(), task_config, msg)
+
+    def test_get_open_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig only if it is still open.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # normal case
+        task_found = task_config.get_open_task(task_container)
+        self.assertEquals(task_found, task)
+        msg = "Task found should not be on 'closed' state"
+        task_state = api.content.get_state(task_found)
+        self.assertNotEquals(task_state, 'closed', msg)
+
+        # round trip test
+        msg = "The TaskConfig of the task found should be the original one"
+        self.assertEquals(task_found.get_task_config(), task_config, msg)
+
+        # close the task, get_open_task should not find it
+        task_config.end_task(task)
+        task_state = api.content.get_state(task)
+        self.assertEquals(task_state, 'closed')
+        task_found = task_config.get_open_task(task_container)
+        msg = 'No task should have been found'
+        self.assertEquals(task_found, None, msg)
+
+    def test_get_closed_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig only if it is closed.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # the task is not closed, nothing should be found yet
+        task_state = api.content.get_state(task)
+        self.assertNotEquals(task_state, 'closed')
+        task_found = task_config.get_closed_task(task_container)
+        msg = 'No task should have been found'
+        self.assertEquals(task_found, None, msg)
+
+        # close the task
+        task_config.end_task(task)
+        # normal case
+        task_found = task_config.get_closed_task(task_container)
+        self.assertEquals(task_found, task)
+        msg = "Task found should be on 'closed' state"
+        task_state = api.content.get_state(task_found)
+        self.assertEquals(task_state, 'closed', msg)
+
+        # round trip test
+        msg = "The TaskConfig of the task found should be the original one"
+        self.assertEquals(task_found.get_task_config(), task_config, msg)
+
     def test_task_already_exists(self):
         """
         Should tell wheter the task container already have a task from
@@ -183,10 +255,8 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         task_config = self.task_config
 
         task_container = self.task_container
-        existing_task = task_config.task_already_exists(task_container)
-        self.assertTrue(existing_task)
         msg = "TaskConfig of the existing task found should be the original task_config"
-        self.assertEquals(existing_task.get_task_config(), task_config, msg)
+        self.assertTrue(task_config.task_already_exists(task_container), msg)
 
         empty_task_container = self.empty_task_container
         msg = "no existing task should have been found on empty container"

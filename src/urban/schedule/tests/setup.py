@@ -73,6 +73,7 @@ def add_schedule_config(context):
         type='TaskConfig',
         id='test_taskconfig',
         title='Test TaskConfig',
+        default_assigned_user='urban.schedule.assign_current_user',
         start_conditions=('urban.schedule.test_start_condition',),
         end_conditions=('urban.schedule.test_end_condition',),
         starting_state='private',

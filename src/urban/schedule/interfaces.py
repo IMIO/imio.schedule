@@ -17,6 +17,12 @@ class ICondition(Interface):
     """
 
 
+class IDefaultTaskUser(Interface):
+    """
+    Adapts a TaskContainer into a plone user to assign to a task.
+    """
+
+
 class IStartCondition(ICondition):
     """
     Start/creation condition of task.

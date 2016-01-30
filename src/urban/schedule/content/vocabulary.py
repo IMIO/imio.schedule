@@ -9,6 +9,7 @@ from urban.schedule.interfaces import ICondition
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
+from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
@@ -131,7 +132,40 @@ class ScheduledContentTypeVocabulary(object):
         return (portal_type, interface_to_tuple(interface))
 
 
-class ContainerStateVocabularyFactory(BaseVocabularyFactory):
+class AssignedUserVocabularyFactory(object):
+    """
+    Vocabulary factory for 'default_assigned_user' field.
+    """
+
+    def __call__(self, context):
+        """
+        Call the adapter vocabulary for the 'default_assigned_user' field
+        Return available users of a task config.
+        """
+        gsm = getGlobalSiteManager()
+        scheduled_interface = context.get_scheduled_interface()
+
+        voc_terms = []
+        for adapter in gsm.registeredAdapters():
+            implements_IUser = adapter.provided is IDefaultTaskUser
+            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                issubclass(scheduled_interface, adapter.required[0])
+            if implements_IUser and specific_enough:
+                voc_terms.append(
+                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                )
+
+        # enrich the vocabulary with available users
+        for user in api.user.get_users():
+            voc_terms.append(
+                SimpleTerm(user.id, user.id, user.getProperty('fullname') or user.getUserName())
+            )
+
+        vocabulary = SimpleVocabulary(voc_terms)
+        return vocabulary
+
+
+class ContainerStateVocabularyFactory(object):
     """
     Vocabulary factory for 'container_state' field.
     """
@@ -173,7 +207,6 @@ class ConditionVocabularyFactory(object):
         Look for all the conditions registered for scheduled_contenttype,
         implementing 'condition_interface' and return them as a vocabulary.
         """
-
         gsm = getGlobalSiteManager()
         scheduled_interface = context.get_scheduled_interface()
 

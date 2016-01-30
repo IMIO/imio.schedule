@@ -24,4 +24,8 @@
                    zope.lifecycleevent.IObjectModifiedEvent"
               handler=".create_task.create_new_tasks"/>
 
+  <subscriber for="zope.interface.Interface
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".update_tasks.end_tasks"/>
+
 </configure>

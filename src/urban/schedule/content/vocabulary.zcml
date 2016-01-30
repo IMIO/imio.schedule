@@ -17,6 +17,13 @@
       name="ScheduleConfig"
     />
 
+    <!-- TaskConfig 'default_assigned_user' field Vocabulary -->
+    <utility
+        factory=".vocabulary.AssignedUserVocabularyFactory"
+        name="urban.schedule.assigned_user"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'container_state' field Vocabulary -->
     <utility
         factory=".vocabulary.ContainerStateVocabularyFactory"

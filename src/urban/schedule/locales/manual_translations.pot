@@ -17,8 +17,12 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
+msgid "urban.schedule.assign_current_user"
+msgstr ""
+
 msgid "urban.schedule.test_end_condition"
 msgstr ""
 
 msgid "urban.schedule.test_start_condition"
 msgstr ""
+

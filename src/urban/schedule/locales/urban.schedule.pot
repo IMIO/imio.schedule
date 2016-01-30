@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-01-28 08:41+0000\n"
+"POT-Creation-Date: 2016-01-29 15:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,20 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
-#: ../content/task_config.py:36
+#: ../content/task_config.py:24
+msgid "Assigned user"
+msgstr ""
+
+#: ../content/task_config.py:52
 msgid "End conditions"
 msgstr ""
 
-#: ../configure.zcml:25
+#: ../configure.zcml:27
 msgid "Installs the urban.schedule add-on."
+msgstr ""
+
+#: ../profiles/default/types/ScheduleTask.xml
+msgid "Schedulable Task"
 msgstr ""
 
 #: ../profiles/default/types/ScheduleConfig.xml
@@ -33,15 +41,23 @@ msgstr ""
 msgid "ScheduleConfig"
 msgstr ""
 
+#: ../profiles/default/types/ScheduleTask.xml
+msgid "ScheduleTask"
+msgstr ""
+
 #: ../content/schedule_config.py:21
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:37
+#: ../content/task_config.py:25
+msgid "Select default user assigned to this task."
+msgstr ""
+
+#: ../content/task_config.py:53
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:23
+#: ../content/task_config.py:39
 msgid "Select start conditions of the task"
 msgstr ""
 
@@ -49,15 +65,15 @@ msgstr ""
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:30
+#: ../content/task_config.py:32
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:44
+#: ../content/task_config.py:46
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
-#: ../content/task_config.py:22
+#: ../content/task_config.py:38
 msgid "Start conditions"
 msgstr ""
 
@@ -69,11 +85,11 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:43
+#: ../content/task_config.py:45
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:29
+#: ../content/task_config.py:31
 msgid "Task container start state"
 msgstr ""
 
@@ -81,12 +97,15 @@ msgstr ""
 msgid "TaskConfig"
 msgstr ""
 
-#: ../configure.zcml:25
+#: ../configure.zcml:27
 msgid "urban.schedule"
 msgstr ""
 
 #: ../testing.zcml:16
 msgid "urban.schedule tests"
+msgstr ""
+
+msgid "urban.schedule.assign_current_user"
 msgstr ""
 
 msgid "urban.schedule.test_end_condition"
