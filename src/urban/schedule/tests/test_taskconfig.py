@@ -390,3 +390,16 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         task_state = api.content.get_state(task)
         msg = "Task should be on state 'closed'"
         self.assertEquals(task_state, 'closed', msg)
+
+    def test_compute_due_date(self):
+        """
+        Due date should be the date computed by the adapter of
+        due_date_computation field + the value in additional_delay.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+
+        expected_date = task_container.creation_date + task_config.additional_delay
+
+        due_date = task_config.compute_due_date(task_container)
+        self.assertEquals(due_date, expected_date)

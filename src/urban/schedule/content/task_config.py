@@ -7,6 +7,7 @@ from plone.supermodel import model
 
 from urban.schedule import _
 from urban.schedule.content.task import IScheduleTask
+from urban.schedule.interfaces import IDueDate
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IDefaultTaskUser
@@ -253,12 +254,22 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'realized':
             api.content.transition(obj=task, transition='do_closed')
 
-    def compute_due_date(self, task, **kwargs):
+    def compute_due_date(self, task_container, **kwargs):
         """
-        Evaluate 'task' and 'kwargs' to compute the due date of a task.
+        Evaluate 'task_container' and 'kwargs' to compute the due date of a task.
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
+        date_adapter = getAdapter(
+            task_container,
+            interface=IDueDate,
+            name=self.due_date_computation
+        )
+        base_due_date = date_adapter.due_date(**kwargs)
+        additional_delay = self.additional_delay or 0
+        due_date = base_due_date + additional_delay
+
+        return due_date
 
 
 class TaskConfig(Item, BaseTaskConfig):
