@@ -95,6 +95,20 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
+    def user_to_assign(self, task_container):
+        """
+        Returns a default user to assign to the ScheduleTask.
+        """
+        # the value could be either the name of an adapter to call or the id
+        # of an existing user
+        user_id = self.default_assigned_user
+        # try to get the adapter named 'user_id'
+        assign_user = queryAdapter(task_container, IDefaultTaskUser, name=user_id)
+        if assign_user:
+            return assign_user.user_id()
+        # else just return user_id
+        return user_id
+
     def query_task_instances(self, root_container, states=[], the_objects=False):
         """
         Catalog query to return every ScheduleTask created
@@ -229,22 +243,6 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
-
-    def user_to_assign(self, task_container):
-        """
-        Returns a default user to assign.
-        Adapts task_container to IAssignUser so this behaviour can easily
-        be customised for each task_container.
-        """
-        # the value could be either the name of an adapter to call or the id
-        # of an existing user
-        user_id = self.default_assigned_user
-        # try to get the adapter named 'user_id'
-        assign_user = queryAdapter(task_container, IDefaultTaskUser, name=user_id)
-        if assign_user:
-            return assign_user.user_id()
-        # else just return user_id
-        return user_id
 
 
 class TaskConfig(Item, BaseTaskConfig):

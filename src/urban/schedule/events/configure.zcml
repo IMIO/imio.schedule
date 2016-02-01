@@ -25,7 +25,15 @@
               handler=".create_task.create_new_tasks"/>
 
   <subscriber for="zope.interface.Interface
+                   Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+              handler=".create_task.create_new_tasks" />
+
+  <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"
               handler=".update_tasks.end_tasks"/>
+
+  <subscriber for="zope.interface.Interface
+                   Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+              handler=".update_tasks.end_tasks" />
 
 </configure>
