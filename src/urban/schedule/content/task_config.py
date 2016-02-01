@@ -134,7 +134,7 @@ class BaseTaskConfig(object):
     def get_task(self, task_container):
         """
         Return the unique ScheduleTask object created from this
-        TaskConfig contained in 'task_container' if it exists and is open.
+        TaskConfig in 'task_container' if it exists.
         """
         tasks = self.query_task_instances(task_container)
         task_instance = tasks and tasks[0].getObject() or None
