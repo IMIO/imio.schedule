@@ -189,7 +189,7 @@ class BaseTaskConfig(object):
         """
         return self.query_task_instances(task_container)
 
-    def should_start_task(self, task_container, **kwargs):
+    def should_start_task(self, task_container):
         """
         Evaluate:
          - If the task container is on the state selected on 'starting_state'
@@ -213,12 +213,12 @@ class BaseTaskConfig(object):
                 interface=IStartCondition,
                 name=condition_name
             )
-            if not condition.evaluate(**kwargs):
+            if not condition.evaluate():
                 return False
 
         return True
 
-    def should_end_task(self, task_container, task, **kwargs):
+    def should_end_task(self, task_container, task):
         """
         Evaluate:
          - If the task container is on the state selected on 'ending_states'
@@ -238,7 +238,7 @@ class BaseTaskConfig(object):
                 interface=IEndCondition,
                 name=condition_name
             )
-            if not condition.evaluate(task, **kwargs):
+            if not condition.evaluate(task):
                 return False
 
         return True
@@ -254,7 +254,7 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'realized':
             api.content.transition(obj=task, transition='do_closed')
 
-    def compute_due_date(self, task_container, **kwargs):
+    def compute_due_date(self, task_container):
         """
         Evaluate 'task_container' and 'kwargs' to compute the due date of a task.
         This should be checked in a zope event to automatically compute and set the
@@ -265,7 +265,7 @@ class BaseTaskConfig(object):
             interface=IDueDate,
             name=self.due_date_computation
         )
-        base_due_date = date_adapter.due_date(**kwargs)
+        base_due_date = date_adapter.due_date()
         additional_delay = self.additional_delay or 0
         due_date = base_due_date + additional_delay
 

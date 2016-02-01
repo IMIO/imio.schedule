@@ -89,6 +89,24 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         )
         self.assertTrue(IScheduleTask.providedBy(created), msg)
 
+    def test_assigned_user_is_set_on_created_task(self):
+        """
+        Check that the assigned user is set on an
+        automatically created task.
+        """
+        msg = 'default assigned user should have been admin'
+        self.assertEquals(self.task.assigned_user, 'admin', msg)
+
+    def test_due_date_is_set_on_created_task(self):
+        """
+        Check that the computed due date is set on an
+        automatically created task.
+        """
+        msg = 'default du date should have been today + 10 days'
+        due_date = self.task.due_date
+        expected_date = self.task_container.creation_date + 10
+        self.assertEquals(due_date, expected_date, msg)
+
 
 class TestTaskEnding(ExampleScheduleFunctionalTestCase):
     """
