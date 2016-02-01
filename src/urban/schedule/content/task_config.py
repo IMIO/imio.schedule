@@ -57,6 +57,24 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
+    due_date_computation = schema.Choice(
+        title=_(u'Due date'),
+        description=_(u'Select how to compute the due date.'),
+        vocabulary='urban.schedule.due_date',
+        required=True,
+    )
+
+    additional_delay = schema.Int(
+        title=_(u'Additional delay'),
+        description=_(u'This delay is added to the due date of the task.'),
+        required=False,
+    )
+
+    warning_delay = schema.Int(
+        title=_(u'Warning delay'),
+        required=False,
+    )
+
 
 class BaseTaskConfig(object):
     """
@@ -209,7 +227,7 @@ class BaseTaskConfig(object):
         """
 
         # task container state match any ending_states value?
-        if api.content.get_state(task_container) not in  self.ending_states:
+        if api.content.get_state(task_container) not in self.ending_states:
             return False
 
         # each conditions is matched?

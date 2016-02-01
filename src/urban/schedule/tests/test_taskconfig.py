@@ -135,6 +135,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'ending_states' is not editable"
         self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
 
+    def test_due_date_computation_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'due_date_computation'))
+
+    def test_due_date_computation_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'due_date_computation' is not displayed"
+        self.assertTrue('id="form-widgets-due_date_computation"' in contents, msg)
+        msg = "field 'due_date_computation' is not translated"
+        self.assertTrue('Date d\'échéance' in contents, msg)
+
+    def test_due_date_computation_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'due_date_computation' is not editable"
+        self.assertTrue('Date d\'échéance' in contents, msg)
+
 
 class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     """

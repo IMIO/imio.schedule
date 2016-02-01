@@ -45,4 +45,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig 'due_date' field Vocabulary -->
+    <utility
+        factory=".vocabulary.DuteDateVocabularyFactory"
+        name="urban.schedule.due_date"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
 </configure>

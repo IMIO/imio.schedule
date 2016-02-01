@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="urban.schedule">
+
+    <adapter
+        for="Products.ATContentTypes.interfaces.IATFolder"
+        provides="urban.schedule.interfaces.IDueDate"
+        factory=".due_date.ContainerCreationDate"
+        name="urban.schedule.due_date.creation_date"
+    />
+
+</configure>

@@ -11,15 +11,21 @@ class IUrbanScheduleLayer(IDefaultBrowserLayer):
     """ """
 
 
-class ICondition(Interface):
+class IScheduledContentTypeVocabulary(Interface):
     """
-    Condition object adapting a TaskContainer.
+    Adapts a ScheduleConfig instance into a vocabulary.
     """
 
 
 class IDefaultTaskUser(Interface):
     """
     Adapts a TaskContainer into a plone user to assign to a task.
+    """
+
+
+class ICondition(Interface):
+    """
+    Condition object adapting a TaskContainer.
     """
 
 
@@ -47,10 +53,16 @@ class IEndCondition(ICondition):
         """
 
 
-class IScheduledContentTypeVocabulary(Interface):
+class IDueDate(Interface):
     """
-    Adapts a ScheduleConfig instance into a vocabulary.
+    Adapts a TaskContainer into a due date for its tasks.
     """
+
+    def due_date(self, **kwargs):
+        """
+        Compute a due date from task_container and **kwargs
+        then return it.
+        """
 
 
 class IToTaskConfig(Interface):

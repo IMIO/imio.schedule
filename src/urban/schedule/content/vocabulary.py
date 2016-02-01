@@ -5,7 +5,7 @@ from plone import api
 from Products.CMFPlone import PloneMessageFactory
 
 from urban.schedule import _
-from urban.schedule.interfaces import ICondition
+from urban.schedule.interfaces import IDueDate
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
@@ -193,14 +193,14 @@ class ContainerStateVocabularyFactory(object):
         return vocabulary
 
 
-class ConditionVocabularyFactory(object):
+class AdaptersBaseVocabularyFactory(object):
     """
-    Base class for ConditionVocabularyFactory
+    Base class for vocabular factories listing adapters providing
+    'provides_interface' and adapting a task container content type.
     Return available conditions of a task config.
     """
 
-    # to override
-    condition_interface = ICondition
+    provides_interface = None  # to override in subclass
 
     def __call__(self, context):
         """
@@ -212,10 +212,10 @@ class ConditionVocabularyFactory(object):
 
         condition_adapters = []
         for adapter in gsm.registeredAdapters():
-            implements_ICondition = adapter.provided is self.condition_interface
+            implements_interface = adapter.provided is self.provides_interface
             specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
                 issubclass(adapter.required[0], scheduled_interface)
-            if implements_ICondition and specific_enough:
+            if implements_interface and specific_enough:
                 condition_adapters.append(
                     SimpleTerm(adapter.name, adapter.name, _(adapter.name))
                 )
@@ -224,19 +224,28 @@ class ConditionVocabularyFactory(object):
         return vocabulary
 
 
-class StartConditionVocabularyFactory(ConditionVocabularyFactory):
+class StartConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     """
     Vocabulary factory for 'start_conditions' field.
     Return available start conditions of a task config.
     """
 
-    condition_interface = IStartCondition
+    provides_interface = IStartCondition
 
 
-class EndConditionVocabularyFactory(ConditionVocabularyFactory):
+class EndConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     """
     Vocabulary factory for 'end_conditions' field.
     Return available end conditions of a task config.
     """
 
-    condition_interface = IEndCondition
+    provides_interface = IEndCondition
+
+
+class DuteDateVocabularyFactory(AdaptersBaseVocabularyFactory):
+    """
+    Vocabulary factory for 'due_date' field.
+    Return due date computation options of task config.
+    """
+
+    provides_interface = IDueDate

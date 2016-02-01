@@ -3,5 +3,6 @@
     i18n_domain="urban.schedule">
 
     <include file="conditions.zcml" />
+    <include file="due_date.zcml" />
 
 </configure>
