@@ -45,6 +45,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         taskconfig_type = portal_types.get(self.task_config.portal_type)
         self.assertTrue('ITaskConfig' in taskconfig_type.schema)
 
+    def test_default_assigned_user_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'default_assigned_user'))
+
+    def test_default_assigned_user_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'default_assigned_user' is not displayed"
+        self.assertTrue('id="form-widgets-default_assigned_user"' in contents, msg)
+        msg = "field 'default_assigned_user' is not translated"
+        self.assertTrue('Responsable de la tâche' in contents, msg)
+
+    def test_default_assigned_user_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'default_assigned_user' is not editable"
+        self.assertTrue('Responsable de la tâche' in contents, msg)
+
     def test_start_conditions_attribute(self):
         task_config = aq_base(self.task_config)
         self.assertTrue(hasattr(task_config, 'start_conditions'))

@@ -232,8 +232,6 @@ class BaseTaskConfig(object):
             api.content.transition(obj=task, transition='do_to_assign')
         if api.content.get_state(task) == 'to_do':
             api.content.transition(obj=task, transition='do_realized')
-        if api.content.get_state(task) == 'in_progress':
-            api.content.transition(obj=task, transition='do_closed')
         if api.content.get_state(task) == 'realized':
             api.content.transition(obj=task, transition='do_closed')
 

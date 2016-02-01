@@ -140,7 +140,7 @@ class AssignedUserVocabularyFactory(object):
     def __call__(self, context):
         """
         Call the adapter vocabulary for the 'default_assigned_user' field
-        Return available users of a task config.
+        Return available users for a task config.
         """
         gsm = getGlobalSiteManager()
         scheduled_interface = context.get_scheduled_interface()

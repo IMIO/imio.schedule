@@ -61,6 +61,27 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         )
         self.assertTrue(expected_key in vocabulary.by_token.keys(), msg)
 
+    def test_assigned_user_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'urban.schedule.assigned_user'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_assigned_user_vocabulary_values(self):
+        """
+        Test some assigned_user values.
+        """
+        voc_name = 'urban.schedule.assigned_user'
+        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.task_config)
+        self.assertTrue('urban.schedule.assign_current_user' in vocabulary)
+
+        term = vocabulary.getTerm('urban.schedule.assign_current_user')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u'Utilisateur connecté', msg)
+
     def test_start_conditions_vocabulary_factory_registration(self):
         """
         Content types voc factory should be registered as a named utility.
