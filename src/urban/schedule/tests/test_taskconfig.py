@@ -153,6 +153,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'due_date_computation' is not editable"
         self.assertTrue('Date d\'échéance' in contents, msg)
 
+    def test_additional_delay_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'additional_delay'))
+
+    def test_additional_delay_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'additional_delay' is not displayed"
+        self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
+        msg = "field 'additional_delay' is not translated"
+        self.assertTrue('Délai supplémentaire' in contents, msg)
+
+    def test_additional_delay_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'additional_delay' is not editable"
+        self.assertTrue('Délai supplémentaire' in contents, msg)
+
 
 class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     """

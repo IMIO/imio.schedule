@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-02-01 14:46+0000\n"
+"POT-Creation-Date: 2016-02-01 14:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: ../content/task_config.py:68
 msgid "Additional delay"
-msgstr ""
+msgstr "Délai supplémentaire"
 
 #: ../content/task_config.py:26
 msgid "Assigned user"
@@ -108,7 +108,7 @@ msgstr "Configuration de tâche"
 
 #: ../content/task_config.py:69
 msgid "This delay is added to the due date of the task."
-msgstr ""
+msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 
 #: ../content/task_config.py:74
 msgid "Warning delay"
