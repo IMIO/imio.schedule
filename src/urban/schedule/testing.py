@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from plone import api
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -11,6 +12,9 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
+
+from urban.schedule.events.zope_registration import subscribe_task_configs_at_instance_startup
+from urban.schedule.events.zope_registration import unsubscribe_task_configs_for_content_type
 
 import transaction
 
@@ -132,6 +136,7 @@ class ExampleScheduleTestBase(BrowserTest):
         super(ExampleScheduleTestBase, self).setUp()
 
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
+        subscribe_task_configs_at_instance_startup(self.portal, None)
 
         self.schedule_config = self.portal.config.test_scheduleconfig
         self.task_config = self.schedule_config.test_taskconfig
@@ -153,3 +158,18 @@ class ExampleScheduleIntegrationTestCase(ExampleScheduleTestBase):
 class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
 
     layer = EXAMPLE_SCHEDULE_FUNCTIONAL
+
+    def tearDown(self):
+        """
+        Unregister the adapters here since the zope instance never shut downs.
+        """
+        unsubscribe_task_configs_for_content_type(self.task_config, None)
+
+        api.content.delete(self.task)
+        api.content.delete(self.task_container)
+        api.content.delete(self.empty_task_container)
+        api.content.delete(self.task_config)
+        api.content.delete(self.schedule_config)
+
+        # Commit to save these changes for the test
+        transaction.commit()

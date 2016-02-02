@@ -72,6 +72,17 @@ def unsubscribe_task_configs_for_content_type(task_config, event):
         logger.info(msg)
 
 
+def resubscribe_task_configs_for_content_type(task_config, event):
+    """
+    When changing the TaskConfig we have to update the subscription
+    to be sure the dynamical adapter (TaskConfigSubscriber) always
+    refer (see => self.task_config) to the modified version of
+    the TaskConfig.
+    """
+    unsubscribe_task_configs_for_content_type(task_config, event)
+    subscribe_task_configs_for_content_type(task_config, event)
+
+
 def update_task_configs_subscriptions(schedule_config, event):
     """
     When the scheduled_contenttype value of a ScheduleConfig is changed,
@@ -112,10 +123,9 @@ def subscribe_task_configs_at_instance_startup(site, event):
     """
     if site not in _registered_sites:
 
-        portal = api.portal.get()
         catalog = api.portal.get_tool('portal_catalog')
         task_brains = catalog.unrestrictedSearchResults(object_provides=ITaskConfig.__identifier__)
-        all_task_configs = [portal.unrestrictedTraverse(brain.getPath()) for brain in task_brains]
+        all_task_configs = [site.unrestrictedTraverse(brain.getPath()) for brain in task_brains]
 
         for task_config in all_task_configs:
             subscribe_task_configs_for_content_type(task_config, event)

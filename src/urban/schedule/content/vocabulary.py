@@ -214,7 +214,7 @@ class AdaptersBaseVocabularyFactory(object):
         for adapter in gsm.registeredAdapters():
             implements_interface = adapter.provided is self.provides_interface
             specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                issubclass(adapter.required[0], scheduled_interface)
+                issubclass(scheduled_interface, adapter.required[0])
             if implements_interface and specific_enough:
                 condition_adapters.append(
                     SimpleTerm(adapter.name, adapter.name, _(adapter.name))

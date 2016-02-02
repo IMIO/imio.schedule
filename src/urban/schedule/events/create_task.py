@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from Acquisition import aq_base
+
 from plone import api
 
 from urban.schedule.utils import get_task_configs
@@ -12,6 +14,13 @@ def create_new_tasks(task_container, event):
         - if the task has to start, check if the task already exists
         - if the task doesnt exist, create the task
     """
+
+    # This handler can be triggered for archetypes containers by the
+    # workflow modification event but we do not want to create tasks
+    # as long the container doesnt really exists...
+    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+        if task_container.checkCreationFlag():
+            return
 
     task_configs = get_task_configs(task_container)
 

@@ -75,6 +75,31 @@ class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         msg = "the adapter should have been unregistered when deleting the TaskConfig"
         self.assertTrue(adapter is None, msg)
 
+    def test_update_registration_on_TaskConfig_modification(self):
+        """
+        When modifying a TaskConfig, its IToTaskConfig adapter should be re-registered
+        to be sure to always keep an updated reference of the modified TaskConfig.
+        """
+
+        task_config = api.content.create(
+            type='TaskConfig',
+            id='task_config_2',
+            container=self.schedule_config
+        )
+
+        # to test registration update , we have to be sure something was registered
+        folder = self.portal.config
+        old_adapter = getAdapter(folder, IToTaskConfig, task_config.UID())
+        msg = "an adapter providing IToTaskConfig should have been registered for IATFolder"
+        self.assertTrue(old_adapter is not None, msg)
+
+        # simulate modification
+        notify(ObjectModifiedEvent(task_config))
+
+        new_adapter = queryAdapter(folder, IToTaskConfig, task_config.UID())
+        msg = "the IToTaskConfig adapter has not been re-registered"
+        self.assertNotEquals(old_adapter.__class__, new_adapter.__class__, msg)
+
     def test_adapters_update_on_LicenceSchedule_modification(self):
         """
         When an other content type is selected on the field 'scheduled_contenttype'

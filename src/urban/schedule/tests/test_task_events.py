@@ -105,6 +105,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         msg = 'default du date should have been today + 10 days'
         due_date = self.task.due_date
         expected_date = self.task_container.creation_date + 10
+        expected_date = expected_date.asdatetime().date()
         self.assertEquals(due_date, expected_date, msg)
 
 

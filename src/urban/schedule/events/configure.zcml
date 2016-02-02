@@ -17,6 +17,10 @@
               handler=".zope_registration.subscribe_task_configs_for_content_type"/>
 
   <subscriber for="urban.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".zope_registration.resubscribe_task_configs_for_content_type"/>
+
+  <subscriber for="urban.schedule.content.task_config.ITaskConfig
                    zope.lifecycleevent.IObjectRemovedEvent"
               handler=".zope_registration.unsubscribe_task_configs_for_content_type"/>
 
@@ -35,5 +39,9 @@
   <subscriber for="zope.interface.Interface
                    Products.DCWorkflow.interfaces.IAfterTransitionEvent"
               handler=".update_tasks.end_tasks" />
+
+  <subscriber for="zope.interface.Interface
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".update_tasks.update_due_date"/>
 
 </configure>

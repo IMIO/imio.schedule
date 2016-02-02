@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+
 from Products.ATContentTypes.interfaces import IATFolder
 
-from urban.schedule.testing import ExampleScheduleIntegrationTestCase
+from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 
 
-class TestUtils(ExampleScheduleIntegrationTestCase):
+class TestUtils(ExampleScheduleFunctionalTestCase):
     """
     Thes all methods of utils.py module.
     """
@@ -18,7 +19,7 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         from urban.schedule.utils import get_task_configs
 
         folder = self.portal.config
-        expected_UIDS = [task_configs.UID() for task_configs in self.schedule_config.objectValues()]
+        expected_UIDS = [task_config.UID() for task_config in self.schedule_config.objectValues()]
         task_config_UIDS = [task_config.UID() for task_config in get_task_configs(folder)]
         self.assertEqual(set(task_config_UIDS), set(expected_UIDS))
 

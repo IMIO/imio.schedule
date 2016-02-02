@@ -268,6 +268,7 @@ class BaseTaskConfig(object):
         base_due_date = date_adapter.due_date()
         additional_delay = self.additional_delay or 0
         due_date = base_due_date + additional_delay
+        due_date = due_date.asdatetime().date()
 
         return due_date
 
