@@ -8,7 +8,6 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 class IUrbanScheduleLayer(IDefaultBrowserLayer):
     """Marker interface that defines a browser layer."""
-    """ """
 
 
 class IScheduledContentTypeVocabulary(Interface):
