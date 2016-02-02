@@ -4,11 +4,12 @@
 from Products.ATContentTypes.interfaces import IATFolder
 
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
+from urban.schedule.testing import ExampleScheduleIntegrationTestCase
 
 
-class TestUtils(ExampleScheduleFunctionalTestCase):
+class TestUtilsFunctionnal(ExampleScheduleFunctionalTestCase):
     """
-    Thes all methods of utils.py module.
+    Test all methods of utils.py module.
     """
 
     def test_get_task_configs(self):
@@ -22,6 +23,12 @@ class TestUtils(ExampleScheduleFunctionalTestCase):
         expected_UIDS = [task_config.UID() for task_config in self.schedule_config.objectValues()]
         task_config_UIDS = [task_config.UID() for task_config in get_task_configs(folder)]
         self.assertEqual(set(task_config_UIDS), set(expected_UIDS))
+
+
+class TestUtils(ExampleScheduleIntegrationTestCase):
+    """
+    Test all methods of utils.py module.
+    """
 
     def test_tuple_to_interface(self):
         """

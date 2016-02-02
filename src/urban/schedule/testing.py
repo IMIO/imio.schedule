@@ -13,7 +13,6 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
 
-from urban.schedule.events.zope_registration import subscribe_task_configs_at_instance_startup
 from urban.schedule.events.zope_registration import unsubscribe_task_configs_for_content_type
 
 import transaction
@@ -136,7 +135,6 @@ class ExampleScheduleTestBase(BrowserTest):
         super(ExampleScheduleTestBase, self).setUp()
 
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
-        subscribe_task_configs_at_instance_startup(self.portal, None)
 
         self.schedule_config = self.portal.config.test_scheduleconfig
         self.task_config = self.schedule_config.test_taskconfig
@@ -144,7 +142,7 @@ class ExampleScheduleTestBase(BrowserTest):
         self.task_container = self.portal.test_taskcontainer
         self.task = self.task_container.objectValues()[0]
 
-        # Commit to save these changes for the test
+        # commit to save the setup in the tests.
         transaction.commit()
 
         self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)
@@ -171,5 +169,6 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
         api.content.delete(self.task_config)
         api.content.delete(self.schedule_config)
 
-        # Commit to save these changes for the test
         transaction.commit()
+
+        super(ExampleScheduleTestBase, self).tearDown()

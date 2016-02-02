@@ -202,7 +202,7 @@ class BaseTaskConfig(object):
         if self.task_already_exists(task_container):
             return False
 
-        # task container state match starting_state value ?
+        # task container state match starting_state value?
         if api.content.get_state(task_container) != self.starting_state:
             return False
 
