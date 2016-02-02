@@ -13,6 +13,7 @@
 
   <include package=".browser" />
   <include package=".content" />
+  <include package=".dashboard" />
   <include package=".events" />
 
   <include file="indexes.zcml" />
