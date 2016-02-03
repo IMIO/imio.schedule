@@ -45,6 +45,7 @@ setup(
     install_requires=[
         'collective.task',
         'collective.z3cform.datagridfield',
+        'imio.dashboard',
         'plone.api',
         'plone.app.dexterity',
         'setuptools',
