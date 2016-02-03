@@ -109,6 +109,78 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         self.assertEquals(due_date, expected_date, msg)
 
 
+class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
+    """
+    Test task update with different changes of TaskContainer.
+    """
+
+    def test_update_due_date_on_container_modification(self):
+        """
+        When modifying a contentype scheduled with a ScheduleConfig
+        Task due date should be updated.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+        old_due_date = task.due_date
+
+        # set an additional delay of 42 days on the task config
+        task_config.additional_delay = 42
+        msg = "The task due date should not have changed"
+        self.assertEquals(task.due_date, old_due_date)
+
+        # simulate modification
+        notify(ObjectModifiedEvent(task_container))
+
+        msg = "The task due date should have been updated"
+        self.assertNotEquals(task.due_date, old_due_date, msg)
+
+    def test_reindex_due_date_on_container_modification(self):
+        """
+        When modifying a contentype scheduled with a ScheduleConfig
+        Task due date should be updated and reindexed.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+        old_due_date = task.due_date
+
+        # set an additional delay of 42 days on the task config
+        task_config.additional_delay = 42
+        msg = "The task due date should not have changed"
+        self.assertEquals(task.due_date, old_due_date)
+
+        # simulate modification
+        notify(ObjectModifiedEvent(task_container))
+
+        catalog = api.portal.get_tool('portal_catalog')
+        msg = 'catalog should not find anything with old due date'
+        task_brain = catalog(due_date=old_due_date, UID=task.UID())
+        self.assertFalse(task_brain, msg)
+        msg = 'new due date should have been reindexed'
+        task_brain = catalog(due_date=task.due_date, UID=task.UID())
+        self.assertTrue(task_brain, msg)
+
+    def test_task_ending_on_container_workflow_modification(self):
+        """
+        When changing state a contentype scheduled with a ScheduleConfig
+        Task should end automatically depending on end conditions
+        and ending_states.
+        """
+        task_container = self.task_container
+        task = self.task
+
+        msg = "The task should not be closed yet ! (for the sake of the test)"
+        self.assertNotEquals(api.content.get_state(task), 'closed', msg)
+
+        # do workflow change
+        api.content.transition(task_container, transition='submit')
+
+        # the task should have been ended
+        msg = "The task should have been ended"
+        self.assertEquals(api.content.get_state(task), 'closed', msg)
+
+
 class TestTaskEnding(ExampleScheduleFunctionalTestCase):
     """
     Test task ending with different changes of TaskContainer.

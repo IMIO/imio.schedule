@@ -38,3 +38,4 @@ def update_due_date(task_container, event):
         task = config.get_open_task(task_container)
         if task:
             task.due_date = config.compute_due_date(task_container)
+            task.reindexObject(idxs=('due_date',))

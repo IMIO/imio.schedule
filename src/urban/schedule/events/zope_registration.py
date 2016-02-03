@@ -4,6 +4,7 @@ from plone import api
 
 from urban.schedule.content.task_config import ITaskConfig
 from urban.schedule.interfaces import IToTaskConfig
+from urban.schedule.interfaces import TaskConfigNotFound
 from urban.schedule.utils import interface_to_tuple
 from urban.schedule.utils import tuple_to_interface
 
@@ -30,7 +31,17 @@ def subscribe_task_configs_for_content_type(task_config, event):
         def __init__(self, context):
             """ """
             self.context = context
-            self.task_config = task_config
+            self.task_config_UID = task_config.UID()
+
+        @property
+        def task_config(self):
+            catalog = api.portal.get_tool('portal_catalog')
+            brains = catalog(UID=self.task_config_UID)
+            if brains:
+                task_config = brains[0].getObject()
+                return task_config
+            else:
+                raise TaskConfigNotFound
 
     registration_interface = task_config.get_scheduled_interface()
 
@@ -70,17 +81,6 @@ def unsubscribe_task_configs_for_content_type(task_config, event):
             previous_interface
         )
         logger.info(msg)
-
-
-def resubscribe_task_configs_for_content_type(task_config, event):
-    """
-    When changing the TaskConfig we have to update the subscription
-    to be sure the dynamical adapter (TaskConfigSubscriber) always
-    refer (see => self.task_config) to the modified version of
-    the TaskConfig.
-    """
-    unsubscribe_task_configs_for_content_type(task_config, event)
-    subscribe_task_configs_for_content_type(task_config, event)
 
 
 def update_task_configs_subscriptions(schedule_config, event):
