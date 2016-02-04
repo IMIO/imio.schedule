@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from collective.compoundcriterion.interfaces import ICompoundCriterionFilter
+
 from plone import api
 
+from urban.schedule.content.schedule_config import IScheduleConfig
 from urban.schedule.content.task_config import ITaskConfig
 from urban.schedule.interfaces import IToTaskConfig
 from urban.schedule.interfaces import TaskConfigNotFound
@@ -9,6 +12,7 @@ from urban.schedule.utils import interface_to_tuple
 from urban.schedule.utils import tuple_to_interface
 
 from zope.component import getGlobalSiteManager
+from zope.interface import Interface
 from zope.interface import implements
 
 import logging
@@ -41,7 +45,9 @@ def subscribe_task_configs_for_content_type(task_config, event):
                 task_config = brains[0].getObject()
                 return task_config
             else:
-                raise TaskConfigNotFound
+                raise TaskConfigNotFound(
+                    'UID {}'.format(self.task_config_UID)
+                )
 
     registration_interface = task_config.get_scheduled_interface()
 
@@ -113,21 +119,81 @@ def update_task_configs_subscriptions(schedule_config, event):
     setattr(schedule_config, '_scheduled_interface_', new_interface)
 
 
+def register_schedule_collection_criterion(schedule_config, event):
+    """
+    Register adapter turning a schedule config into a collection
+    criterion filtering all task from this schedule config.
+    """
+
+    gsm = getGlobalSiteManager()
+    schedule_config_UID = schedule_config.UID()
+
+    class FilterTasksCriterion(object):
+
+        def __init__(self, context):
+            self.context = context
+
+        @property
+        def query(self):
+            return {'schedule_config_UID': {'query': schedule_config_UID}}
+
+    gsm.registerAdapter(
+        factory=FilterTasksCriterion,
+        required=(Interface,),
+        provided=ICompoundCriterionFilter,
+        name=schedule_config.UID()
+    )
+    msg = "Registered CollectionCriterion adapter '{}'".format(
+        schedule_config.Title()
+    )
+    logger.info(msg)
+
+
+def unregister_schedule_collection_criterion(schedule_config, event):
+    """
+    Unregister adapter turning a schedule config into a collection
+    criterion.
+    """
+
+    gsm = getGlobalSiteManager()
+
+    removed = gsm.unregisterAdapter(
+        required=(Interface,),
+        provided=IToTaskConfig,
+        name=schedule_config.UID()
+    )
+    if removed:
+        msg = "Unregistered CollectionCriterion adapter '{}'".format(
+            schedule_config.Title()
+        )
+        logger.info(msg)
+
+
 _registered_sites = set()
 
 
-def subscribe_task_configs_at_instance_startup(site, event):
+def subscribes_at_instance_startup(site, event):
     """
-    Re-subscribe all the TaskConfig adapters when zope instance
-    is started.
+    Re-subscribe:
+        - all the TaskConfig adapters
+        - collections criterions
+    when zope instanceis started.
     """
     if site not in _registered_sites:
 
+        # register task configs subscribers
         catalog = api.portal.get_tool('portal_catalog')
         task_brains = catalog.unrestrictedSearchResults(object_provides=ITaskConfig.__identifier__)
         all_task_configs = [site.unrestrictedTraverse(brain.getPath()) for brain in task_brains]
 
         for task_config in all_task_configs:
             subscribe_task_configs_for_content_type(task_config, event)
+
+        # register schedule configs criterion
+        schedule_brains = catalog.unrestrictedSearchResults(object_provides=IScheduleConfig.__identifier__)
+        all_schedule_configs = [site.unrestrictedTraverse(brain.getPath()) for brain in schedule_brains]
+
+        for schedule_config in all_schedule_configs:
+            register_schedule_collection_criterion(schedule_config, event)
 
         _registered_sites.add(site)

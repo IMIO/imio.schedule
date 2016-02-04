@@ -1,10 +1,26 @@
 # -*- coding: utf-8 -*-
 
+from plone import api
+
 from urban.schedule.interfaces import IToTaskConfig
 
 from zope.component import getAdapters
 
 import importlib
+
+
+def get_all_schedule_configs():
+    """
+    Return all the ScheduleConfig of the site.
+    """
+    # nested import to avoid recursive imports
+    from urban.schedule.content.schedule_config import IScheduleConfig
+
+    catalog = api.portal.get_tool('portal_catalog')
+    brains = catalog(object_provides=IScheduleConfig.__identifier__)
+    configs = [brain.getObject() for brain in brains]
+
+    return configs
 
 
 def get_task_configs(task_container):
@@ -37,3 +53,30 @@ def interface_to_tuple(interface):
     ('interface.module.path', 'Interface')
     """
     return (interface.__module__, interface.__name__)
+
+
+def create_tasks_collection(schedule_config, container, id, **kwargs):
+    """
+    Create a DashboardCollection in container with a base
+    query returning all the ScheduleTask instances from
+    schedule_config.
+    """
+
+    factory_args = {
+        'id': id,
+        'query': [
+            {
+                'i': 'CompoundCriterion',
+                'o': 'plone.app.querystring.operation.compound.is',
+                'v': schedule_config.UID()
+            }
+        ],
+        'customViewFields': ('due_date', 'Creator'),
+        'sort_on': u'due_date',
+        'sort_reversed': True,
+        'b_size': 30
+    }
+
+    factory_args.update(kwargs)
+
+    container.invokeFactory('DashboardCollection', **factory_args)

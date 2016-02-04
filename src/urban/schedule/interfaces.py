@@ -71,6 +71,12 @@ class IToTaskConfig(Interface):
     """
 
 
+class ScheduleConfigNotFound(Exception):
+    """
+    Raised when a ScheduleConfig is not found.
+    """
+
+
 class TaskConfigNotFound(Exception):
     """
     Raised when a TaskConfig is not found.

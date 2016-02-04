@@ -6,6 +6,7 @@ from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from urban.schedule.interfaces import ScheduleConfigNotFound
 from urban.schedule.interfaces import TaskConfigNotFound
 
 from zope.interface import implements
@@ -23,6 +24,20 @@ class BaseScheduleTask(object):
     """
 
     task_config_UID = None
+    schedule_config_UID = None
+
+    def get_schedule_config(self):
+        """
+        Return associated schedule config.
+        """
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(UID=self.schedule_config_UID)
+        if brains:
+            return brains[0].getObject()
+        else:
+            raise ScheduleConfigNotFound(
+                'UID {}'.format(self.schedule_config_UID)
+            )
 
     def get_task_config(self):
         """
@@ -33,7 +48,9 @@ class BaseScheduleTask(object):
         if brains:
             return brains[0].getObject()
         else:
-            raise TaskConfigNotFound(self.task_config_UID)
+            raise TaskConfigNotFound(
+                'UID {}'.format(self.task_config_UID)
+            )
 
 
 class ScheduleTask(Item, BaseScheduleTask):

@@ -41,6 +41,7 @@ def create_new_tasks(task_container, event):
                     container=task_container,
                     id=task_id,
                     title=config.Title(),
+                    schedule_config_UID=config.get_schedule_config().UID(),
                     task_config_UID=config.UID(),
                     assigned_user=config.user_to_assign(task_container),
                     due_date=config.compute_due_date(task_container)
