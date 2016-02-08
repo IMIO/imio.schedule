@@ -32,9 +32,9 @@ class ScheduleConfig(Container):
 
     implements(IScheduleConfig)
 
-    def get_all_task_configs(self):
+    def query_task_configs(self):
         """
-        Return all the TaskConfig of this ScheduleConfig.
+        Query the TaskConfig of this ScheduleConfig.
         """
         catalog = api.portal.get_tool('portal_catalog')
         config_path = '/'.join(self.getPhysicalPath())
@@ -44,7 +44,15 @@ class ScheduleConfig(Container):
             path={'query': config_path}
         )
 
+        return config_brains
+
+    def get_all_task_configs(self):
+        """
+        Return all the TaskConfig of this ScheduleConfig.
+        """
+        config_brains = self.query_task_configs()
         task_configs = [brain.getObject() for brain in config_brains]
+
         return task_configs
 
     def get_scheduled_portal_type(self):

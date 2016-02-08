@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from Products.ATContentTypes.interfaces import IATDocument
 
@@ -9,12 +10,15 @@ from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 from urban.schedule.utils import interface_to_tuple
 
 from zope.component import getAdapter
+from zope.component import getUtility
 from zope.component import queryAdapter
+from zope.component import queryUtility
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
+from zope.schema.interfaces import IVocabularyFactory
 
 
-class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
+class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
     """
     Test the automated IToTaskConfig adapters registration.
     """
@@ -110,3 +114,46 @@ class TestAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         adapter = queryAdapter(document, IToTaskConfig, task_config.UID())
         msg = "an adapter providing IToTaskConfig should have been registered for IATDocument"
         self.assertTrue(adapter is not None, msg)
+
+
+class TestCriterionVocabularyRegistration(ExampleScheduleFunctionalTestCase):
+    """
+    Test the automated registration of task filter criterion vocabulary.
+    """
+
+    def test_registration_on_ScheduleConfig_creation(self):
+        """
+        When creating a new ScheduleConfig,
+        A vocabulary, named with the ScheduleConfig title, listing all its subtasks
+        should be registered.
+        """
+        normalizer = getUtility(IIDNormalizer)
+        voc_name = normalizer.normalize(self.schedule_config.Title())
+        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        msg = "a vocabulary factory should have been registered for this ScheduleConfig"
+        self.assertTrue(voc_factory is not None, msg)
+
+    def test_unregistration_on_ScheduleConfig_deletion(self):
+        """
+        When deleting a ScheduleConfig, its IVocabularyFactory should be
+        unregistered.
+        """
+
+        normalizer = getUtility(IIDNormalizer)
+        schedule_config = api.content.create(
+            type='ScheduleConfig',
+            id='schedule_config_2',
+            container=self.portal.config,
+            title='YOLO'
+        )
+
+        # to test unregistration, we have to be sure something was registered
+        voc_name = normalizer.normalize(schedule_config.Title())
+        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        msg = "a vocabulary factory should have been registered for this ScheduleConfig"
+        self.assertTrue(voc_factory is not None, msg)
+
+        api.content.delete(schedule_config)
+        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        msg = "vocabulary factory should have been unregistered when deleting this ScheduleConfig"
+        self.assertTrue(voc_factory is None, msg)
