@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collective.compoundcriterion.interfaces import ICompoundCriterionFilter
+
 from plone import api
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 
@@ -116,12 +118,49 @@ class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         self.assertTrue(adapter is not None, msg)
 
 
-class TestCriterionVocabularyRegistration(ExampleScheduleFunctionalTestCase):
+class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
     """
-    Test the automated registration of task filter criterion vocabulary.
+    Test the automated registration of task filter criterion and
+    its vocabulary.
     """
 
-    def test_registration_on_ScheduleConfig_creation(self):
+    def test_criterion_registration_on_ScheduleConfig_creation(self):
+        """
+        When creating a new ScheduleConfig,
+        A vocabulary, named with the ScheduleConfig title, listing all its subtasks
+        should be registered.
+        """
+        adapter = queryAdapter(
+            self.portal,
+            ICompoundCriterionFilter,
+            self.schedule_config.UID()
+        )
+        msg = "an criterion adapter should have been registered when creating a new ScheduleConfig"
+        self.assertTrue(adapter is not None, msg)
+
+    def test_criterion_unregistration_on_ScheduleConfig_deletion(self):
+        """
+        When deleting a ScheduleConfig, its IVocabularyFactory should be
+        unregistered.
+        """
+        schedule_config = api.content.create(
+            type='ScheduleConfig',
+            id='schedule_config_2',
+            container=self.portal.config,
+        )
+
+        # to test unregistration, we have to be sure something was registered
+        adapter = queryAdapter(self.portal, ICompoundCriterionFilter, schedule_config.UID())
+        msg = "an adapter providing ICompoundCriterionFilter should have been registered"
+        self.assertTrue(adapter is not None, msg)
+
+        schedule_config_UID = schedule_config.UID()
+        api.content.delete(schedule_config)
+        adapter = queryAdapter(self.portal, ICompoundCriterionFilter, schedule_config_UID)
+        msg = "the ICompoundCriterionFilter adapter should have been unregistered when deleting the ScheduleConfig"
+        self.assertTrue(adapter is None, msg)
+
+    def test_vocabulary_registration_on_ScheduleConfig_creation(self):
         """
         When creating a new ScheduleConfig,
         A vocabulary, named with the ScheduleConfig title, listing all its subtasks
@@ -133,7 +172,7 @@ class TestCriterionVocabularyRegistration(ExampleScheduleFunctionalTestCase):
         msg = "a vocabulary factory should have been registered for this ScheduleConfig"
         self.assertTrue(voc_factory is not None, msg)
 
-    def test_unregistration_on_ScheduleConfig_deletion(self):
+    def test_vocabularty_unregistration_on_ScheduleConfig_deletion(self):
         """
         When deleting a ScheduleConfig, its IVocabularyFactory should be
         unregistered.

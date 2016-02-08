@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
 
 from zope.component import queryAdapter
-from zope.component import queryUtility
+from zope.component import getUtility
 from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -28,7 +29,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Content types voc factory should be registered as a named utility.
         """
         factory_name = 'urban.schedule.scheduled_contenttype'
-        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
     def test_content_types_default_vocabulary_registration(self):
         """
@@ -52,7 +53,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
 
         voc_name = 'urban.schedule.scheduled_contenttype'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.schedule_config)
         expected_key = "('Folder', ('Products.ATContentTypes.interfaces.folder', 'IATFolder'))"
         msg = 'expected key:\n{expected}\nwas not found in voc_keys:\n{voc}'.format(
@@ -66,14 +67,14 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Content types voc factory should be registered as a named utility.
         """
         factory_name = 'urban.schedule.assigned_user'
-        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
     def test_assigned_user_vocabulary_values(self):
         """
         Test some assigned_user values.
         """
         voc_name = 'urban.schedule.assigned_user'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.assign_current_user' in vocabulary)
 
@@ -87,14 +88,14 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Content types voc factory should be registered as a named utility.
         """
         factory_name = 'urban.schedule.start_conditions'
-        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
     def test_start_conditions_vocabulary_values(self):
         """
         Test some start_conditions values.
         """
         voc_name = 'urban.schedule.start_conditions'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.test_start_condition' in vocabulary)
 
@@ -108,14 +109,14 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Content types voc factory should be registered as a named utility.
         """
         factory_name = 'urban.schedule.end_conditions'
-        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
     def test_end_conditions_vocabulary_values(self):
         """
         Test some end_conditions values.
         """
         voc_name = 'urban.schedule.end_conditions'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.test_end_condition' in vocabulary)
 
@@ -129,14 +130,14 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Content types voc factory should be registered as a named utility.
         """
         factory_name = 'urban.schedule.due_date'
-        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
     def test_due_date_vocabulary_values(self):
         """
         Test some due_date values.
         """
         voc_name = 'urban.schedule.due_date'
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
         self.assertTrue('urban.schedule.due_date.creation_date' in vocabulary)
 
@@ -144,3 +145,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Date de création du dossier', msg)
+
+    def test_tasks_vocabulary_values(self):
+        """
+        Test values of the vocabulary listing task configs of a schedule task.
+        """
+        task_config = self.task_config
+        normalizer = getUtility(IIDNormalizer)
+        voc_name = normalizer.normalize(self.schedule_config.Title())
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+
+        vocabulary = voc_factory(self.portal)
+        self.assertTrue(task_config.UID() in vocabulary)
+
+        term = vocabulary.getTerm(task_config.UID())
+        msg = 'Display value should have been the TaskConfig title'
+        self.assertEquals(term.title, task_config.Title(), msg)

@@ -165,7 +165,7 @@ def unregister_schedule_collection_criterion(schedule_config, event):
 
     removed = gsm.unregisterAdapter(
         required=(Interface,),
-        provided=IToTaskConfig,
+        provided=ICompoundCriterionFilter,
         name=schedule_config.UID()
     )
     if removed:
