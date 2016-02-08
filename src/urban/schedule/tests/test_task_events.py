@@ -108,6 +108,26 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         expected_date = expected_date.asdatetime().date()
         self.assertEquals(due_date, expected_date, msg)
 
+    def test_schedule_config_UID_is_set_on_created_task(self):
+        """
+        Check that schedule_config_UID attribute is set on an
+        automatically created task.
+        """
+        task = self.task
+        schedule_config = self.schedule_config
+        msg = "schedule_config_UID attribute should have been set"
+        self.assertEquals(task.schedule_config_UID, schedule_config.UID(), msg)
+
+    def test_task_config_UID_is_set_on_created_task(self):
+        """
+        Check that task_config_UID attribute is set on an
+        automatically created task.
+        """
+        task = self.task
+        task_config = self.task_config
+        msg = "task_config_UID attribute should have been set"
+        self.assertEquals(task.task_config_UID, task_config.UID(), msg)
+
 
 class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
     """

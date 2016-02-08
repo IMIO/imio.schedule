@@ -4,5 +4,6 @@
     i18n_domain="urban.schedule">
 
   <adapter name="task_config_UID" factory=".indexes.task_config_UID" />
+  <adapter name="schedule_config_UID" factory=".indexes.schedule_config_UID" />
 
 </configure>
