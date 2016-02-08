@@ -31,12 +31,12 @@ class NakedPloneLayer(PloneSandboxLayer):
         # Load ZCML
         self.loadZCML(package=urban.schedule,
                       name='testing.zcml')
-        z2.installProduct(app, 'urban.schedule')
+        # need to do this for archetypes products having 'initialize'
+        # method for their content types in their __init__.py
         z2.installProduct(app, 'imio.dashboard')
 
     def tearDownZope(self, app):
         """Tear down Zope."""
-        z2.uninstallProduct(app, 'urban.schedule')
         z2.uninstallProduct(app, 'imio.dashboard')
 
 NAKED_PLONE_FIXTURE = NakedPloneLayer(
