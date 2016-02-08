@@ -3,6 +3,5 @@
     i18n_domain="urban.schedule">
 
     <include file="columns.zcml" />
-    <include file="vocabulary.zcml" />
 
 </configure>

@@ -7,9 +7,10 @@
 
   <i18n:registerTranslations directory="locales" />
 
-  <include package="collective.z3cform.datagridfield"/>
-  <include package="plone.app.dexterity" />
   <include package="collective.task" />
+  <include package="collective.z3cform.datagridfield"/>
+  <include package="imio.dashboard"/>
+  <include package="plone.app.dexterity" />
 
   <include package=".browser" />
   <include package=".content" />

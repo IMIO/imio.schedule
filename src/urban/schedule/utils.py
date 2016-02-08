@@ -79,4 +79,7 @@ def create_tasks_collection(schedule_config, container, id, **kwargs):
 
     factory_args.update(kwargs)
 
-    container.invokeFactory('DashboardCollection', **factory_args)
+    collection_id = container.invokeFactory('DashboardCollection', **factory_args)
+    collection = getattr(container, collection_id)
+
+    return collection

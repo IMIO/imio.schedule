@@ -32,10 +32,12 @@ class NakedPloneLayer(PloneSandboxLayer):
         self.loadZCML(package=urban.schedule,
                       name='testing.zcml')
         z2.installProduct(app, 'urban.schedule')
+        z2.installProduct(app, 'imio.dashboard')
 
     def tearDownZope(self, app):
         """Tear down Zope."""
         z2.uninstallProduct(app, 'urban.schedule')
+        z2.uninstallProduct(app, 'imio.dashboard')
 
 NAKED_PLONE_FIXTURE = NakedPloneLayer(
     name='NAKED_PLONE_FIXTURE'
