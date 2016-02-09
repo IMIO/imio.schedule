@@ -221,7 +221,10 @@ def unregister_tasks_vocabulary(schedule_config, event):
 
     gsm = getGlobalSiteManager()
 
-    voc_factory = _vocabularies[schedule_config.UID()]
+    voc_factory = _vocabularies.get(schedule_config.UID(), None)
+    if not voc_factory:
+        return
+
     removed = gsm.unregisterUtility(voc_factory, name=voc_factory.name)
 
     if removed:
