@@ -8,6 +8,7 @@ from plone.supermodel import model
 from urban.schedule import _
 from urban.schedule.content.task import IScheduleTask
 from urban.schedule.interfaces import IDefaultTaskUser
+from urban.schedule.interfaces import ICreationCondition
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IStartDate
@@ -30,9 +31,23 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    starting_state = schema.Choice(
-        title=_(u'Task container start state'),
+    creation_state = schema.Choice(
+        title=_(u'Task container creation state'),
         description=_(u'Select the state of the container where the task is automatically created.'),
+        vocabulary='urban.schedule.container_state',
+        required=False,
+    )
+
+    creation_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select creation conditions of the task'),
+        value_type=schema.Choice(source='urban.schedule.creation_conditions'),
+        required=True,
+    )
+
+    starting_states = schema.Choice(
+        title=_(u'Task container start states'),
+        description=_(u'Select the state of the container where the task is automatically started.'),
         vocabulary='urban.schedule.container_state',
         required=False,
     )
@@ -159,14 +174,38 @@ class BaseTaskConfig(object):
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
 
-    def get_open_task(self, task_container):
+    def get_created_task(self, task_container):
         """
         Return the unique ScheduleTask object created from this
-        TaskConfig in 'task_container' if it exists and is open.
+        TaskConfig in 'task_container' if it exists and is not started yet..
         """
         tasks = self.query_task_instances(
             task_container,
-            states=['created', 'to_assign', 'realized']
+            states=['created', 'to_assign']
+        )
+        task_instance = tasks and tasks[0].getObject() or None
+        return task_instance
+
+    def get_started_task(self, task_container):
+        """
+        Return the unique ScheduleTask object created from this
+        TaskConfig in 'task_container' if it exists and is started.
+        """
+        tasks = self.query_task_instances(
+            task_container,
+            states=['to_do', 'in_progress', 'realized']
+        )
+        task_instance = tasks and tasks[0].getObject() or None
+        return task_instance
+
+    def get_open_task(self, task_container):
+        """
+        Return the unique ScheduleTask object created from this
+        TaskConfig in 'task_container' if it exists and is not closed yet.
+        """
+        tasks = self.query_task_instances(
+            task_container,
+            states=['created', 'to_assign', 'to_do', 'in_progress', 'realized']
         )
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
@@ -189,11 +228,11 @@ class BaseTaskConfig(object):
         """
         return self.query_task_instances(task_container)
 
-    def should_start_task(self, task_container):
+    def should_create_task(self, task_container):
         """
         Evaluate:
-         - If the task container is on the state selected on 'starting_state'
-         - All the existence conditions of a task with 'kwargs'.
+         - If the task container is on the state selected on 'starting_states'
+         - All the creation conditions of a task with 'kwargs'.
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically create a task.
         """
@@ -202,8 +241,33 @@ class BaseTaskConfig(object):
         if self.task_already_exists(task_container):
             return False
 
-        # task container state match starting_state value?
-        if api.content.get_state(task_container) != self.starting_state:
+        # task container state match creation_state value?
+        if api.content.get_state(task_container) != self.creation_state:
+            return False
+
+        # each conditions is matched?
+        for condition_name in self.creation_conditions or []:
+            condition = getAdapter(
+                task_container,
+                interface=ICreationCondition,
+                name=condition_name
+            )
+            if not condition.evaluate():
+                return False
+
+        return True
+
+    def should_start_task(self, task_container, task):
+        """
+        Evaluate:
+         - If the task container is on the state selected on 'starting_states'
+         - All the starting conditions of a task with 'kwargs'.
+           Returns True only if ALL the conditions are matched.
+        This should be checked in a zope event to automatically start a task.
+        """
+
+        # task container state match starting_states value?
+        if api.content.get_state(task_container) not in self.starting_states:
             return False
 
         # each conditions is matched?
@@ -213,7 +277,7 @@ class BaseTaskConfig(object):
                 interface=IStartCondition,
                 name=condition_name
             )
-            if not condition.evaluate():
+            if not condition.evaluate(task):
                 return False
 
         return True
@@ -243,12 +307,23 @@ class BaseTaskConfig(object):
 
         return True
 
+    def start_task(self, task):
+        """
+        Default implementation is to put the task on the state 'to_do'.
+        """
+        if api.content.get_state(task) == 'created':
+            api.content.transition(obj=task, transition='do_to_assign')
+        if api.content.get_state(task) == 'to_assign':
+            api.content.transition(obj=task, transition='do_to_do')
+
     def end_task(self, task):
         """
         Default implementation is to put the task on the state 'closed'.
         """
         if api.content.get_state(task) == 'created':
             api.content.transition(obj=task, transition='do_to_assign')
+        if api.content.get_state(task) == 'to_assign':
+            api.content.transition(obj=task, transition='do_to_do')
         if api.content.get_state(task) == 'to_do':
             api.content.transition(obj=task, transition='do_realized')
         if api.content.get_state(task) == 'realized':

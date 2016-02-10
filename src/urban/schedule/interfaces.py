@@ -28,14 +28,26 @@ class ICondition(Interface):
     """
 
 
-class IStartCondition(ICondition):
+class ICreationCondition(ICondition):
     """
-    Start/creation condition of task.
+    Creation condition of task.
     """
 
     def evaluate(self, **kwargs):
         """
         Do something with task_container and **kwargs to
+        evaluate if the condition is True or False
+        """
+
+
+class IStartCondition(ICondition):
+    """
+    Start condition of task.
+    """
+
+    def evaluate(self, task, **kwargs):
+        """
+        Do something with task, task_container and **kwargs to
         evaluate if the condition is True or False
         """
 

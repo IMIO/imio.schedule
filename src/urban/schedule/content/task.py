@@ -23,8 +23,8 @@ class BaseScheduleTask(object):
     Base class for ScheduleTask content types.
     """
 
-    task_config_UID = None
-    schedule_config_UID = None
+    task_config_UID = ''
+    schedule_config_UID = ''
 
     def get_container(self):
         """

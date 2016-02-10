@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from urban.schedule.content.condition import CreationCondition
 from urban.schedule.content.condition import EndCondition
 from urban.schedule.content.condition import StartCondition
 
 
-class TestStartCondition(StartCondition):
+class TestCreationCondition(CreationCondition):
     """
     Test task start condition.
     """
@@ -13,12 +14,30 @@ class TestStartCondition(StartCondition):
         return 'Should start'
 
 
-class TestNegativeStartCondition(StartCondition):
+class TestNegativeCreationCondition(CreationCondition):
     """
     Test task start condition.
     """
 
     def evaluate(self, **kwargs):
+        return False
+
+
+class TestStartCondition(StartCondition):
+    """
+    Test task start condition.
+    """
+
+    def evaluate(self, task, **kwargs):
+        return 'Should start'
+
+
+class TestNegativeStartCondition(StartCondition):
+    """
+    Test task start condition.
+    """
+
+    def evaluate(self, task, **kwargs):
         return False
 
 

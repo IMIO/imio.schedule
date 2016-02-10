@@ -5,6 +5,7 @@ from plone import api
 from Products.CMFPlone import PloneMessageFactory
 
 from urban.schedule import _
+from urban.schedule.interfaces import ICreationCondition
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
@@ -222,6 +223,15 @@ class AdaptersBaseVocabularyFactory(object):
 
         vocabulary = SimpleVocabulary(condition_adapters)
         return vocabulary
+
+
+class CreationConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
+    """
+    Vocabulary factory for 'creation_conditions' field.
+    Return available creation conditions of a task config.
+    """
+
+    provides_interface = ICreationCondition
 
 
 class StartConditionVocabularyFactory(AdaptersBaseVocabularyFactory):

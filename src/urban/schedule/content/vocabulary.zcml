@@ -31,6 +31,13 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig 'creation_conditions' field Vocabulary -->
+    <utility
+        factory=".vocabulary.CreationConditionVocabularyFactory"
+        name="urban.schedule.creation_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'start_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.StartConditionVocabularyFactory"

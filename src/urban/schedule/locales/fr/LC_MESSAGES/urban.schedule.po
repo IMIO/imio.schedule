@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-02-10 09:59+0000\n"
+"POT-Creation-Date: 2016-02-10 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,15 +14,15 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-#: ../content/task_config.py:69
+#: ../content/task_config.py:84
 msgid "Additional delay"
 msgstr "Délai supplémentaire"
 
-#: ../content/task_config.py:27
+#: ../content/task_config.py:28
 msgid "Assigned user"
 msgstr "Responsable de la tâche"
 
-#: ../content/task_config.py:55
+#: ../content/task_config.py:70
 msgid "End conditions"
 msgstr "Conditions de clôture"
 
@@ -50,39 +50,47 @@ msgstr "Tâche configurable"
 msgid "Scheduled content type"
 msgstr "Type de contenu associé"
 
-#: ../content/task_config.py:28
+#: ../content/task_config.py:43
+msgid "Select creation conditions of the task"
+msgstr "Sélectionnez les conditions de création de la tâche"
+
+#: ../content/task_config.py:29
 msgid "Select default user assigned to this task."
 msgstr "Choisissez l'utisateur qui sera assigné par défaut à cette tâche"
 
-#: ../content/task_config.py:56
+#: ../content/task_config.py:71
 msgid "Select end conditions of the task."
 msgstr "Sélectionnez les conditions de clôture de la tâche"
 
-#: ../content/task_config.py:42
+#: ../content/task_config.py:57
 msgid "Select start conditions of the task"
-msgstr "Sélectionnez les conditions de création de la tâche"
+msgstr "Sélectionnez les conditions de démarrage de la tâche"
 
 #: ../content/schedule_config.py:22
 msgid "Select the content type to apply schedule."
 msgstr "Sélectionnez le type de contenu de l'échéancier"
 
-#: ../content/task_config.py:63
+#: ../content/task_config.py:78
 msgid "Select the start date used to compute the due date."
 msgstr "Sélectionnez la date de départ pour la calcul de l'échéance"
 
-#: ../content/task_config.py:35
+#: ../content/task_config.py:36
 msgid "Select the state of the container where the task is automatically created."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement créée"
 
-#: ../content/task_config.py:49
+#: ../content/task_config.py:50
+msgid "Select the state of the container where the task is automatically started."
+msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement démarrée"
+
+#: ../content/task_config.py:64
 msgid "Select the states of the container where the task is automatically closed."
 msgstr "Sélectionnez les états du récipient pour lequel la tâche est automatiquement clôturée"
 
-#: ../content/task_config.py:41
+#: ../content/task_config.py:42
 msgid "Start conditions"
 msgstr "Conditions de création"
 
-#: ../content/task_config.py:62
+#: ../content/task_config.py:77
 msgid "Start date"
 msgstr "Date de départ"
 
@@ -94,25 +102,29 @@ msgstr ""
 msgid "Task configuration."
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:48
+#: ../content/task_config.py:35
+msgid "Task container creation state"
+msgstr "État de création de la tâche"
+
+#: ../content/task_config.py:63
 msgid "Task container end states"
 msgstr "État(s) de clôture de la tâche"
 
-#: ../content/task_config.py:34
-msgid "Task container start state"
-msgstr "État de création de la tâche"
+#: ../content/task_config.py:49
+msgid "Task container start states"
+msgstr "État(s) de démarrage de la tâche"
 
 #: ../profiles/default/types/TaskConfig.xml
 msgid "TaskConfig"
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:70
+#: ../content/task_config.py:85
 msgid "This delay is added to the due date of the task."
 msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 
-#: ../content/task_config.py:75
+#: ../content/task_config.py:90
 msgid "Warning delay"
-msgstr ""
+msgstr "Délai d'alerte"
 
 #: ../configure.zcml:29
 msgid "urban.schedule"
@@ -125,11 +137,14 @@ msgstr ""
 msgid "urban.schedule.assign_current_user"
 msgstr "Utilisateur connecté"
 
+msgid "urban.schedule.start_date.creation_date"
+msgstr "Date de création du dossier"
+
+msgid "urban.schedule.test_creation_condition"
+msgstr "Condition de création TEST"
+
 msgid "urban.schedule.test_end_condition"
 msgstr "Condition de fin TEST"
 
 msgid "urban.schedule.test_start_condition"
-msgstr "Condition de création TEST"
-
-msgid "urban.schedule.start_date.creation_date"
-msgstr "Date de création du dossier"
+msgstr "Condition de démarrage TEST"

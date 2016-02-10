@@ -46,6 +46,14 @@
 
   <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".update_tasks.start_tasks"/>
+
+  <subscriber for="zope.interface.Interface
+                   Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+              handler=".update_tasks.start_tasks" />
+
+  <subscriber for="zope.interface.Interface
+                   zope.lifecycleevent.IObjectModifiedEvent"
               handler=".update_tasks.end_tasks"/>
 
   <subscriber for="zope.interface.Interface

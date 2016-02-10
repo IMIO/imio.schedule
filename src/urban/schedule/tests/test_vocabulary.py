@@ -83,6 +83,27 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Utilisateur connecté', msg)
 
+    def test_creation_conditions_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'urban.schedule.creation_conditions'
+        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+
+    def test_creation_conditions_vocabulary_values(self):
+        """
+        Test some creation_conditions values.
+        """
+        voc_name = 'urban.schedule.creation_conditions'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.task_config)
+        self.assertTrue('urban.schedule.test_creation_condition' in vocabulary)
+
+        term = vocabulary.getTerm('urban.schedule.test_creation_condition')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u'Condition de création TEST', msg)
+
     def test_start_conditions_vocabulary_factory_registration(self):
         """
         Content types voc factory should be registered as a named utility.
@@ -102,7 +123,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         term = vocabulary.getTerm('urban.schedule.test_start_condition')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
-        self.assertEquals(translation, u'Condition de création TEST', msg)
+        self.assertEquals(translation, u'Condition de démarrage TEST', msg)
 
     def test_end_conditions_vocabulary_factory_registration(self):
         """

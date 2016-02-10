@@ -28,7 +28,7 @@ def create_new_tasks(task_container, event):
         return
 
     for config in task_configs:
-        if config.should_start_task(task_container):
+        if config.should_create_task(task_container):
 
             task_id = 'TASK-{}'.format(config.id)
 

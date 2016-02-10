@@ -3,6 +3,26 @@
 from urban.schedule.utils import get_task_configs
 
 
+def start_tasks(task_container, event):
+    """
+    Automatically start tasks matching start conditions of a given
+    task container.
+    """
+
+    task_configs = get_task_configs(task_container)
+
+    if not task_configs:
+        return
+
+    for config in task_configs:
+        task = config.get_created_task(task_container)
+
+        if task and config.should_start_task(task_container, task):
+            # delegate the starting action to the config so different behaviors
+            # can be easily configured
+            config.start_task(task)
+
+
 def end_tasks(task_container, event):
     """
     Automatically end tasks matching end conditions of a given
@@ -15,7 +35,7 @@ def end_tasks(task_container, event):
         return
 
     for config in task_configs:
-        task = config.get_open_task(task_container)
+        task = config.get_task(task_container)
 
         if task and config.should_end_task(task_container, task):
             # delegate the closure action to the config so different behaviors

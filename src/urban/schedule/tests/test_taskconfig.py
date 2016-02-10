@@ -63,6 +63,42 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'default_assigned_user' is not editable"
         self.assertTrue('Responsable de la tâche' in contents, msg)
 
+    def test_creation_conditions_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'creation_conditions'))
+
+    def test_creation_conditions_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'creation_conditions' is not displayed"
+        self.assertTrue('id="form-widgets-creation_conditions"' in contents, msg)
+        msg = "field 'creation_conditions' is not translated"
+        self.assertTrue('Conditions de création' in contents, msg)
+
+    def test_creation_conditions_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'creation_conditions' is not editable"
+        self.assertTrue('Conditions de création' in contents, msg)
+
+    def test_creation_state_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'creation_state'))
+
+    def test_creation_state_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'creation_state' is not displayed"
+        self.assertTrue('id="form-widgets-creation_state"' in contents, msg)
+        msg = "field 'creation_state' is not translated"
+        self.assertTrue('État de création de la tâche' in contents, msg)
+
+    def test_creation_state_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'creation_state' is not editable"
+        self.assertTrue('État de création de la tâche' in contents, msg)
+
     def test_start_conditions_attribute(self):
         task_config = aq_base(self.task_config)
         self.assertTrue(hasattr(task_config, 'start_conditions'))
@@ -81,23 +117,23 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_conditions' is not editable"
         self.assertTrue('Conditions de création' in contents, msg)
 
-    def test_starting_state_attribute(self):
+    def test_starting_states_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'starting_state'))
+        self.assertTrue(hasattr(task_config, 'starting_states'))
 
-    def test_starting_state_field_display(self):
+    def test_starting_states_field_display(self):
         self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
-        msg = "field 'starting_state' is not displayed"
-        self.assertTrue('id="form-widgets-starting_state"' in contents, msg)
-        msg = "field 'starting_state' is not translated"
-        self.assertTrue('État de création de la tâche' in contents, msg)
+        msg = "field 'starting_states' is not displayed"
+        self.assertTrue('id="form-widgets-starting_states"' in contents, msg)
+        msg = "field 'starting_states' is not translated"
+        self.assertTrue('État(s) de démarrage de la tâche' in contents, msg)
 
-    def test_starting_state_field_edit(self):
+    def test_starting_states_field_edit(self):
         self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
-        msg = "field 'starting_state' is not editable"
-        self.assertTrue('État de création de la tâche' in contents, msg)
+        msg = "field 'starting_states' is not editable"
+        self.assertTrue('État(s) de démarrage de la tâche' in contents, msg)
 
     def test_end_conditions_attribute(self):
         task_config = aq_base(self.task_config)
@@ -316,34 +352,65 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         msg = "no existing task should have been found on empty container"
         self.assertFalse(task_config.task_already_exists(empty_task_container), msg)
 
-    def test_should_start_task(self):
+    def test_should_create_task(self):
         """
-        Test different cases for the 'should_start_task' method.
+        Test different cases for the 'should_create_task' method.
         """
         task_config = self.task_config
         task_container = self.task_container
         empty_task_container = self.empty_task_container
 
         # case of task already existing
-        msg = "Task should not be started because it already exists"
-        self.assertFalse(task_config.should_start_task(task_container), msg)
+        msg = "Task should not be created because it already exists"
+        self.assertFalse(task_config.should_create_task(task_container), msg)
 
         # normal case
+        msg = "Task should be created"
+        create = task_config.should_create_task(empty_task_container)
+        self.assertTrue(create, msg)
+
+        # set the task_config field 'creation_conditions' with a negative condition
+        # => task should not start
+        task_config.creation_conditions = ('urban.schedule.negative_creation_condition',)
+        msg = "Task should not be created because the creation condition is not matched"
+        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
+
+        # set the task_config starting_states field to a state different from
+        # the task_container state => task should not start
+        task_config.creation_state = 'pending'
+        msg = "Task should not be created because the creation state does not match container state"
+        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
+
+    def test_should_start_task(self):
+        """
+        Test different cases for the 'should_start_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # task container state is different from the states selected on
+        # task_config 'starting_states' => task should not start
+        msg = "Task should not be started because the starting state does not match container state"
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+
+        # normal case
+        api.content.transition(obj=task_container, transition='submit')
         msg = "Task should be started"
-        start = task_config.should_start_task(empty_task_container)
+        start = task_config.should_start_task(task_container, task)
         self.assertTrue(start, msg)
 
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
         task_config.start_conditions = ('urban.schedule.negative_start_condition',)
         msg = "Task should not be started because the start condition is not matched"
-        self.assertFalse(task_config.should_start_task(empty_task_container), msg)
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
-        # set the task_config starting_state field to a state different from
+        # set the task_config starting_states field to a state different from
         # the task_container state => task should not start
-        task_config.starting_state = 'pending'
+        task_config.starting_states = ('pending',)
         msg = "Task should not be started because the starting state does not match container state"
-        self.assertFalse(task_config.should_start_task(empty_task_container), msg)
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
     def test_should_end_task(self):
         """
@@ -359,7 +426,7 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
         # normal case
-        api.content.transition(obj=task_container, transition='submit')
+        api.content.transition(obj=task_container, transition='publish')
         msg = "Task should be ended"
         end = task_config.should_end_task(task_container, task)
         self.assertTrue(end, msg)

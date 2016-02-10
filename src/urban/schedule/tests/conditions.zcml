@@ -4,6 +4,20 @@
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
+        provides="urban.schedule.interfaces.ICreationCondition"
+        factory=".condition.TestCreationCondition"
+        name="urban.schedule.test_creation_condition"
+    />
+
+    <adapter
+        for="Products.ATContentTypes.interfaces.IATFolder"
+        provides="urban.schedule.interfaces.ICreationCondition"
+        factory=".condition.TestNegativeCreationCondition"
+        name="urban.schedule.negative_creation_condition"
+    />
+
+    <adapter
+        for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IStartCondition"
         factory=".condition.TestStartCondition"
         name="urban.schedule.test_start_condition"
