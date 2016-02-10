@@ -26,6 +26,16 @@ class BaseScheduleTask(object):
     task_config_UID = None
     schedule_config_UID = None
 
+    def get_container(self):
+        """
+        Return the task container.
+        """
+        container = self
+        while IScheduleTask.providedBy(container):
+            container = container.getParentNode()
+
+        return container
+
     def get_schedule_config(self):
         """
         Return associated schedule config.

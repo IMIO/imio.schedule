@@ -52,9 +52,10 @@ class IEndCondition(ICondition):
         """
 
 
-class IDueDate(Interface):
+class IStartDate(Interface):
     """
-    Adapts a TaskContainer into a due date for its tasks.
+    Adapts a TaskContainer into the start date used to compute
+    the task due date.
     """
 
     def due_date(self, **kwargs):

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from urban.schedule.content.due_date import DueDate
+from urban.schedule.content.due_date import StartDate
 
 
-class ContainerCreationDate(DueDate):
+class ContainerCreationDate(StartDate):
     """
-    Test DueDate returning the creation date of the task container.
+    Test StartDate returning the creation date of the task container.
     """
 
-    def due_date(self, **kwargs):
+    def start_date(self, **kwargs):
         return self.task_container.creation_date

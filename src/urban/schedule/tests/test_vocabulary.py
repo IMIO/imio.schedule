@@ -125,23 +125,23 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Condition de fin TEST', msg)
 
-    def test_due_date_vocabulary_factory_registration(self):
+    def test_start_date_vocabulary_factory_registration(self):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.due_date'
+        factory_name = 'urban.schedule.start_date'
         self.assertTrue(getUtility(IVocabularyFactory, factory_name))
 
-    def test_due_date_vocabulary_values(self):
+    def test_start_date_vocabulary_values(self):
         """
         Test some due_date values.
         """
-        voc_name = 'urban.schedule.due_date'
+        voc_name = 'urban.schedule.start_date'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.due_date.creation_date' in vocabulary)
+        self.assertTrue('urban.schedule.start_date.creation_date' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.due_date.creation_date')
+        term = vocabulary.getTerm('urban.schedule.start_date.creation_date')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Date de création du dossier', msg)

@@ -20,12 +20,11 @@ msgstr ""
 msgid "urban.schedule.assign_current_user"
 msgstr ""
 
-msgid "urban.schedule.due_date.creation_date"
-msgstr ""
-
 msgid "urban.schedule.test_end_condition"
 msgstr ""
 
 msgid "urban.schedule.test_start_condition"
 msgstr ""
 
+msgid "urban.schedule.start_date.creation_date"
+msgstr ""

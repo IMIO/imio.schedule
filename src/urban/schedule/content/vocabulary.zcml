@@ -47,8 +47,8 @@
 
     <!-- TaskConfig 'due_date' field Vocabulary -->
     <utility
-        factory=".vocabulary.DuteDateVocabularyFactory"
-        name="urban.schedule.due_date"
+        factory=".vocabulary.StartDateVocabularyFactory"
+        name="urban.schedule.start_date"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 

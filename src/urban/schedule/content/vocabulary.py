@@ -5,10 +5,10 @@ from plone import api
 from Products.CMFPlone import PloneMessageFactory
 
 from urban.schedule import _
-from urban.schedule.interfaces import IDueDate
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
+from urban.schedule.interfaces import IStartDate
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.utils import interface_to_tuple
 
@@ -242,10 +242,10 @@ class EndConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     provides_interface = IEndCondition
 
 
-class DuteDateVocabularyFactory(AdaptersBaseVocabularyFactory):
+class StartDateVocabularyFactory(AdaptersBaseVocabularyFactory):
     """
     Vocabulary factory for 'due_date' field.
     Return due date computation options of task config.
     """
 
-    provides_interface = IDueDate
+    provides_interface = IStartDate

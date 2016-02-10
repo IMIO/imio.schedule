@@ -78,7 +78,7 @@ def add_schedule_config(context):
         end_conditions=('urban.schedule.test_end_condition',),
         starting_state='private',
         ending_states=('pending',),
-        due_date_computation='urban.schedule.due_date.creation_date',
+        start_date='urban.schedule.start_date.creation_date',
         additional_delay=10,
     )
 

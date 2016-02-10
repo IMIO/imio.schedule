@@ -7,10 +7,10 @@ from plone.supermodel import model
 
 from urban.schedule import _
 from urban.schedule.content.task import IScheduleTask
-from urban.schedule.interfaces import IDueDate
+from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
-from urban.schedule.interfaces import IDefaultTaskUser
+from urban.schedule.interfaces import IStartDate
 
 from zope import schema
 from zope.component import getAdapter
@@ -58,10 +58,10 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    due_date_computation = schema.Choice(
-        title=_(u'Due date'),
-        description=_(u'Select how to compute the due date.'),
-        vocabulary='urban.schedule.due_date',
+    start_date = schema.Choice(
+        title=_(u'Start date'),
+        description=_(u'Select the start date used to compute the due date.'),
+        vocabulary='urban.schedule.start_date',
         required=True,
     )
 
@@ -262,12 +262,12 @@ class BaseTaskConfig(object):
         """
         date_adapter = getAdapter(
             task_container,
-            interface=IDueDate,
-            name=self.due_date_computation
+            interface=IStartDate,
+            name=self.start_date
         )
-        base_due_date = date_adapter.due_date()
+        start_date = date_adapter.start_date()
         additional_delay = self.additional_delay or 0
-        due_date = base_due_date + additional_delay
+        due_date = start_date + additional_delay
         due_date = due_date.asdatetime().date()
 
         return due_date

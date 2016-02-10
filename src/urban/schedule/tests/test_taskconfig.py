@@ -135,23 +135,23 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'ending_states' is not editable"
         self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
 
-    def test_due_date_computation_attribute(self):
+    def test_start_date_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'due_date_computation'))
+        self.assertTrue(hasattr(task_config, 'start_date'))
 
-    def test_due_date_computation_field_display(self):
+    def test_start_date_field_display(self):
         self.browser.open(self.task_config.absolute_url())
         contents = self.browser.contents
-        msg = "field 'due_date_computation' is not displayed"
-        self.assertTrue('id="form-widgets-due_date_computation"' in contents, msg)
-        msg = "field 'due_date_computation' is not translated"
-        self.assertTrue('Date d\'échéance' in contents, msg)
+        msg = "field 'start_date' is not displayed"
+        self.assertTrue('id="form-widgets-start_date"' in contents, msg)
+        msg = "field 'start_date' is not translated"
+        self.assertTrue('Date de départ' in contents, msg)
 
-    def test_due_date_computation_field_edit(self):
+    def test_start_date_field_edit(self):
         self.browser.open(self.task_config.absolute_url() + '/edit')
         contents = self.browser.contents
-        msg = "field 'due_date_computation' is not editable"
-        self.assertTrue('Date d\'échéance' in contents, msg)
+        msg = "field 'start_date' is not editable"
+        self.assertTrue('Date de départ' in contents, msg)
 
     def test_additional_delay_attribute(self):
         task_config = aq_base(self.task_config)
@@ -394,7 +394,7 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
     def test_compute_due_date(self):
         """
         Due date should be the date computed by the adapter of
-        due_date_computation field + the value in additional_delay.
+        start_date field + the value in additional_delay.
         """
         task_config = self.task_config
         task_container = self.task_container

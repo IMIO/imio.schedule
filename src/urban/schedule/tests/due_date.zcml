@@ -4,9 +4,9 @@
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
-        provides="urban.schedule.interfaces.IDueDate"
+        provides="urban.schedule.interfaces.IStartDate"
         factory=".due_date.ContainerCreationDate"
-        name="urban.schedule.due_date.creation_date"
+        name="urban.schedule.start_date.creation_date"
     />
 
 </configure>
