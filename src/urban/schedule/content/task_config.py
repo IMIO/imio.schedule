@@ -23,60 +23,65 @@ class ITaskConfig(model.Schema):
     """
     TaskConfig dexterity schema.
     """
+    enabled = schema.Bool(
+        title=_(u'Enabled'),
+        default=True,
+        required=False,
+    )
 
     default_assigned_user = schema.Choice(
         title=_(u'Assigned user'),
         description=_(u'Select default user assigned to this task.'),
-        vocabulary='urban.schedule.assigned_user',
+        vocabulary='schedule.assigned_user',
         required=True,
     )
 
     creation_state = schema.Choice(
         title=_(u'Task container creation state'),
         description=_(u'Select the state of the container where the task is automatically created.'),
-        vocabulary='urban.schedule.container_state',
+        vocabulary='schedule.container_state',
         required=False,
     )
 
     creation_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select creation conditions of the task'),
-        value_type=schema.Choice(source='urban.schedule.creation_conditions'),
+        value_type=schema.Choice(source='schedule.creation_conditions'),
         required=True,
     )
 
     starting_states = schema.Choice(
         title=_(u'Task container start states'),
         description=_(u'Select the state of the container where the task is automatically started.'),
-        vocabulary='urban.schedule.container_state',
+        vocabulary='schedule.container_state',
         required=False,
     )
 
     start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='urban.schedule.start_conditions'),
+        value_type=schema.Choice(source='schedule.start_conditions'),
         required=True,
     )
 
     ending_states = schema.Set(
         title=_(u'Task container end states'),
         description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='urban.schedule.container_state'),
+        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
     end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='urban.schedule.end_conditions'),
+        value_type=schema.Choice(source='schedule.end_conditions'),
         required=True,
     )
 
     start_date = schema.Choice(
         title=_(u'Start date'),
         description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='urban.schedule.start_date',
+        vocabulary='schedule.start_date',
         required=True,
     )
 
@@ -103,7 +108,13 @@ class BaseTaskConfig(object):
         Return the content type of task to create.
         """
 
-    def get_schedule_config(self):
+    def is_main_taskconfig(self):
+        """
+        Tells wheter this task config is a sub task or not.
+        """
+        return self.getParentNode() is self.get_schedule_config()
+
+    def  get_schedule_config(self):
         """
         Return the parent ScheduleConfig.
         """
@@ -307,6 +318,11 @@ class BaseTaskConfig(object):
 
         return True
 
+    def create_task(self, task_container):
+        """
+        To implements in subclasses.
+        """
+
     def start_task(self, task):
         """
         Default implementation is to put the task on the state 'to_do'.
@@ -347,6 +363,29 @@ class BaseTaskConfig(object):
 
         return due_date
 
+    def _create_task_instance(self, task_container):
+        """
+        Helper method to use to implement 'create_task'.
+        """
+        task_id = 'TASK_{}'.format(self.id)
+
+        if not task_id in task_container.objectIds():
+
+            task_portal_type = self.get_task_type()
+            portal_types = api.portal.get_tool('portal_types')
+            type_info = portal_types.getTypeInfo(task_portal_type)
+
+            task = type_info._constructInstance(
+                container=task_container,
+                id=task_id,
+                title=self.Title(),
+                schedule_config_UID=self.get_schedule_config().UID(),
+                task_config_UID=self.UID(),
+                assigned_user=self.user_to_assign(task_container),
+                due_date=self.compute_due_date(task_container)
+            )
+            return task
+
 
 class TaskConfig(Item, BaseTaskConfig):
     """
@@ -361,21 +400,97 @@ class TaskConfig(Item, BaseTaskConfig):
         """
         return 'ScheduleTask'
 
+    def create_task(self, task_container):
+        """
+        Just create the task and return it.
+        """
+        task = self._create_task_instance(task_container)
+        return task
+
+
+class IMacroTaskConfig(ITaskConfig):
+    """
+    TaskConfig dexterity schema.
+    """
+
+    creation_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select creation conditions of the task'),
+        value_type=schema.Choice(source='schedule.macrotask_creation_conditions'),
+        required=True,
+    )
+
+    starting_states = schema.Choice(
+        title=_(u'Task container start states'),
+        description=_(u'Select the state of the container where the task is automatically started.'),
+        vocabulary='schedule.container_state',
+        required=False,
+    )
+
+    start_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select start conditions of the task'),
+        value_type=schema.Choice(source='schedule.macrotask_start_conditions'),
+        required=True,
+    )
+
+    ending_states = schema.Set(
+        title=_(u'Task container end states'),
+        description=_(u'Select the states of the container where the task is automatically closed.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    end_conditions = schema.List(
+        title=_(u'End conditions'),
+        description=_(u'Select end conditions of the task.'),
+        value_type=schema.Choice(source='schedule.macrotask_end_conditions'),
+        required=True,
+    )
+
+    start_date = schema.Choice(
+        title=_(u'Start date'),
+        description=_(u'Select the start date used to compute the due date.'),
+        vocabulary='schedule.macrotask_start_date',
+        required=True,
+    )
+
+    additional_delay = schema.Int(
+        title=_(u'Additional delay'),
+        description=_(u'This delay is added to the due date of the task.'),
+        required=False,
+    )
+
+    warning_delay = schema.Int(
+        title=_(u'Warning delay'),
+        required=False,
+    )
+
 
 class MacroTaskConfig(Container, BaseTaskConfig):
     """
-    TaskConfig dexterity class.
+    MacroTaskConfig dexterity class.
     """
 
-    implements(ITaskConfig)
+    implements(IMacroTaskConfig)
 
-    def evaluate_end_condition(self, task, **kwargs):
+    def get_task_type(self):
         """
-        Evaluate 'task' and 'kwargs' to return the boolean end condition of a task.
-        This should be checked in a zope event to automatically close/reopen a task.
-        Also checks subtasks of this task.
+        Return the content type of task to create.
         """
-        task_done = super(MacroTaskConfig, self).evaluate_end_condition()
+        return 'ScheduleMacroTask'
+
+    def should_end_task(self, task_container, task):
+        """
+        See 'should_end_task' in BaseTaskConfig
+        Evaluate:
+         - If the task container is on the state selected on 'ending_states'
+         - All the existence conditions of a task with 'task' and 'kwargs'.
+           Returns True only if ALL the conditions are matched.
+         - If all the subtasks are ended.
+        This should be checked in a zope event to automatically close a task.
+        """
+        task_done = super(MacroTaskConfig, self).should_end_task(task_container, task)
         if not task_done:
             return False
 
@@ -384,3 +499,16 @@ class MacroTaskConfig(Container, BaseTaskConfig):
             return False
 
         return True
+
+    def end_task(self, task):
+        """
+        Default implementation is to put the task on the state 'closed'.
+        """
+        if api.content.get_state(task) == 'created':
+            api.content.transition(obj=task, transition='do_to_assign')
+        if api.content.get_state(task) == 'to_assign':
+            api.content.transition(obj=task, transition='do_to_do')
+        if api.content.get_state(task) == 'to_do':
+            api.content.transition(obj=task, transition='do_realized')
+        if api.content.get_state(task) == 'realized':
+            api.content.transition(obj=task, transition='do_closed')

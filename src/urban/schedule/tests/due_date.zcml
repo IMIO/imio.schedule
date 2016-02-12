@@ -6,7 +6,7 @@
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IStartDate"
         factory=".due_date.ContainerCreationDate"
-        name="urban.schedule.start_date.creation_date"
+        name="schedule.start_date.creation_date"
     />
 
 </configure>

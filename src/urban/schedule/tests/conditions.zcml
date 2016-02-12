@@ -6,42 +6,42 @@
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.ICreationCondition"
         factory=".condition.TestCreationCondition"
-        name="urban.schedule.test_creation_condition"
+        name="schedule.test_creation_condition"
     />
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.ICreationCondition"
         factory=".condition.TestNegativeCreationCondition"
-        name="urban.schedule.negative_creation_condition"
+        name="schedule.negative_creation_condition"
     />
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IStartCondition"
         factory=".condition.TestStartCondition"
-        name="urban.schedule.test_start_condition"
+        name="schedule.test_start_condition"
     />
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IStartCondition"
         factory=".condition.TestNegativeStartCondition"
-        name="urban.schedule.negative_start_condition"
+        name="schedule.negative_start_condition"
     />
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IEndCondition"
         factory=".condition.TestEndCondition"
-        name="urban.schedule.test_end_condition"
+        name="schedule.test_end_condition"
     />
 
     <adapter
         for="Products.ATContentTypes.interfaces.IATFolder"
         provides="urban.schedule.interfaces.IEndCondition"
         factory=".condition.TestNegativeEndCondition"
-        name="urban.schedule.negative_end_condition"
+        name="schedule.negative_end_condition"
     />
 
 </configure>

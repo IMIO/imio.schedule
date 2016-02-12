@@ -86,6 +86,14 @@ class ExampleScheduleLayer(ScheduleLayer):
 
         applyProfile(portal, 'urban.schedule:testing')
 
+        # delete macro tasks
+        api.content.delete(
+            portal.config.test_scheduleconfig.test_macrotaskconfig
+        )
+        api.content.delete(
+            portal.test_taskcontainer.TASK_test_macrotaskconfig
+        )
+
 
 EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(
     name='EXAMPLE_SCHEDULE_FIXTURE'
@@ -136,13 +144,12 @@ class ExampleScheduleTestBase(BrowserTest):
     def setUp(self):
         super(ExampleScheduleTestBase, self).setUp()
 
-        self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
-
+        # only keep simple tasks
         self.schedule_config = self.portal.config.test_scheduleconfig
         self.task_config = self.schedule_config.test_taskconfig
         self.empty_task_container = self.portal.test_empty_taskcontainer
         self.task_container = self.portal.test_taskcontainer
-        self.task = self.task_container.objectValues()[0]
+        self.task = self.task_container.TASK_test_taskconfig
 
         # commit to save the setup in the tests.
         transaction.commit()
@@ -165,12 +172,87 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
         """
         unsubscribe_task_configs_for_content_type(self.task_config, None)
 
-        api.content.delete(self.task)
         api.content.delete(self.task_container)
         api.content.delete(self.empty_task_container)
-        api.content.delete(self.task_config)
-        api.content.delete(self.schedule_config)
+        api.content.delete(self.portal.config)
 
         transaction.commit()
 
         super(ExampleScheduleTestBase, self).tearDown()
+
+
+class MacrotaskScheduleLayer(ScheduleLayer):
+
+    def setUpPloneSite(self, portal):
+        super(MacrotaskScheduleLayer, self).setUpPloneSite(portal)
+
+        applyProfile(portal, 'urban.schedule:testing')
+
+        # delete simple tasks
+        api.content.delete(
+            portal.config.test_scheduleconfig.test_taskconfig
+        )
+        api.content.delete(
+            portal.test_taskcontainer.TASK_test_taskconfig
+        )
+
+
+MACROTASK_SCHEDULE_FIXTURE = MacrotaskScheduleLayer(
+    name='MACROTASK_SCHEDULE_FIXTURE'
+)
+
+MACROTASK_SCHEDULE_INTEGRATION = IntegrationTesting(
+    bases=(MACROTASK_SCHEDULE_FIXTURE,),
+    name='MACROTASK_SCHEDULE_INTEGRATION'
+)
+
+
+MACROTASK_SCHEDULE_FUNCTIONAL = FunctionalTesting(
+    bases=(MACROTASK_SCHEDULE_FIXTURE,),
+    name='MACROTASK_SCHEDULE_FUNCTIONAL'
+)
+
+
+class MacroTaskScheduleTestBase(BrowserTest):
+
+    def setUp(self):
+        super(MacroTaskScheduleTestBase, self).setUp()
+
+        # recreate test objects
+        self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
+
+        # only keep macro tasks
+        self.schedule_config = self.portal.config.test_scheduleconfig
+        self.macrotask_config = self.schedule_config.test_macrotaskconfig
+        self.empty_task_container = self.portal.test_empty_taskcontainer
+        self.task_container = self.portal.test_taskcontainer
+        self.macro_task = self.task_container.TASK_test_macrotaskconfig
+
+        # commit to save the setup in the tests.
+        transaction.commit()
+
+        self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)
+
+
+class MacroTaskScheduleIntegrationTestCase(MacroTaskScheduleTestBase):
+
+    layer = MACROTASK_SCHEDULE_INTEGRATION
+
+
+class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
+
+    layer = MACROTASK_SCHEDULE_FUNCTIONAL
+
+    def tearDown(self):
+        """
+        Unregister the adapters here since the zope instance never shut downs.
+        """
+        unsubscribe_task_configs_for_content_type(self.task_config, None)
+
+        api.content.delete(self.task_container)
+        api.content.delete(self.empty_task_container)
+        api.content.delete(self.portal.config)
+
+        transaction.commit()
+
+        super(MacroTaskScheduleTestBase, self).tearDown()

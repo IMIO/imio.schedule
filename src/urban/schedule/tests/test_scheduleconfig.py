@@ -45,6 +45,24 @@ class TestScheduleConfigFields(ExampleScheduleIntegrationTestCase):
         scheduleconfig_type = portal_types.get(self.schedule_config.portal_type)
         self.assertTrue('IScheduleConfig' in scheduleconfig_type.schema)
 
+    def test_enabled_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'enabled'))
+
+    def test_enabled_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'enabled' is not displayed"
+        self.assertTrue('id="form-widgets-enabled"' in contents, msg)
+        msg = "field 'enabled' is not translated"
+        self.assertTrue('Activé' in contents, msg)
+
+    def test_enabled_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'enabled' is not editable"
+        self.assertTrue('Activé' in contents, msg)
+
     def test_scheduled_contenttype_attribute(self):
         schedule_config = aq_base(self.schedule_config)
         self.assertTrue(hasattr(schedule_config, 'scheduled_contenttype'))

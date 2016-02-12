@@ -3,7 +3,7 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">ScheduleConfig</property>
  <property name="description" i18n:translate="">Schedule configuration.</property>
- <property name="icon_expr">string:${portal_url}/folder_icon.png</property>
+ <property name="icon_expr">string:${portal_url}/++resource++collective.task/task_icon.png</property>
  <property name="factory">ScheduleConfig</property>
  <property
     name="add_view_expr">string:${folder_url}/++add++ScheduleConfig</property>
@@ -13,6 +13,7 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
   <element value="TaskConfig"/>
+  <element value="MacroTaskConfig"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">view</property>

@@ -6,6 +6,8 @@
 
    <object name="ScheduleConfig" meta_type="Dexterity FTI"/>
    <object name="TaskConfig" meta_type="Dexterity FTI"/>
+   <object name="MacroTaskConfig" meta_type="Dexterity FTI"/>
    <object name="ScheduleTask" meta_type="Dexterity FTI"/>
+   <object name="ScheduleMacroTask" meta_type="Dexterity FTI"/>
 
 </object>

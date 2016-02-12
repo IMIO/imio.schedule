@@ -17,10 +17,16 @@ class IScheduleConfig(model.Schema):
     ScheduleConfig dexterity schema.
     """
 
+    enabled = schema.Bool(
+        title=_(u'Enabled'),
+        default=True,
+        required=False,
+    )
+
     scheduled_contenttype = schema.Choice(
         title=_(u'Scheduled content type'),
         description=_(u'Select the content type to apply schedule.'),
-        vocabulary='urban.schedule.scheduled_contenttype',
+        vocabulary='schedule.scheduled_contenttype',
         required=True,
     )
 
@@ -41,7 +47,8 @@ class ScheduleConfig(Container):
 
         config_brains = catalog(
             object_provides=ITaskConfig.__identifier__,
-            path={'query': config_path}
+            path={'query': config_path},
+            sort_on='getObjPositionInParent',
         )
 
         return config_brains

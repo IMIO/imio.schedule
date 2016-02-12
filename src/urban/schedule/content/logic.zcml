@@ -1,0 +1,23 @@
+
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="urban.schedule">
+
+    <include file="vocabulary.zcml" />
+
+    <!-- Assigned user adapter returning current logged user -->
+    <adapter
+        for="zope.interface.Interface"
+        provides="urban.schedule.interfaces.IDefaultTaskUser"
+        factory=".logic.AssignCurrentUser"
+        name="schedule.assign_current_user"
+    />
+
+    <adapter
+        for="zope.interface.Interface"
+        provides="urban.schedule.interfaces.IMacroTaskStartDate"
+        factory=".logic.SubtaskHighestDueDate"
+        name="schedule.start_date.subtask_highest_due_date"
+    />
+
+</configure>

@@ -4,9 +4,11 @@ from plone import api
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
+from urban.schedule.testing import MacroTaskScheduleIntegrationTestCase
 
-from zope.component import queryAdapter
 from zope.component import getUtility
+from zope.component import queryAdapter
+from zope.component import queryUtility
 from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -28,8 +30,8 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.scheduled_contenttype'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.scheduled_contenttype'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_content_types_default_vocabulary_registration(self):
         """
@@ -52,7 +54,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         Test some content_types values.
         """
 
-        voc_name = 'urban.schedule.scheduled_contenttype'
+        voc_name = 'schedule.scheduled_contenttype'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.schedule_config)
         expected_key = "('Folder', ('Products.ATContentTypes.interfaces.folder', 'IATFolder'))"
@@ -66,19 +68,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.assigned_user'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.assigned_user'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_assigned_user_vocabulary_values(self):
         """
         Test some assigned_user values.
         """
-        voc_name = 'urban.schedule.assigned_user'
+        voc_name = 'schedule.assigned_user'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.assign_current_user' in vocabulary)
+        self.assertTrue('schedule.assign_current_user' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.assign_current_user')
+        term = vocabulary.getTerm('schedule.assign_current_user')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Utilisateur connecté', msg)
@@ -87,19 +89,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.creation_conditions'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.creation_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_creation_conditions_vocabulary_values(self):
         """
         Test some creation_conditions values.
         """
-        voc_name = 'urban.schedule.creation_conditions'
+        voc_name = 'schedule.creation_conditions'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.test_creation_condition' in vocabulary)
+        self.assertTrue('schedule.test_creation_condition' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.test_creation_condition')
+        term = vocabulary.getTerm('schedule.test_creation_condition')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Condition de création TEST', msg)
@@ -108,19 +110,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.start_conditions'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.start_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_start_conditions_vocabulary_values(self):
         """
         Test some start_conditions values.
         """
-        voc_name = 'urban.schedule.start_conditions'
+        voc_name = 'schedule.start_conditions'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.test_start_condition' in vocabulary)
+        self.assertTrue('schedule.test_start_condition' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.test_start_condition')
+        term = vocabulary.getTerm('schedule.test_start_condition')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Condition de démarrage TEST', msg)
@@ -129,19 +131,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.end_conditions'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.end_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_end_conditions_vocabulary_values(self):
         """
         Test some end_conditions values.
         """
-        voc_name = 'urban.schedule.end_conditions'
+        voc_name = 'schedule.end_conditions'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.test_end_condition' in vocabulary)
+        self.assertTrue('schedule.test_end_condition' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.test_end_condition')
+        term = vocabulary.getTerm('schedule.test_end_condition')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Condition de fin TEST', msg)
@@ -150,19 +152,19 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         """
         Content types voc factory should be registered as a named utility.
         """
-        factory_name = 'urban.schedule.start_date'
-        self.assertTrue(getUtility(IVocabularyFactory, factory_name))
+        factory_name = 'schedule.start_date'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
 
     def test_start_date_vocabulary_values(self):
         """
         Test some due_date values.
         """
-        voc_name = 'urban.schedule.start_date'
+        voc_name = 'schedule.start_date'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.task_config)
-        self.assertTrue('urban.schedule.start_date.creation_date' in vocabulary)
+        self.assertTrue('schedule.start_date.creation_date' in vocabulary)
 
-        term = vocabulary.getTerm('urban.schedule.start_date.creation_date')
+        term = vocabulary.getTerm('schedule.start_date.creation_date')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Date de création du dossier', msg)
@@ -182,3 +184,105 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         term = vocabulary.getTerm(task_config.UID())
         msg = 'Display value should have been the TaskConfig title'
         self.assertEquals(term.title, task_config.Title(), msg)
+
+
+class TestMacroTaskVocabularies(MacroTaskScheduleIntegrationTestCase):
+    """
+    Test ScheduleMacroTask field vocabularies registration and values.
+    """
+
+    def test_macrotask_creation_conditions_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.macrotask_creation_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_macrotask_creation_conditions_vocabulary_values(self):
+        """
+        Test some creation_conditions values.
+        """
+        voc_name = 'schedule.macrotask_creation_conditions'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.macrotask_config)
+        self.assertTrue('schedule.create_if_subtask_can_be_created' in vocabulary)
+        self.assertTrue('schedule.create_if_all_subtasks_can_be_created' in vocabulary)
+
+        term = vocabulary.getTerm('schedule.create_if_subtask_can_be_created')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u"Créer dès qu'une sous-tâche est créable", msg)
+
+        term = vocabulary.getTerm('schedule.create_if_all_subtasks_can_be_created')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u"Créer si toutes les sous-tâche sont créables", msg)
+
+    def test_macrotask_start_conditions_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.macrotask_start_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_macrotask_start_conditions_vocabulary_values(self):
+        """
+        Test some start_conditions values.
+        """
+        voc_name = 'schedule.macrotask_start_conditions'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.macrotask_config)
+        self.assertTrue('schedule.start_if_subtask_started' in vocabulary)
+        self.assertTrue('schedule.start_if_all_subtasks_started' in vocabulary)
+
+        term = vocabulary.getTerm('schedule.start_if_subtask_started')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u"Démarrer dès qu'une sous-tâche est démarrée", msg)
+
+        term = vocabulary.getTerm('schedule.start_if_all_subtasks_started')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u"Démarrer si toutes les sous-tâche sont démarrées", msg)
+
+    def test_macrotask_end_conditions_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.macrotask_end_conditions'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_macrotask_end_conditions_vocabulary_values(self):
+        """
+        Test some end_conditions values.
+        """
+        voc_name = 'schedule.macrotask_end_conditions'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.macrotask_config)
+        self.assertTrue('schedule.test_end_condition' in vocabulary)
+
+        term = vocabulary.getTerm('schedule.test_end_condition')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u'Condition de fin TEST', msg)
+
+    def test_macrotask_start_date_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.macrotask_start_date'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_macrotask_start_date_vocabulary_values(self):
+        """
+        Test some due_date values.
+        """
+        voc_name = 'schedule.macrotask_start_date'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.macrotask_config)
+        self.assertTrue('schedule.start_date.subtask_highest_due_date' in vocabulary)
+
+        term = vocabulary.getTerm('schedule.start_date.subtask_highest_due_date')
+        translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
+        msg = 'Condition title was not translated'
+        self.assertEquals(translation, u"Date d'échéance de la sous-tâche la moins proche", msg)

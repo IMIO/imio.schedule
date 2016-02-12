@@ -2,6 +2,7 @@
 
 from Acquisition import aq_base
 
+from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
 from urban.schedule.testing import TEST_INSTALL_INTEGRATION
 
@@ -44,6 +45,24 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         portal_types = api.portal.get_tool('portal_types')
         taskconfig_type = portal_types.get(self.task_config.portal_type)
         self.assertTrue('ITaskConfig' in taskconfig_type.schema)
+
+    def test_enabled_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'enabled'))
+
+    def test_enabled_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'enabled' is not displayed"
+        self.assertTrue('id="form-widgets-enabled"' in contents, msg)
+        msg = "field 'enabled' is not translated"
+        self.assertTrue('Activé' in contents, msg)
+
+    def test_enabled_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'enabled' is not editable"
+        self.assertTrue('Activé' in contents, msg)
 
     def test_default_assigned_user_attribute(self):
         task_config = aq_base(self.task_config)
@@ -208,7 +227,7 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('Délai supplémentaire' in contents, msg)
 
 
-class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
+class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
@@ -280,6 +299,132 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         msg = "The TaskConfig of the task found should be the original one"
         self.assertEquals(task_found.get_task_config(), task_config, msg)
 
+    def test_task_already_exists(self):
+        """
+        Should tell wheter the task container already have a task from
+        this TaskConfig.
+        """
+        task_config = self.task_config
+
+        task_container = self.task_container
+        msg = "TaskConfig of the existing task found should be the original task_config"
+        self.assertTrue(task_config.task_already_exists(task_container), msg)
+
+        empty_task_container = self.empty_task_container
+        msg = "no existing task should have been found on empty container"
+        self.assertFalse(task_config.task_already_exists(empty_task_container), msg)
+
+    def test_should_create_task(self):
+        """
+        Test different cases for the 'should_create_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        empty_task_container = self.empty_task_container
+
+        # case of task already existing
+        msg = "Task should not be created because it already exists"
+        self.assertFalse(task_config.should_create_task(task_container), msg)
+
+        # normal case
+        msg = "Task should be created"
+        create = task_config.should_create_task(empty_task_container)
+        self.assertTrue(create, msg)
+
+        # set the task_config field 'creation_conditions' with a negative condition
+        # => task should not start
+        task_config.creation_conditions = ('schedule.negative_creation_condition',)
+        msg = "Task should not be created because the creation condition is not matched"
+        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
+
+        # set the task_config starting_states field to a state different from
+        # the task_container state => task should not start
+        task_config.creation_state = 'pending'
+        msg = "Task should not be created because the creation state does not match container state"
+        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
+
+    def test_should_start_task(self):
+        """
+        Test different cases for the 'should_start_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # task container state is different from the states selected on
+        # task_config 'starting_states' => task should not start
+        msg = "Task should not be started because the starting state does not match container state"
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+
+        # normal case
+        api.content.transition(obj=task_container, transition='submit')
+        msg = "Task should be started"
+        start = task_config.should_start_task(task_container, task)
+        self.assertTrue(start, msg)
+
+        # set the task_config field 'start_conditions' with a negative condition
+        # => task should not start
+        task_config.start_conditions = ('schedule.negative_start_condition',)
+        msg = "Task should not be started because the start condition is not matched"
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+
+        # set the task_config starting_states field to a state different from
+        # the task_container state => task should not start
+        task_config.starting_states = ('pending',)
+        msg = "Task should not be started because the starting state does not match container state"
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+
+    def test_should_end_task(self):
+        """
+        Test different cases for the 'should_end_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # task container state is different from the states selected on
+        # task_config 'ending_states' => task should not end
+        msg = "Task should not be ended because the ending state does not match container state"
+        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+
+        # normal case
+        api.content.transition(obj=task_container, transition='publish')
+        msg = "Task should be ended"
+        end = task_config.should_end_task(task_container, task)
+        self.assertTrue(end, msg)
+
+        # set the task_config field 'end_conditions' with a negative condition
+        # => task should not end
+        task_config.end_conditions = ('schedule.negative_end_condition',)
+        msg = "Task should not be ended because the end condition is not matched"
+        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+
+        # set the task_config ending_states field to a state different from
+        # the task_container state => task should not end
+        task_config.ending_states = ('pending',)
+        msg = "Task should not be ended because the ending state does not match container state"
+        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+
+    def test_compute_due_date(self):
+        """
+        Due date should be the date computed by the adapter of
+        start_date field + the value in additional_delay.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+
+        expected_date = task_container.creation_date + task_config.additional_delay
+        expected_date = expected_date.asdatetime().date()
+
+        due_date = task_config.compute_due_date(task_container)
+        self.assertEquals(due_date, expected_date)
+
+
+class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):
+    """
+    Test TaskConfig methods.
+    """
+
     def test_get_open_task(self):
         """
         Should return the unique Task of task_container created from
@@ -337,84 +482,55 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         msg = "The TaskConfig of the task found should be the original one"
         self.assertEquals(task_found.get_task_config(), task_config, msg)
 
-    def test_task_already_exists(self):
+    def test_end_task(self):
         """
-        Should tell wheter the task container already have a task from
-        this TaskConfig.
-        """
-        task_config = self.task_config
-
-        task_container = self.task_container
-        msg = "TaskConfig of the existing task found should be the original task_config"
-        self.assertTrue(task_config.task_already_exists(task_container), msg)
-
-        empty_task_container = self.empty_task_container
-        msg = "no existing task should have been found on empty container"
-        self.assertFalse(task_config.task_already_exists(empty_task_container), msg)
-
-    def test_should_create_task(self):
-        """
-        Test different cases for the 'should_create_task' method.
+        Default implementation is to put the task on the state 'closed'.
         """
         task_config = self.task_config
-        task_container = self.task_container
-        empty_task_container = self.empty_task_container
-
-        # case of task already existing
-        msg = "Task should not be created because it already exists"
-        self.assertFalse(task_config.should_create_task(task_container), msg)
-
-        # normal case
-        msg = "Task should be created"
-        create = task_config.should_create_task(empty_task_container)
-        self.assertTrue(create, msg)
-
-        # set the task_config field 'creation_conditions' with a negative condition
-        # => task should not start
-        task_config.creation_conditions = ('urban.schedule.negative_creation_condition',)
-        msg = "Task should not be created because the creation condition is not matched"
-        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
-
-        # set the task_config starting_states field to a state different from
-        # the task_container state => task should not start
-        task_config.creation_state = 'pending'
-        msg = "Task should not be created because the creation state does not match container state"
-        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
-
-    def test_should_start_task(self):
-        """
-        Test different cases for the 'should_start_task' method.
-        """
-        task_config = self.task_config
-        task_container = self.task_container
         task = self.task
 
-        # task container state is different from the states selected on
-        # task_config 'starting_states' => task should not start
-        msg = "Task should not be started because the starting state does not match container state"
-        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+        task_state = api.content.get_state(task)
+        self.assertNotEquals(task_state, 'closed')
 
-        # normal case
-        api.content.transition(obj=task_container, transition='submit')
-        msg = "Task should be started"
-        start = task_config.should_start_task(task_container, task)
-        self.assertTrue(start, msg)
+        task_config.end_task(task)
+        task_state = api.content.get_state(task)
+        msg = "Task should be on state 'closed'"
+        self.assertEquals(task_state, 'closed', msg)
 
-        # set the task_config field 'start_conditions' with a negative condition
-        # => task should not start
-        task_config.start_conditions = ('urban.schedule.negative_start_condition',)
-        msg = "Task should not be started because the start condition is not matched"
-        self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
-        # set the task_config starting_states field to a state different from
-        # the task_container state => task should not start
-        task_config.starting_states = ('pending',)
-        msg = "Task should not be started because the starting state does not match container state"
-        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+class TestMacroTaskConfig(unittest.TestCase):
+    """
+    Test MacroTaskConfig content type.
+    """
+
+    layer = TEST_INSTALL_INTEGRATION
+
+    def test_MacroTaskConfig_portal_type_is_registered(self):
+        portal_types = api.portal.get_tool('portal_types')
+        registered_types = portal_types.listContentTypes()
+        self.assertTrue('MacroTaskConfig' in registered_types)
+
+
+class TestMacroTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
+    """
+    Test MacroTaskConfig methods.
+    """
+
+    def test_MacroTasConfigk_inherits_from_TaskConfig(self):
+        """
+        MacroTaskConfig implements ITaskConfig and should implements all
+        the methods defined in TaskConfig.
+        As long MacroTaskConfig inherits from BaseTaskConfig, we test the inherited
+        methods only in TaskConfig test cases to avoid test code duplication.
+        """
+        from urban.schedule.content.task_config import MacroTaskConfig
+        from urban.schedule.content.task_config import BaseTaskConfig
+        msg = "MacroTaskConfig should inherits BaseTaskConfig"
+        self.assertTrue(issubclass(MacroTaskConfig, BaseTaskConfig), msg)
 
     def test_should_end_task(self):
         """
-        Test different cases for the 'should_end_task' method.
+        Should return 'ScheduleTask'
         """
         task_config = self.task_config
         task_container = self.task_container
@@ -433,7 +549,7 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'end_conditions' with a negative condition
         # => task should not end
-        task_config.end_conditions = ('urban.schedule.negative_end_condition',)
+        task_config.end_conditions = ('schedule.negative_end_condition',)
         msg = "Task should not be ended because the end condition is not matched"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
@@ -442,32 +558,3 @@ class TestTaskConfigIntegration(ExampleScheduleIntegrationTestCase):
         task_config.ending_states = ('pending',)
         msg = "Task should not be ended because the ending state does not match container state"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
-
-    def test_end_task(self):
-        """
-        Default implementation is to put the task on the state 'closed'.
-        """
-        task_config = self.task_config
-        task = self.task
-
-        task_state = api.content.get_state(task)
-        self.assertNotEquals(task_state, 'closed')
-
-        task_config.end_task(task)
-        task_state = api.content.get_state(task)
-        msg = "Task should be on state 'closed'"
-        self.assertEquals(task_state, 'closed', msg)
-
-    def test_compute_due_date(self):
-        """
-        Due date should be the date computed by the adapter of
-        start_date field + the value in additional_delay.
-        """
-        task_config = self.task_config
-        task_container = self.task_container
-
-        expected_date = task_container.creation_date + task_config.additional_delay
-        expected_date = expected_date.asdatetime().date()
-
-        due_date = task_config.compute_due_date(task_container)
-        self.assertEquals(due_date, expected_date)

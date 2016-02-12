@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-02-10 12:08+0000\n"
+"POT-Creation-Date: 2016-02-12 14:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,45 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
-#: ../content/task_config.py:84
+#: ../content/task_config.py:89
 msgid "Additional delay"
 msgstr ""
 
-#: ../content/task_config.py:28
+#: ../content/task_config.py:33
 msgid "Assigned user"
 msgstr ""
 
-#: ../content/task_config.py:70
+#: ../content/vocabulary.py:217
+msgid "Created"
+msgstr ""
+
+#: ../content/schedule_config.py:21
+#: ../content/task_config.py:27
+msgid "Enabled"
+msgstr ""
+
+#: ../content/task_config.py:75
 msgid "End conditions"
+msgstr ""
+
+#: ../content/vocabulary.py:219
+msgid "Ended"
 msgstr ""
 
 #: ../configure.zcml:29
 msgid "Installs the urban.schedule add-on."
+msgstr ""
+
+#: ../profiles/default/types/MacroTaskConfig.xml
+msgid "MacroTask configuration."
+msgstr ""
+
+#: ../profiles/default/types/MacroTaskConfig.xml
+msgid "MacroTaskConfig"
+msgstr ""
+
+#: ../profiles/default/types/ScheduleMacroTask.xml
+msgid "Schedulable Macrotask"
 msgstr ""
 
 #: ../profiles/default/types/ScheduleTask.xml
@@ -45,55 +70,59 @@ msgstr ""
 msgid "ScheduleConfig"
 msgstr ""
 
+#: ../profiles/default/types/ScheduleMacroTask.xml
+msgid "ScheduleMacrotask"
+msgstr ""
+
 #: ../profiles/default/types/ScheduleTask.xml
 msgid "ScheduleTask"
 msgstr ""
 
-#: ../content/schedule_config.py:21
+#: ../content/schedule_config.py:27
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:43
+#: ../content/task_config.py:48
 msgid "Select creation conditions of the task"
 msgstr ""
 
-#: ../content/task_config.py:29
+#: ../content/task_config.py:34
 msgid "Select default user assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:71
+#: ../content/task_config.py:76
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:57
+#: ../content/task_config.py:62
 msgid "Select start conditions of the task"
 msgstr ""
 
-#: ../content/schedule_config.py:22
+#: ../content/schedule_config.py:28
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:78
+#: ../content/task_config.py:83
 msgid "Select the start date used to compute the due date."
 msgstr ""
 
-#: ../content/task_config.py:36
+#: ../content/task_config.py:41
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:50
+#: ../content/task_config.py:55
 msgid "Select the state of the container where the task is automatically started."
 msgstr ""
 
-#: ../content/task_config.py:64
+#: ../content/task_config.py:69
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
-#: ../content/task_config.py:42
+#: ../content/task_config.py:47
 msgid "Start conditions"
 msgstr ""
 
-#: ../content/task_config.py:77
+#: ../content/task_config.py:82
 msgid "Start date"
 msgstr ""
 
@@ -105,15 +134,15 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:35
+#: ../content/task_config.py:40
 msgid "Task container creation state"
 msgstr ""
 
-#: ../content/task_config.py:63
+#: ../content/task_config.py:68
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:49
+#: ../content/task_config.py:54
 msgid "Task container start states"
 msgstr ""
 
@@ -121,12 +150,46 @@ msgstr ""
 msgid "TaskConfig"
 msgstr ""
 
-#: ../content/task_config.py:85
+#: ../content/task_config.py:90
 msgid "This delay is added to the due date of the task."
 msgstr ""
 
-#: ../content/task_config.py:90
+#: ../content/vocabulary.py:218
+msgid "To do"
+msgstr ""
+
+#: ../content/task_config.py:95
 msgid "Warning delay"
+msgstr ""
+
+msgid "schedule.assign_current_user"
+msgstr ""
+
+msgid "schedule.create_if_all_subtasks_can_be_created"
+msgstr ""
+
+msgid "schedule.create_if_subtask_can_be_created"
+msgstr ""
+
+msgid "schedule.start_date.creation_date"
+msgstr ""
+
+msgid "schedule.start_date.subtask_highest_due_date"
+msgstr ""
+
+msgid "schedule.start_if_all_subtasks_started"
+msgstr ""
+
+msgid "schedule.start_if_subtask_started"
+msgstr ""
+
+msgid "schedule.test_creation_condition"
+msgstr ""
+
+msgid "schedule.test_end_condition"
+msgstr ""
+
+msgid "schedule.test_start_condition"
 msgstr ""
 
 #: ../configure.zcml:29
@@ -135,19 +198,4 @@ msgstr ""
 
 #: ../testing.zcml:16
 msgid "urban.schedule tests"
-msgstr ""
-
-msgid "urban.schedule.assign_current_user"
-msgstr ""
-
-msgid "urban.schedule.start_date.creation_date"
-msgstr ""
-
-msgid "urban.schedule.test_creation_condition"
-msgstr ""
-
-msgid "urban.schedule.test_end_condition"
-msgstr ""
-
-msgid "urban.schedule.test_start_condition"
 msgstr ""

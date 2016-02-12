@@ -5,7 +5,7 @@
     <!-- TaskConfig 'scheduled_contenttype' field Vocabulary -->
     <utility
         factory=".vocabulary.ScheduledContentTypeVocabularyFactory"
-        name="urban.schedule.scheduled_contenttype"
+        name="schedule.scheduled_contenttype"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
@@ -20,42 +20,77 @@
     <!-- TaskConfig 'default_assigned_user' field Vocabulary -->
     <utility
         factory=".vocabulary.AssignedUserVocabularyFactory"
-        name="urban.schedule.assigned_user"
+        name="schedule.assigned_user"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
     <!-- TaskConfig 'container_state' field Vocabulary -->
     <utility
         factory=".vocabulary.ContainerStateVocabularyFactory"
-        name="urban.schedule.container_state"
+        name="schedule.container_state"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- Task simple states Vocabulary -->
+    <utility
+        factory=".vocabulary.TaskSimpleStatesVocabularyFactory"
+        name="schedule.task_simple_states"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
     <!-- TaskConfig 'creation_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.CreationConditionVocabularyFactory"
-        name="urban.schedule.creation_conditions"
+        name="schedule.creation_conditions"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
     <!-- TaskConfig 'start_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.StartConditionVocabularyFactory"
-        name="urban.schedule.start_conditions"
+        name="schedule.start_conditions"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
     <!-- TaskConfig 'end_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.EndConditionVocabularyFactory"
-        name="urban.schedule.end_conditions"
+        name="schedule.end_conditions"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
     <!-- TaskConfig 'due_date' field Vocabulary -->
     <utility
         factory=".vocabulary.StartDateVocabularyFactory"
-        name="urban.schedule.start_date"
+        name="schedule.start_date"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'creation_conditions' field Vocabulary for MacroTaskConfig -->
+    <utility
+        factory=".vocabulary.MacroTaskCreationConditionVocabularyFactory"
+        name="schedule.macrotask_creation_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'start_conditions' field Vocabulary for MacroTaskConfig -->
+    <utility
+        factory=".vocabulary.MacroTaskStartConditionVocabularyFactory"
+        name="schedule.macrotask_start_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'end_conditions' field Vocabulary for MacroTaskConfig -->
+    <utility
+        factory=".vocabulary.MacroTaskEndConditionVocabularyFactory"
+        name="schedule.macrotask_end_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'due_date' field Vocabulary for MacroTaskConfig -->
+    <utility
+        factory=".vocabulary.MacroTaskStartDateVocabularyFactory"
+        name="schedule.macrotask_start_date"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 

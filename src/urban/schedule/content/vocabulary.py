@@ -6,11 +6,16 @@ from Products.CMFPlone import PloneMessageFactory
 
 from urban.schedule import _
 from urban.schedule.interfaces import ICreationCondition
+from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import IEndCondition
+from urban.schedule.interfaces import IMacroTaskCreationCondition
+from urban.schedule.interfaces import IMacroTaskEndCondition
+from urban.schedule.interfaces import IMacroTaskStartCondition
+from urban.schedule.interfaces import IMacroTaskStartDate
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IStartDate
-from urban.schedule.interfaces import IDefaultTaskUser
+from urban.schedule.interfaces import ITaskLogic
 from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
@@ -194,11 +199,36 @@ class ContainerStateVocabularyFactory(object):
         return vocabulary
 
 
-class AdaptersBaseVocabularyFactory(object):
+class TaskSimpleStatesVocabularyFactory(object):
     """
-    Base class for vocabular factories listing adapters providing
-    'provides_interface' and adapting a task container content type.
-    Return available conditions of a task config.
+    Vocabulary factory listing a simplifed version of the real
+    task workflow into 3 simpler states:
+        - Created (created, to_assign)
+        - To do (to_do, realized)
+        - Ended (closed)
+    """
+
+    def __call__(self, context):
+        """
+        Call the adapter vocabulary for the 'container_state' field
+        and returns it.
+        """
+        voc_terms = [
+            SimpleTerm('created', 'created', _('Created')),
+            SimpleTerm('to_do', 'to_do', _('To do')),
+            SimpleTerm('closed', 'closed', _('Ended')),
+        ]
+
+        vocabulary = SimpleVocabulary(voc_terms)
+
+        return vocabulary
+
+
+class TaskLogicVocabularyFactory(object):
+    """
+    Base class for vocabulary factories listing adapters providing
+    some ITaskLogic (sub)interface and adapting a task container
+    content type.
     """
 
     provides_interface = None  # to override in subclass
@@ -206,26 +236,28 @@ class AdaptersBaseVocabularyFactory(object):
     def __call__(self, context):
         """
         Look for all the conditions registered for scheduled_contenttype,
-        implementing 'condition_interface' and return them as a vocabulary.
+        implementing some ITaskLogic (sub)interface and return them as
+        a vocabulary.
         """
         gsm = getGlobalSiteManager()
         scheduled_interface = context.get_scheduled_interface()
 
-        condition_adapters = []
+        terms = []
         for adapter in gsm.registeredAdapters():
-            implements_interface = adapter.provided is self.provides_interface
+            implements_interface = issubclass(adapter.provided, ITaskLogic) and \
+                issubclass(self.provides_interface, adapter.provided)
             specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
                 issubclass(scheduled_interface, adapter.required[0])
             if implements_interface and specific_enough:
-                condition_adapters.append(
+                terms.append(
                     SimpleTerm(adapter.name, adapter.name, _(adapter.name))
                 )
 
-        vocabulary = SimpleVocabulary(condition_adapters)
+        vocabulary = SimpleVocabulary(terms)
         return vocabulary
 
 
-class CreationConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
+class CreationConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
     Vocabulary factory for 'creation_conditions' field.
     Return available creation conditions of a task config.
@@ -234,7 +266,7 @@ class CreationConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     provides_interface = ICreationCondition
 
 
-class StartConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
+class StartConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
     Vocabulary factory for 'start_conditions' field.
     Return available start conditions of a task config.
@@ -243,7 +275,7 @@ class StartConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     provides_interface = IStartCondition
 
 
-class EndConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
+class EndConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
     Vocabulary factory for 'end_conditions' field.
     Return available end conditions of a task config.
@@ -252,10 +284,46 @@ class EndConditionVocabularyFactory(AdaptersBaseVocabularyFactory):
     provides_interface = IEndCondition
 
 
-class StartDateVocabularyFactory(AdaptersBaseVocabularyFactory):
+class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
     """
-    Vocabulary factory for 'due_date' field.
-    Return due date computation options of task config.
+    Vocabulary factory for 'start_date' field.
+    Return start date of a task config.
     """
 
     provides_interface = IStartDate
+
+
+class MacroTaskCreationConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'creation_conditions' field.
+    Return available creation conditions of a macro task config.
+    """
+
+    provides_interface = IMacroTaskCreationCondition
+
+
+class MacroTaskStartConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'start_conditions' field.
+    Return available start conditions of a macro task config.
+    """
+
+    provides_interface = IMacroTaskStartCondition
+
+
+class MacroTaskEndConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'end_conditions' field.
+    Return available end conditions of a macro task config.
+    """
+
+    provides_interface = IMacroTaskEndCondition
+
+
+class MacroTaskStartDateVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'start_date' field.
+    Return start date of a macro task config.
+    """
+
+    provides_interface = IMacroTaskStartDate

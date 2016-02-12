@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from urban.schedule.content.due_date import StartDate
+from urban.schedule.content.logic import StartDate
 
 
 class ContainerCreationDate(StartDate):
