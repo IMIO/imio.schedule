@@ -62,6 +62,14 @@ class BaseScheduleTask(object):
                 'UID {}'.format(self.task_config_UID)
             )
 
+    def is_done(self):
+        """
+        Default implementation is to say if the task
+        is on state 'closed'.
+        """
+        closed = api.content.get_state(self) == 'closed'
+        return closed
+
 
 class ScheduleTask(Item, BaseScheduleTask):
     """

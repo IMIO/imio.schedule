@@ -285,4 +285,4 @@ class TestMacroTaskVocabularies(MacroTaskScheduleIntegrationTestCase):
         term = vocabulary.getTerm('schedule.start_date.subtask_highest_due_date')
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
-        self.assertEquals(translation, u"Date d'échéance de la sous-tâche la moins proche", msg)
+        self.assertEquals(translation, u"La plus haute date d'échéance parmi les sous-tâches", msg)

@@ -197,7 +197,7 @@ def register_tasks_vocabulary(schedule_config, event):
         def __call__(self, context):
             catalog = api.portal.get_tool('portal_catalog')
             schedule_config = catalog(UID=self.schedule_config_UID)[0].getObject()
-            collection_brains = schedule_config.query_task_configs()
+            collection_brains = schedule_config.query_maintask_configs()
             vocabulary = SimpleVocabulary(
                 [SimpleTerm(b.UID, b.UID, b.Title) for b in collection_brains]
             )

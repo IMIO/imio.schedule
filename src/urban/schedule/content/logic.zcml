@@ -7,14 +7,16 @@
 
     <!-- Assigned user adapter returning current logged user -->
     <adapter
-        for="zope.interface.Interface"
+        for="zope.interface.Interface
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IDefaultTaskUser"
         factory=".logic.AssignCurrentUser"
         name="schedule.assign_current_user"
     />
 
     <adapter
-        for="zope.interface.Interface"
+        for="zope.interface.Interface
+             urban.schedule.content.task.ScheduleMacroTask"
         provides="urban.schedule.interfaces.IMacroTaskStartDate"
         factory=".logic.SubtaskHighestDueDate"
         name="schedule.start_date.subtask_highest_due_date"

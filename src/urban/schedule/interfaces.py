@@ -25,6 +25,12 @@ class ITaskLogic(Interface):
     """
 
 
+class ICreationTaskLogic(Interface):
+    """
+    Base interface for all the TaskConfig creation logic items.
+    """
+
+
 class IDefaultTaskUser(ITaskLogic):
     """
     Adapts a TaskContainer into a plone user to assign to a task.
@@ -32,6 +38,12 @@ class IDefaultTaskUser(ITaskLogic):
 
 
 class ICondition(ITaskLogic):
+    """
+    Condition object adapting a TaskContainer and task.
+    """
+
+
+class ITaskCreationCondition(ICreationTaskLogic):
     """
     Condition object adapting a TaskContainer.
     """

@@ -3,7 +3,8 @@
     i18n_domain="urban.schedule">
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IStartDate"
         factory=".due_date.ContainerCreationDate"
         name="schedule.start_date.creation_date"

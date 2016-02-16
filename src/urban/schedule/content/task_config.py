@@ -15,7 +15,8 @@ from urban.schedule.interfaces import IStartDate
 
 from zope import schema
 from zope.component import getAdapter
-from zope.component import queryAdapter
+from zope.component import getMultiAdapter
+from zope.component import queryMultiAdapter
 from zope.interface import implements
 
 
@@ -140,7 +141,7 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
-    def user_to_assign(self, task_container):
+    def user_to_assign(self, task_container, task):
         """
         Returns a default user to assign to the ScheduleTask.
         """
@@ -148,10 +149,16 @@ class BaseTaskConfig(object):
         # of an existing user
         user_id = self.default_assigned_user
         # try to get the adapter named 'user_id'
-        assign_user = queryAdapter(task_container, IDefaultTaskUser, name=user_id)
+        assign_user = queryMultiAdapter(
+            (task_container, task),
+            IDefaultTaskUser,
+            name=user_id
+        )
         if assign_user:
-            return assign_user.user_id()
-        # else just return user_id
+            default_user = assign_user.user_id()
+
+        # if no user was found use user_id
+        user_id = default_user or user_id
         return user_id
 
     def query_task_instances(self, root_container, states=[], the_objects=False):
@@ -247,6 +254,9 @@ class BaseTaskConfig(object):
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically create a task.
         """
+        # config should be enabled
+        if not self.enabled:
+            return False
 
         # does the Task already exists?
         if self.task_already_exists(task_container):
@@ -278,17 +288,17 @@ class BaseTaskConfig(object):
         """
 
         # task container state match starting_states value?
-        if api.content.get_state(task_container) not in self.starting_states:
+        if api.content.get_state(task_container) not in (self.starting_states or []):
             return False
 
         # each conditions is matched?
         for condition_name in self.start_conditions or []:
-            condition = getAdapter(
-                task_container,
+            condition = getMultiAdapter(
+                (task_container, task),
                 interface=IStartCondition,
                 name=condition_name
             )
-            if not condition.evaluate(task):
+            if not condition.evaluate():
                 return False
 
         return True
@@ -297,23 +307,23 @@ class BaseTaskConfig(object):
         """
         Evaluate:
          - If the task container is on the state selected on 'ending_states'
-         - All the existence conditions of a task with 'task' and 'kwargs'.
+         - All the existence conditions of a task.
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically close a task.
         """
 
         # task container state match any ending_states value?
-        if api.content.get_state(task_container) not in self.ending_states:
+        if api.content.get_state(task_container) not in (self.ending_states or []):
             return False
 
         # each conditions is matched?
         for condition_name in self.end_conditions or []:
-            condition = getAdapter(
-                task_container,
+            condition = getMultiAdapter(
+                (task_container, task),
                 interface=IEndCondition,
                 name=condition_name
             )
-            if not condition.evaluate(task):
+            if not condition.evaluate():
                 return False
 
         return True
@@ -329,7 +339,7 @@ class BaseTaskConfig(object):
         """
         if api.content.get_state(task) == 'created':
             api.content.transition(obj=task, transition='do_to_assign')
-        if api.content.get_state(task) == 'to_assign':
+        if api.content.get_state(task) == 'to_assign' and task.assigned_user:
             api.content.transition(obj=task, transition='do_to_do')
 
     def end_task(self, task):
@@ -345,44 +355,45 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'realized':
             api.content.transition(obj=task, transition='do_closed')
 
-    def compute_due_date(self, task_container):
+    def compute_due_date(self, task_container, task):
         """
-        Evaluate 'task_container' and 'kwargs' to compute the due date of a task.
+        Evaluate 'task_container' and 'task' to compute the due date of a task.
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
-        date_adapter = getAdapter(
-            task_container,
+        date_adapter = getMultiAdapter(
+            (task_container, task),
             interface=IStartDate,
             name=self.start_date
         )
         start_date = date_adapter.start_date()
+        if not start_date:
+            return None
+
         additional_delay = self.additional_delay or 0
         due_date = start_date + additional_delay
         due_date = due_date.asdatetime().date()
 
         return due_date
 
-    def _create_task_instance(self, task_container):
+    def _create_task_instance(self, creation_place):
         """
         Helper method to use to implement 'create_task'.
         """
         task_id = 'TASK_{}'.format(self.id)
 
-        if not task_id in task_container.objectIds():
+        if not task_id in creation_place.objectIds():
 
             task_portal_type = self.get_task_type()
             portal_types = api.portal.get_tool('portal_types')
             type_info = portal_types.getTypeInfo(task_portal_type)
 
             task = type_info._constructInstance(
-                container=task_container,
+                container=creation_place,
                 id=task_id,
                 title=self.Title(),
                 schedule_config_UID=self.get_schedule_config().UID(),
                 task_config_UID=self.UID(),
-                assigned_user=self.user_to_assign(task_container),
-                due_date=self.compute_due_date(task_container)
             )
             return task
 
@@ -400,11 +411,14 @@ class TaskConfig(Item, BaseTaskConfig):
         """
         return 'ScheduleTask'
 
-    def create_task(self, task_container):
+    def create_task(self, task_container, creation_place=None):
         """
         Just create the task and return it.
         """
-        task = self._create_task_instance(task_container)
+        creation_place = creation_place or task_container
+        task = self._create_task_instance(creation_place)
+        task.due_date = self.compute_due_date(task_container, task)
+        task.assigned_user = self.user_to_assign(task_container, task)
         return task
 
 
@@ -479,6 +493,28 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         Return the content type of task to create.
         """
         return 'ScheduleMacroTask'
+
+    def get_subtask_configs(self):
+        """
+        Return all the subtasks configs of this macro task.
+        """
+        return self.objectValues()
+
+    def create_task(self, task_container):
+        """
+        Create the macrotask and subtasks.
+        """
+        macrotask = self._create_task_instance(task_container)
+
+        for config in self.get_subtask_configs():
+            if config.should_create_task(task_container):
+                config.create_task(task_container, creation_place=macrotask)
+
+        # compute due date only after all substasks are created
+        macrotask.due_date = self.compute_due_date(task_container, macrotask)
+        macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
+
+        return macrotask
 
     def should_end_task(self, task_container, task):
         """

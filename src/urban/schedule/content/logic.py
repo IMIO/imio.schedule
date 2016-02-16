@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from DateTime import DateTime
+
 from plone import api
 
+from urban.schedule.interfaces import ICreationTaskLogic
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import IMacroTaskStartDate
 from urban.schedule.interfaces import IStartDate
@@ -10,16 +13,30 @@ from urban.schedule.interfaces import ITaskLogic
 from zope.interface import implements
 
 
-class TaskLogic(object):
+class CreationTaskLogic(object):
     """
     Base class for any object adapting a task container into
-    some task logic (condition, user assigment, due date..).
+    some task logic (condition, user assigment, due date..)
+    called during the task craetion.
+    """
+
+    implements(ICreationTaskLogic)
+
+    def __init__(self, task_container):
+        self.task_container = task_container
+
+
+class TaskLogic(object):
+    """
+    Base class for any object adapting a task container and a task
+    into some logic (condition, user assigment, due date..).
     """
 
     implements(ITaskLogic)
 
-    def __init__(self, task_container):
+    def __init__(self, task_container, task):
         self.task_container = task_container
+        self.task = task
 
 
 class StartDate(TaskLogic):
@@ -44,7 +61,7 @@ class MacroTaskStartDate(StartDate):
 
     implements(IMacroTaskStartDate)
 
-    def due_date(self):
+    def start_date(self):
         """
         To override.
         Compute a due date from task_container
@@ -57,9 +74,15 @@ class SubtaskHighestDueDate(MacroTaskStartDate):
     Return the highest due date of the subtasks.
     """
 
-    def due_date(self):
+    def start_date(self):
         """
+        Return the highest due date of the subtasks.
         """
+        subtasks = self.task.get_subtasks()
+        if not subtasks:
+            return None
+        due_dates = [DateTime(str(t.due_date)) for t in subtasks if t.due_date]
+        return max(due_dates)
 
 
 class AssignTaskUser(TaskLogic):

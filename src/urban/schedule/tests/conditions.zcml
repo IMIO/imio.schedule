@@ -17,28 +17,32 @@
     />
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IStartCondition"
         factory=".condition.TestStartCondition"
         name="schedule.test_start_condition"
     />
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IStartCondition"
         factory=".condition.TestNegativeStartCondition"
         name="schedule.negative_start_condition"
     />
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IEndCondition"
         factory=".condition.TestEndCondition"
         name="schedule.test_end_condition"
     />
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task.IScheduleTask"
         provides="urban.schedule.interfaces.IEndCondition"
         factory=".condition.TestNegativeEndCondition"
         name="schedule.negative_end_condition"

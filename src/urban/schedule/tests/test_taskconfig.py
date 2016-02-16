@@ -412,11 +412,12 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         """
         task_config = self.task_config
         task_container = self.task_container
+        task = self.task
 
         expected_date = task_container.creation_date + task_config.additional_delay
         expected_date = expected_date.asdatetime().date()
 
-        due_date = task_config.compute_due_date(task_container)
+        due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
 
 

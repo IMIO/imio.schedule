@@ -10,7 +10,7 @@ class TestCreationCondition(CreationCondition):
     Test task start condition.
     """
 
-    def evaluate(self, **kwargs):
+    def evaluate(self):
         return 'Should start'
 
 
@@ -19,7 +19,7 @@ class TestNegativeCreationCondition(CreationCondition):
     Test task start condition.
     """
 
-    def evaluate(self, **kwargs):
+    def evaluate(self):
         return False
 
 
@@ -28,7 +28,7 @@ class TestStartCondition(StartCondition):
     Test task start condition.
     """
 
-    def evaluate(self, task, **kwargs):
+    def evaluate(self):
         return 'Should start'
 
 
@@ -37,7 +37,7 @@ class TestNegativeStartCondition(StartCondition):
     Test task start condition.
     """
 
-    def evaluate(self, task, **kwargs):
+    def evaluate(self):
         return False
 
 
@@ -46,7 +46,7 @@ class TestEndCondition(EndCondition):
     Test task end condition.
     """
 
-    def evaluate(self, task, **kwargs):
+    def evaluate(self):
         return 'Should end'
 
 
@@ -55,5 +55,5 @@ class TestNegativeEndCondition(EndCondition):
     Test task end condition.
     """
 
-    def evaluate(self, task, **kwargs):
+    def evaluate(self):
         return False

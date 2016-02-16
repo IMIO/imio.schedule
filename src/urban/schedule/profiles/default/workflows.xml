@@ -5,5 +5,8 @@
   <type type_id="ScheduleTask">
      <bound-workflow workflow_id="task_workflow" />
   </type>
+  <type type_id="ScheduleMacroTask">
+     <bound-workflow workflow_id="task_workflow" />
+  </type>
  </bindings>
 </object>

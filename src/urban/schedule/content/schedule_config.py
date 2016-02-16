@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*-coding: utf-8 -*-
 
 from plone import api
 from plone.dexterity.content import Container
@@ -38,18 +38,34 @@ class ScheduleConfig(Container):
 
     implements(IScheduleConfig)
 
-    def query_task_configs(self):
+    def query_task_configs(self, query={}):
         """
         Query the TaskConfig of this ScheduleConfig.
         """
         catalog = api.portal.get_tool('portal_catalog')
         config_path = '/'.join(self.getPhysicalPath())
 
-        config_brains = catalog(
-            object_provides=ITaskConfig.__identifier__,
-            path={'query': config_path},
-            sort_on='getObjPositionInParent',
-        )
+        base_query = {
+            'object_provides': ITaskConfig.__identifier__,
+            'path': {'query': config_path},
+            'sort_on': 'getObjPositionInParent',
+        }
+
+        base_query.update(query)
+
+        config_brains = catalog(**base_query)
+
+        return config_brains
+
+    def query_maintask_configs(self):
+        """
+        Query main TaskConfig (tasks config that are not
+        sub-tasks) of this ScheduleConfig.
+        """
+        config_path = '/'.join(self.getPhysicalPath())
+        additional_query = {'path': {'query': config_path, 'depth': 1}}
+
+        config_brains = self.query_task_configs(additional_query)
 
         return config_brains
 

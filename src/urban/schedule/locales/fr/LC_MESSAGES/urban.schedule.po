@@ -172,7 +172,7 @@ msgid "schedule.start_date.creation_date"
 msgstr "Date de création du dossier"
 
 msgid "schedule.start_date.subtask_highest_due_date"
-msgstr "Date d'échéance de la sous-tâche la moins proche"
+msgstr "La plus haute date d'échéance parmi les sous-tâches"
 
 msgid "schedule.start_if_all_subtasks_started"
 msgstr "Démarrer si toutes les sous-tâche sont démarrées"
