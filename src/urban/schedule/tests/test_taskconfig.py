@@ -2,6 +2,7 @@
 
 from Acquisition import aq_base
 
+from urban.schedule.content.task import AutomatedMacroTask
 from urban.schedule.content.task import AutomatedTask
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
@@ -622,6 +623,15 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         expected_type = 'AutomatedMacroTask'
         self.assertEquals(task_type, expected_type)
 
+    def test_get_subtask_configs(self):
+        """
+        Should return all the subtasks configs of a macro task.
+        """
+        subtasks_configs = self.macrotask_config.get_subtask_configs()
+        msg = "sould have return the subtask config"
+        self.assertTrue(len(subtasks_configs) == 1, msg)
+        self.assertTrue(subtasks_configs[0] == self.subtask_config, msg)
+
     def test_is_main_taskconfig(self):
         """
         Tells wheter a task config is a subtaskconfig or not
@@ -630,6 +640,19 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         self.assertTrue(self.macrotask_config.is_main_taskconfig(), msg)
         msg = "this subtask config should not be considered as a main task config"
         self.assertFalse(self.subtask_config.is_main_taskconfig(), msg)
+
+    def test_create_task(self):
+        """
+        Should create a macro task and all its subtasks.
+        """
+        task_container = self.empty_task_container
+        task_config = self.task_config
+
+        created_macrotask = task_config.create_task(task_container)
+        self.assertTrue(isinstance(created_macrotask, AutomatedMacroTask))
+
+        created_subtask = created_macrotask.objectValues()[0]
+        self.assertTrue(isinstance(created_subtask, AutomatedTask))
 
     def test_should_end_task(self):
         """

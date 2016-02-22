@@ -539,16 +539,3 @@ class MacroTaskConfig(Container, BaseTaskConfig):
             return False
 
         return True
-
-    def end_task(self, task):
-        """
-        Default implementation is to put the task on the state 'closed'.
-        """
-        if api.content.get_state(task) == 'created':
-            api.content.transition(obj=task, transition='do_to_assign')
-        if api.content.get_state(task) == 'to_assign':
-            api.content.transition(obj=task, transition='do_to_do')
-        if api.content.get_state(task) == 'to_do':
-            api.content.transition(obj=task, transition='do_realized')
-        if api.content.get_state(task) == 'realized':
-            api.content.transition(obj=task, transition='do_closed')
