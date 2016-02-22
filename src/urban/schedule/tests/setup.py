@@ -112,7 +112,7 @@ def add_schedule_config(context):
             creation_state='private',
             starting_states=('pending',),
             ending_states=('published',),
-            start_date='schedule.start_date.creation_date',
+            start_date='schedule.start_date.subtask_highest_due_date',
             additional_delay=17,
         )
     macrotask_config = getattr(schedule_config, macrotask_cfg_id)

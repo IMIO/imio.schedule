@@ -50,6 +50,22 @@ class TestAutomatedTaskIntegration(ExampleScheduleIntegrationTestCase):
     Test AutomatedTask methods.
     """
 
+    def test_get_container(self):
+        """
+        Should return the task container of the task.
+        """
+        task_container = self.task.get_container()
+        expected_container = self.task_container
+        self.assertEquals(task_container, expected_container)
+
+    def test_get_schedule_config(self):
+        """
+        Should return the schedule config of the task.
+        """
+        schedule_config = self.task.get_schedule_config()
+        expected_config = self.schedule_config
+        self.assertEquals(schedule_config, expected_config)
+
     def test_get_task_config(self):
         """
         Should return the associated TaskConfig.
@@ -100,6 +116,14 @@ class TestAutomatedMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):
     Test AutomatedMacroTask methods.
     """
 
+    def test_get_container(self):
+        """
+        Should return the task container of the task.
+        """
+        task_container = self.sub_task.get_container()
+        expected_container = self.task_container
+        self.assertEquals(task_container, expected_container)
+
     def test_get_task_config(self):
         """
         Should return the associated MacroTaskConfig.
@@ -107,3 +131,11 @@ class TestAutomatedMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):
         config = self.macro_task.get_task_config()
         expected_config = self.macrotask_config
         self.assertEquals(config, expected_config)
+
+    def test_get_subtasks(self):
+        """
+        Should return the subtasks of this macro task.
+        """
+        subtasks = self.macro_task.get_subtasks()
+        self.assertEquals(len(subtasks), 1)
+        self.assertEquals(subtasks[0], self.sub_task)
