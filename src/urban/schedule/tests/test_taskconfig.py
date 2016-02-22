@@ -433,14 +433,21 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         create = task_config.should_create_task(empty_task_container)
         self.assertTrue(create, msg)
 
+        # disable the task config => task should not be created
+        task_config.enabled = False
+        msg = "Task should not be created because the creation condition is not matched"
+        self.assertFalse(task_config.should_create_task(empty_task_container), msg)
+
         # set the task_config field 'creation_conditions' with a negative condition
-        # => task should not start
+        # => task should not be created
+        task_config.enabled = True
         task_config.creation_conditions = ('schedule.negative_creation_condition',)
         msg = "Task should not be created because the creation condition is not matched"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
 
         # set the task_config starting_states field to a state different from
-        # the task_container state => task should not start
+        # the task_container state => task should not be created
+        task_config.creation_conditions = ('schedule.test_creation_condition',)
         task_config.creation_state = 'pending'
         msg = "Task should not be created because the creation state does not match container state"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
