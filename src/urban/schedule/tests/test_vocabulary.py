@@ -13,6 +13,35 @@ from zope.i18n import translate
 from zope.schema.interfaces import IVocabularyFactory
 
 
+class TestDashboardVocabularies(ExampleScheduleIntegrationTestCase):
+    """
+    Test dashboard vocabularies registration and values.
+    """
+
+    def test_task_workflow_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.TaskWorkflowStates'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
+    def test_task_workflow_vocabulary_values(self):
+        """
+        Test task workflow vocabulary values.
+        """
+
+        voc_name = 'schedule.TaskWorkflowStates'
+        voc_factory = getUtility(IVocabularyFactory, voc_name)
+        vocabulary = voc_factory(self.schedule_config)
+        expected_keys = ['created', 'to_do', 'closed']
+        for expected_key in expected_keys:
+            msg = 'expected key:\n{expected}\nwas not found in voc_keys:\n{voc}'.format(
+                expected=expected_key,
+                voc=vocabulary.by_token.keys()
+            )
+            self.assertTrue(expected_key in vocabulary.by_token.keys(), msg)
+
+
 class TestVocabularies(ExampleScheduleIntegrationTestCase):
     """
     Test field vocabularies registration and values.
