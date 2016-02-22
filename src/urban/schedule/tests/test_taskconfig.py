@@ -646,7 +646,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         Should create a macro task and all its subtasks.
         """
         task_container = self.empty_task_container
-        task_config = self.task_config
+        task_config = self.macrotask_config
 
         created_macrotask = task_config.create_task(task_container)
         self.assertTrue(isinstance(created_macrotask, AutomatedMacroTask))
