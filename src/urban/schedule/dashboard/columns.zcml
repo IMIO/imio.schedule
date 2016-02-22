@@ -2,6 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="urban.schedule">
 
+  <!-- columns adapters -->
   <adapter
      for="zope.interface.Interface
           zope.publisher.interfaces.browser.IBrowserRequest
@@ -9,6 +10,24 @@
      factory=".columns.DueDateColumn"
      provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
      name="due_date"
+  />
+
+  <adapter
+     for="zope.interface.Interface
+          zope.publisher.interfaces.browser.IBrowserRequest
+          collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+     factory=".columns.StatusColum"
+     provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+     name="status"
+  />
+
+  <!-- display adapters -->
+  <adapter
+     for="urban.schedule.dashboard.columns.StatusColum
+          urban.schedule.content.task.AutomatedMacroTask
+          zope.publisher.interfaces.browser.IBrowserRequest"
+     factory=".columns.MacroTaskStatusDisplay"
+     provides="urban.schedule.dashboard.interfaces.IDisplayTaskStatus"
   />
 
 </configure>

@@ -18,7 +18,7 @@
 
     <adapter
         for="zope.interface.Interface
-             urban.schedule.content.task.ScheduleMacroTask"
+             urban.schedule.content.task.AutomatedMacroTask"
         provides="urban.schedule.interfaces.IMacroTaskStartCondition"
         factory=".condition.StartIfAnySubtaskStarted"
         name="schedule.start_if_subtask_started"
@@ -26,7 +26,7 @@
 
     <adapter
         for="zope.interface.Interface
-             urban.schedule.content.task.ScheduleMacroTask"
+             urban.schedule.content.task.AutomatedMacroTask"
         provides="urban.schedule.interfaces.IMacroTaskStartCondition"
         factory=".condition.StartIfAllSubtasksStarted"
         name="schedule.start_if_all_subtasks_started"

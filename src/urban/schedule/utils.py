@@ -58,7 +58,7 @@ def interface_to_tuple(interface):
 def create_tasks_collection(schedule_config, container, id, **kwargs):
     """
     Create a DashboardCollection in container with a base
-    query returning all the ScheduleTask instances from
+    query returning all the AutomatedTask instances from
     schedule_config.
     """
 

@@ -32,7 +32,7 @@ class TaskCreationCondition(CreationTaskLogic):
 
 class CreationCondition(TaskCreationCondition):
     """
-    Creation condition of a ScheduleTask.
+    Creation condition of a AutomatedTask.
     """
 
     implements(ICreationCondition)
@@ -47,7 +47,7 @@ class CreationCondition(TaskCreationCondition):
 
 class StartCondition(Condition):
     """
-    Start condition of a ScheduleTask.
+    Start condition of a AutomatedTask.
     """
 
     implements(IStartCondition)
@@ -62,7 +62,7 @@ class StartCondition(Condition):
 
 class EndCondition(Condition):
     """
-    End condition of a ScheduleTask.
+    End condition of a AutomatedTask.
     """
 
     implements(IEndCondition)
@@ -77,7 +77,7 @@ class EndCondition(Condition):
 
 class MacroTaskCreationCondition(TaskCreationCondition):
     """
-    Creation condition of a ScheduleMacroTask.
+    Creation condition of a AutomatedMacroTask.
     """
 
     implements(IMacroTaskCreationCondition)
@@ -92,7 +92,7 @@ class MacroTaskCreationCondition(TaskCreationCondition):
 
 class MacroTaskStartCondition(Condition):
     """
-    Start condition of a ScheduleMacroTask.
+    Start condition of a AutomatedMacroTask.
     """
 
     implements(IMacroTaskStartCondition)
@@ -107,7 +107,7 @@ class MacroTaskStartCondition(Condition):
 
 class MacroTaskEndCondition(Condition):
     """
-    End condition of a ScheduleMacroTask.
+    End condition of a AutomatedMacroTask.
     """
 
     implements(IMacroTaskEndCondition)

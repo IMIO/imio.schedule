@@ -2,7 +2,7 @@
 
 from plone import api
 
-from urban.schedule.content.task import IScheduleTask
+from urban.schedule.content.task import IAutomatedTask
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 
 from zope.event import notify
@@ -37,7 +37,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         msg = "The object created should have been a Task but is {}".format(
             created.portal_type
         )
-        self.assertTrue(IScheduleTask.providedBy(created), msg)
+        self.assertTrue(IAutomatedTask.providedBy(created), msg)
 
     def test_task_creation_on_container_workflow_modification(self):
         """
@@ -63,7 +63,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         msg = "The object created should have been a Task but is {}".format(
             created.portal_type
         )
-        self.assertTrue(IScheduleTask.providedBy(created), msg)
+        self.assertTrue(IAutomatedTask.providedBy(created), msg)
 
     def test_task_creation_on_container_creation(self):
         """
@@ -87,7 +87,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         msg = "The object created should have been a Task but is {}".format(
             created.portal_type
         )
-        self.assertTrue(IScheduleTask.providedBy(created), msg)
+        self.assertTrue(IAutomatedTask.providedBy(created), msg)
 
     def test_assigned_user_is_set_on_created_task(self):
         """

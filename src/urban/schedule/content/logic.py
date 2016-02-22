@@ -34,7 +34,7 @@ class TaskLogic(object):
 
     implements(ITaskLogic)
 
-    def __init__(self, task_container, task):
+    def __init__(self, task_container, task=None):
         self.task_container = task_container
         self.task = task
 
@@ -103,7 +103,7 @@ class AssignTaskUser(TaskLogic):
 class AssignCurrentUser(AssignTaskUser):
     """
     Return the current connected user to assign it as default assigned
-    user of a new ScheduleTask.
+    user of a new AutomatedTask.
     """
 
     def user_id(self):

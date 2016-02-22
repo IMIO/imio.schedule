@@ -2,8 +2,10 @@
 
 from Acquisition import aq_base
 
+from urban.schedule.content.task import AutomatedTask
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
+from urban.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from urban.schedule.testing import TEST_INSTALL_INTEGRATION
 
 from plone import api
@@ -234,11 +236,18 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
 
     def test_get_task_type(self):
         """
-        Should return 'ScheduleTask'
+        Should return 'AutomatedTask'
         """
         task_type = self.task_config.get_task_type()
-        expected_type = 'ScheduleTask'
+        expected_type = 'AutomatedTask'
         self.assertEquals(task_type, expected_type)
+
+    def test_is_main_taskconfig(self):
+        """
+        Tells wheter a task config is a subtaskconfig or not
+        """
+        msg = "this simple task config should be considered as a main task config"
+        self.assertTrue(self.task_config.is_main_taskconfig(), msg)
 
     def test_get_schedule_config(self):
         """
@@ -268,20 +277,33 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         expected_interface = IATFolder
         self.assertEquals(type_interface, expected_interface)
 
+    def test_user_to_assign(self):
+        """
+        Should return a user to assign on a task.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        user = task_config.user_to_assign(task_container, task)
+        expected_user = 'test-user'
+        msg = "should have return '{}' user id".format(expected_user)
+        self.assertEquals(user, expected_user, msg)
+
     def test_query_task_instances(self):
         """
-        Should return ScheduleTask brains in a container created from a given TaskConfig.
+        Should return AutomatedTask brains in a container created from a given TaskConfig.
         """
         task_config = self.task_config
 
         root = self.portal
         tasks = task_config.query_task_instances(root, the_objects=True)
-        msg = "Should have found at least one ScheduleTask"
+        msg = "Should have found at least one AutomatedTask"
         self.assertEquals(tasks, [self.task], msg)
 
         root = self.empty_task_container
         tasks = task_config.query_task_instances(root, the_objects=True)
-        msg = "Should not have found any ScheduleTask"
+        msg = "Should not have found any AutomatedTask"
         self.assertEquals(tasks, [], msg)
 
     def test_get_task(self):
@@ -298,6 +320,85 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         # round trip test
         msg = "The TaskConfig of the task found should be the original one"
         self.assertEquals(task_found.get_task_config(), task_config, msg)
+
+    def test_get_created_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig if it is in the state 'created'.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        task_found = task_config.get_created_task(task_container)
+        self.assertEquals(task_found, task)
+
+    def test_get_started_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig if it is in the state 'created'.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # so far nothing should be found
+        task_found = task_config.get_started_task(task_container)
+        self.assertFalse(task_found)
+
+        # start the task
+        api.content.transition(obj=task, transition='do_to_assign')
+
+        task_found = task_config.get_started_task(task_container)
+        msg = "should have found the started task"
+        self.assertEquals(task_found, task, msg)
+
+    def test_get_open_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig if it is in the state 'created' or 'to_do'.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        task_found = task_config.get_open_task(task_container)
+        msg = "should have found the created task"
+        self.assertEquals(task_found, task, msg)
+
+        # start the task
+        api.content.transition(obj=task, transition='do_to_assign')
+
+        task_found = task_config.get_open_task(task_container)
+        msg = "should have found the started task"
+        self.assertEquals(task_found, task, msg)
+
+        # close the task
+        task_config.end_task(task)
+
+        task_found = task_config.get_open_task(task_container)
+        msg = "should not have found the closed task"
+        self.assertFalse(task_found, msg)
+
+    def test_get_closed_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig if it is in the state 'closed'.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # so far nothing should be found
+        task_found = task_config.get_closed_task(task_container)
+        self.assertFalse(task_found)
+
+        # close the task
+        task_config.end_task(task)
+
+        task_found = task_config.get_closed_task(task_container)
+        msg = "should have found the closed task"
+        self.assertEquals(task_found, task, msg)
 
     def test_task_already_exists(self):
         """
@@ -405,6 +506,47 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         msg = "Task should not be ended because the ending state does not match container state"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
+    def test_create_task(self):
+        """
+        Should create a task.
+        """
+        task_container = self.empty_task_container
+        task_config = self.task_config
+
+        created_task = task_config.create_task(task_container)
+
+        self.assertTrue(isinstance(created_task, AutomatedTask))
+
+    def test_start_task(self):
+        """
+        Should start a task.
+        """
+        task_config = self.task_config
+        task = self.task
+
+        msg = "task should not be started yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+        task_config.start_task(task)
+
+        msg = "task should have been started"
+        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+
+    def test_end_task(self):
+        """
+        Should end a task.
+        """
+        task_config = self.task_config
+        task = self.task
+
+        msg = "task should not be ended yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+        task_config.end_task(task)
+
+        msg = "task should have been ended"
+        self.assertEquals(api.content.get_state(task), 'closed', msg)
+
     def test_compute_due_date(self):
         """
         Due date should be the date computed by the adapter of
@@ -425,63 +567,6 @@ class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):
     """
     Test TaskConfig methods.
     """
-
-    def test_get_open_task(self):
-        """
-        Should return the unique Task of task_container created from
-        this TaskConfig only if it is still open.
-        """
-        task_config = self.task_config
-        task_container = self.task_container
-        task = self.task
-
-        # normal case
-        task_found = task_config.get_open_task(task_container)
-        self.assertEquals(task_found, task)
-        msg = "Task found should not be on 'closed' state"
-        task_state = api.content.get_state(task_found)
-        self.assertNotEquals(task_state, 'closed', msg)
-
-        # round trip test
-        msg = "The TaskConfig of the task found should be the original one"
-        self.assertEquals(task_found.get_task_config(), task_config, msg)
-
-        # close the task, get_open_task should not find it
-        task_config.end_task(task)
-        task_state = api.content.get_state(task)
-        self.assertEquals(task_state, 'closed')
-        task_found = task_config.get_open_task(task_container)
-        msg = 'No task should have been found'
-        self.assertEquals(task_found, None, msg)
-
-    def test_get_closed_task(self):
-        """
-        Should return the unique Task of task_container created from
-        this TaskConfig only if it is closed.
-        """
-        task_config = self.task_config
-        task_container = self.task_container
-        task = self.task
-
-        # the task is not closed, nothing should be found yet
-        task_state = api.content.get_state(task)
-        self.assertNotEquals(task_state, 'closed')
-        task_found = task_config.get_closed_task(task_container)
-        msg = 'No task should have been found'
-        self.assertEquals(task_found, None, msg)
-
-        # close the task
-        task_config.end_task(task)
-        # normal case
-        task_found = task_config.get_closed_task(task_container)
-        self.assertEquals(task_found, task)
-        msg = "Task found should be on 'closed' state"
-        task_state = api.content.get_state(task_found)
-        self.assertEquals(task_state, 'closed', msg)
-
-        # round trip test
-        msg = "The TaskConfig of the task found should be the original one"
-        self.assertEquals(task_found.get_task_config(), task_config, msg)
 
     def test_end_task(self):
         """
@@ -512,7 +597,7 @@ class TestMacroTaskConfig(unittest.TestCase):
         self.assertTrue('MacroTaskConfig' in registered_types)
 
 
-class TestMacroTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
+class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase):
     """
     Test MacroTaskConfig methods.
     """
@@ -529,33 +614,50 @@ class TestMacroTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         msg = "MacroTaskConfig should inherits BaseTaskConfig"
         self.assertTrue(issubclass(MacroTaskConfig, BaseTaskConfig), msg)
 
+    def test_get_task_type(self):
+        """
+        Should return 'AutomatedMacroTask'
+        """
+        task_type = self.macrotask_config.get_task_type()
+        expected_type = 'AutomatedMacroTask'
+        self.assertEquals(task_type, expected_type)
+
+    def test_is_main_taskconfig(self):
+        """
+        Tells wheter a task config is a subtaskconfig or not
+        """
+        msg = "this macrotask config should be considered as a main task config"
+        self.assertTrue(self.macrotask_config.is_main_taskconfig(), msg)
+        msg = "this subtask config should not be considered as a main task config"
+        self.assertFalse(self.subtask_config.is_main_taskconfig(), msg)
+
     def test_should_end_task(self):
         """
-        Should return 'ScheduleTask'
+        Test different cases for the 'should_end_task' method.
         """
-        task_config = self.task_config
+        macrotask_config = self.macrotask_config
+        subtask_config = self.subtask_config
         task_container = self.task_container
-        task = self.task
-
-        # task container state is different from the states selected on
-        # task_config 'ending_states' => task should not end
-        msg = "Task should not be ended because the ending state does not match container state"
-        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+        macrotask = self.macro_task
+        subtask = self.sub_task
 
         # normal case
         api.content.transition(obj=task_container, transition='publish')
-        msg = "Task should be ended"
-        end = task_config.should_end_task(task_container, task)
+
+        msg = "SubTask should be ended"
+        end = subtask_config.should_end_task(task_container, macrotask)
         self.assertTrue(end, msg)
 
-        # set the task_config field 'end_conditions' with a negative condition
-        # => task should not end
-        task_config.end_conditions = ('schedule.negative_end_condition',)
-        msg = "Task should not be ended because the end condition is not matched"
-        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+        msg = "MacroTask should be ended"
+        end = macrotask_config.should_end_task(task_container, subtask)
+        self.assertTrue(end, msg)
 
-        # set the task_config ending_states field to a state different from
-        # the task_container state => task should not end
-        task_config.ending_states = ('pending',)
-        msg = "Task should not be ended because the ending state does not match container state"
-        self.assertFalse(task_config.should_end_task(task_container, task), msg)
+        # re open the subtask => the macro task should not be ended as long
+        # the subtask is open
+
+        api.content.transition(obj=subtask, transition='back_in_realized')
+        self.assertFalse(subtask.is_done())
+
+        msg = "MacroTask should not be ended as long its subtask is open"
+        end = macrotask_config.should_end_task(task_container, subtask)
+        self.assertFalse(end, msg)

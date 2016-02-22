@@ -140,3 +140,9 @@ class TaskConfigNotFound(Exception):
     """
     Raised when a TaskConfig is not found.
     """
+
+
+class TaskAlreadyExists(Exception):
+    """
+    Raised when a Task already exists.
+    """

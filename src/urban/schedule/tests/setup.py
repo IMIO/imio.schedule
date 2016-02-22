@@ -140,7 +140,7 @@ def add_schedule_config(context):
 def add_task(context):
     """
     Add dummy task container (ATFolder) and create
-    a ScheduleTask in it
+    a AutomatedTask in it
     """
     site = api.portal.get()
 
@@ -155,11 +155,11 @@ def add_task(context):
     task_container = getattr(site, task_container_id)
 
     # If no task was created automatically, create the task manually
-    # to keep ScheduleTask tests alive
+    # to keep AutomatedTask tests alive
     task_id = 'TASK_test_taskconfig'
     if task_id not in task_container.objectIds():
         portal_types = api.portal.get_tool('portal_types')
-        type_info = portal_types.getTypeInfo('ScheduleTask')
+        type_info = portal_types.getTypeInfo('AutomatedTask')
         schedule_config = site.config.test_scheduleconfig
         task_config = schedule_config.test_taskconfig
 
@@ -171,18 +171,36 @@ def add_task(context):
             task_config_UID=task_config.UID()
         )
 
-    # If no task was created automatically, create the task manually
-    # to keep ScheduleMacroTask tests alive
+    # If no task was created automatically, create the macrotask manually
+    # to keep AutomatedMacroTask tests alive
     macrotask_id = 'TASK_test_macrotaskconfig'
     if macrotask_id not in task_container.objectIds():
         portal_types = api.portal.get_tool('portal_types')
-        type_info = portal_types.getTypeInfo('ScheduleMacroTask')
+        type_info = portal_types.getTypeInfo('AutomatedMacroTask')
         schedule_config = site.config.test_scheduleconfig
         task_config = schedule_config.test_macrotaskconfig
 
         type_info._constructInstance(
             container=task_container,
             id=macrotask_id,
+            title=task_config.Title(),
+            schedule_config_UID=schedule_config.UID(),
+            task_config_UID=task_config.UID()
+        )
+    macro_task = getattr(task_container, macrotask_id)
+
+    # If no task was created automatically, create the subtask manually
+    # to keep AutomatedMacroTask tests alive
+    subtask_id = 'TASK_test_subtaskconfig'
+    if subtask_id not in macro_task.objectIds():
+        portal_types = api.portal.get_tool('portal_types')
+        type_info = portal_types.getTypeInfo('AutomatedTask')
+        schedule_config = site.config.test_scheduleconfig
+        task_config = schedule_config.test_macrotaskconfig.test_subtaskconfig
+
+        type_info._constructInstance(
+            container=macro_task,
+            id=subtask_id,
             title=task_config.Title(),
             schedule_config_UID=schedule_config.UID(),
             task_config_UID=task_config.UID()

@@ -28,3 +28,9 @@ def create_new_tasks(task_container, event):
         if config.is_main_taskconfig():
             if config.should_create_task(task_container):
                 config.create_task(task_container)
+        # case of a sub-task creation, the parent should have been created first
+        else:
+            macro_config = config.getParentNode()
+            parent_task = macro_config.get_open_task(task_container)
+            if parent_task and config.should_create_task(task_container):
+                config.create_task(task_container, creation_place=parent_task)

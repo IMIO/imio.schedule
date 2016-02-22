@@ -12,15 +12,15 @@ from urban.schedule.interfaces import TaskConfigNotFound
 from zope.interface import implements
 
 
-class IScheduleTask(ITask):
+class IAutomatedTask(ITask):
     """
-    ScheduleTask dexterity schema.
+    AutomatedTask dexterity schema.
     """
 
 
-class BaseScheduleTask(object):
+class BaseAutomatedTask(object):
     """
-    Base class for ScheduleTask content types.
+    Base class for AutomatedTask content types.
     """
 
     task_config_UID = ''
@@ -31,7 +31,7 @@ class BaseScheduleTask(object):
         Return the task container.
         """
         container = self
-        while IScheduleTask.providedBy(container):
+        while IAutomatedTask.providedBy(container):
             container = container.getParentNode()
 
         return container
@@ -71,18 +71,18 @@ class BaseScheduleTask(object):
         return closed
 
 
-class ScheduleTask(Item, BaseScheduleTask):
+class AutomatedTask(Item, BaseAutomatedTask):
     """
     """
 
-    implements(IScheduleTask)
+    implements(IAutomatedTask)
 
 
-class ScheduleMacroTask(Container, BaseScheduleTask):
+class AutomatedMacroTask(Container, BaseAutomatedTask):
     """
     """
 
-    implements(IScheduleTask)
+    implements(IAutomatedTask)
 
     def get_subtasks(self):
         """

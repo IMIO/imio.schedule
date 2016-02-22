@@ -2,10 +2,10 @@
 
 from plone.indexer import indexer
 
-from urban.schedule.content.task import IScheduleTask
+from urban.schedule.content.task import IAutomatedTask
 
 
-@indexer(IScheduleTask)
+@indexer(IAutomatedTask)
 def schedule_config_UID(task):
     """
     Return the ScheduleConfig UID of this task.
@@ -13,7 +13,7 @@ def schedule_config_UID(task):
     return task.schedule_config_UID
 
 
-@indexer(IScheduleTask)
+@indexer(IAutomatedTask)
 def task_config_UID(task):
     """
     Return the TaskConfig UID of this task.

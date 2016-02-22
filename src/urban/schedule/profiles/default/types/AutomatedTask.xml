@@ -1,19 +1,15 @@
 <?xml version="1.0"?>
-<object name="ScheduleMacrotask" meta_type="Dexterity FTI" i18n:domain="urban.schedule"
+<object name="AutomatedTask" meta_type="Dexterity FTI" i18n:domain="urban.schedule"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">ScheduleMacrotask</property>
- <property name="description" i18n:translate="">Schedulable Macrotask</property>
+ <property name="title" i18n:translate="">AutomatedTask</property>
+ <property name="description" i18n:translate="">Schedulable Task</property>
  <property name="icon_expr">string:${portal_url}/folder_icon.png</property>
- <property name="factory">ScheduleMacrotask</property>
+ <property name="factory">AutomatedTask</property>
  <property
-    name="add_view_expr">string:${folder_url}/++add++ScheduleMacrotask</property>
+    name="add_view_expr">string:${folder_url}/++add++AutomatedTask</property>
  <property name="link_target"></property>
  <property name="immediate_view">view</property>
  <property name="global_allow">False</property>
- <property name="filter_content_types">True</property>
- <property name="allowed_content_types">
-  <element value="ScheduleMacrotask"/>
- </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">view</property>
  <property name="view_methods">
@@ -21,12 +17,12 @@
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">urban.schedule.content.task.ScheduleMacroTask</property>
+ <property name="klass">urban.schedule.content.task.AutomatedTask</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
  </property>
- <property name="schema">urban.schedule.content.task.IScheduleTask</property>
+ <property name="schema">urban.schedule.content.task.IAutomatedTask</property>
  <property name="schema_policy">dexterity</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>

@@ -188,7 +188,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
 
 class TestMacroTaskVocabularies(MacroTaskScheduleIntegrationTestCase):
     """
-    Test ScheduleMacroTask field vocabularies registration and values.
+    Test AutomatedMacroTask field vocabularies registration and values.
     """
 
     def test_macrotask_creation_conditions_vocabulary_factory_registration(self):

@@ -12,7 +12,7 @@ class TestIndexes(ExampleScheduleIntegrationTestCase):
 
     def test_schedule_config_UID_index(self):
         """
-        Content types voc factory should be registered as a named utility.
+        Check is schedule config UID is indexed in tasks.
         """
         schedule_config = self.schedule_config
         task = self.task
@@ -25,7 +25,7 @@ class TestIndexes(ExampleScheduleIntegrationTestCase):
 
     def test_task_config_UID_index(self):
         """
-        Content types voc factory should be registered as a named utility.
+        Check is task config UID is indexed in tasks.
         """
         task_config = self.task_config
         task = self.task

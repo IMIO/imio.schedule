@@ -6,12 +6,13 @@ from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from urban.schedule import _
-from urban.schedule.content.task import IScheduleTask
+from urban.schedule.content.task import IAutomatedTask
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import ICreationCondition
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IStartDate
+from urban.schedule.interfaces import TaskAlreadyExists
 
 from zope import schema
 from zope.component import getAdapter
@@ -45,7 +46,7 @@ class ITaskConfig(model.Schema):
     )
 
     creation_conditions = schema.List(
-        title=_(u'Start conditions'),
+        title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
         value_type=schema.Choice(source='schedule.creation_conditions'),
         required=True,
@@ -115,7 +116,7 @@ class BaseTaskConfig(object):
         """
         return self.getParentNode() is self.get_schedule_config()
 
-    def  get_schedule_config(self):
+    def get_schedule_config(self):
         """
         Return the parent ScheduleConfig.
         """
@@ -143,7 +144,7 @@ class BaseTaskConfig(object):
 
     def user_to_assign(self, task_container, task):
         """
-        Returns a default user to assign to the ScheduleTask.
+        Returns a default user to assign to the AutomatedTask.
         """
         # the value could be either the name of an adapter to call or the id
         # of an existing user
@@ -163,13 +164,13 @@ class BaseTaskConfig(object):
 
     def query_task_instances(self, root_container, states=[], the_objects=False):
         """
-        Catalog query to return every ScheduleTask created
+        Catalog query to return every AutomatedTask created
         from this TaskConfig contained in 'root_container'.
         """
         catalog = api.portal.get_tool('portal_catalog')
 
         query = {
-            'object_provides': IScheduleTask.__identifier__,
+            'object_provides': IAutomatedTask.__identifier__,
             'path': {'query': '/'.join(root_container.getPhysicalPath())},
             'task_config_UID': self.UID()
         }
@@ -185,7 +186,7 @@ class BaseTaskConfig(object):
 
     def get_task(self, task_container):
         """
-        Return the unique ScheduleTask object created from this
+        Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists.
         """
         tasks = self.query_task_instances(task_container)
@@ -194,7 +195,7 @@ class BaseTaskConfig(object):
 
     def get_created_task(self, task_container):
         """
-        Return the unique ScheduleTask object created from this
+        Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is not started yet..
         """
         tasks = self.query_task_instances(
@@ -206,7 +207,7 @@ class BaseTaskConfig(object):
 
     def get_started_task(self, task_container):
         """
-        Return the unique ScheduleTask object created from this
+        Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is started.
         """
         tasks = self.query_task_instances(
@@ -218,7 +219,7 @@ class BaseTaskConfig(object):
 
     def get_open_task(self, task_container):
         """
-        Return the unique ScheduleTask object created from this
+        Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is not closed yet.
         """
         tasks = self.query_task_instances(
@@ -230,7 +231,7 @@ class BaseTaskConfig(object):
 
     def get_closed_task(self, task_container):
         """
-        Return the unique ScheduleTask object created from this
+        Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is closed.
         """
         tasks = self.query_task_instances(
@@ -382,20 +383,21 @@ class BaseTaskConfig(object):
         """
         task_id = 'TASK_{}'.format(self.id)
 
-        if not task_id in creation_place.objectIds():
+        if task_id in creation_place.objectIds():
+            raise TaskAlreadyExists(task_id)
 
-            task_portal_type = self.get_task_type()
-            portal_types = api.portal.get_tool('portal_types')
-            type_info = portal_types.getTypeInfo(task_portal_type)
+        task_portal_type = self.get_task_type()
+        portal_types = api.portal.get_tool('portal_types')
+        type_info = portal_types.getTypeInfo(task_portal_type)
 
-            task = type_info._constructInstance(
-                container=creation_place,
-                id=task_id,
-                title=self.Title(),
-                schedule_config_UID=self.get_schedule_config().UID(),
-                task_config_UID=self.UID(),
-            )
-            return task
+        task = type_info._constructInstance(
+            container=creation_place,
+            id=task_id,
+            title=self.Title(),
+            schedule_config_UID=self.get_schedule_config().UID(),
+            task_config_UID=self.UID(),
+        )
+        return task
 
 
 class TaskConfig(Item, BaseTaskConfig):
@@ -409,7 +411,7 @@ class TaskConfig(Item, BaseTaskConfig):
         """
         Return the content type of task to create.
         """
-        return 'ScheduleTask'
+        return 'AutomatedTask'
 
     def create_task(self, task_container, creation_place=None):
         """
@@ -417,8 +419,10 @@ class TaskConfig(Item, BaseTaskConfig):
         """
         creation_place = creation_place or task_container
         task = self._create_task_instance(creation_place)
+
         task.due_date = self.compute_due_date(task_container, task)
         task.assigned_user = self.user_to_assign(task_container, task)
+
         return task
 
 
@@ -428,7 +432,7 @@ class IMacroTaskConfig(ITaskConfig):
     """
 
     creation_conditions = schema.List(
-        title=_(u'Start conditions'),
+        title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
         value_type=schema.Choice(source='schedule.macrotask_creation_conditions'),
         required=True,
@@ -492,7 +496,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         Return the content type of task to create.
         """
-        return 'ScheduleMacroTask'
+        return 'AutomatedMacroTask'
 
     def get_subtask_configs(self):
         """

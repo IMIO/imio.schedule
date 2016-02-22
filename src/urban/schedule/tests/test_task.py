@@ -9,45 +9,45 @@ from plone import api
 import unittest
 
 
-class TestScheduleTask(unittest.TestCase):
+class TestAutomatedTask(unittest.TestCase):
     """
-    Test ScheduleTask content type.
+    Test AutomatedTask content type.
     """
 
     layer = TEST_INSTALL_INTEGRATION
 
-    def test_ScheduleTask_portal_type_is_registered(self):
+    def test_AutomatedTask_portal_type_is_registered(self):
         portal_types = api.portal.get_tool('portal_types')
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('ScheduleTask' in registered_types)
+        self.assertTrue('AutomatedTask' in registered_types)
 
 
-class TestScheduleTaskFields(ExampleScheduleIntegrationTestCase):
+class TestAutomatedTaskFields(ExampleScheduleIntegrationTestCase):
     """
     Test schema fields declaration.
     """
 
     def test_class_registration(self):
         """
-        Check if the class of the content type ScheduleTask is the
+        Check if the class of the content type AutomatedTask is the
         correct one.
         """
-        from urban.schedule.content.task import ScheduleTask
-        self.assertTrue(self.task.__class__ == ScheduleTask)
+        from urban.schedule.content.task import AutomatedTask
+        self.assertTrue(self.task.__class__ == AutomatedTask)
 
     def test_schema_registration(self):
         """
-        Check if the schema Interface of the content type ScheduleTask is the
+        Check if the schema Interface of the content type AutomatedTask is the
         correct one.
         """
         portal_types = api.portal.get_tool('portal_types')
         taskconfig_type = portal_types.get(self.task.portal_type)
-        self.assertTrue('IScheduleTask' in taskconfig_type.schema)
+        self.assertTrue('IAutomatedTask' in taskconfig_type.schema)
 
 
-class TestScheduleTaskIntegration(ExampleScheduleIntegrationTestCase):
+class TestAutomatedTaskIntegration(ExampleScheduleIntegrationTestCase):
     """
-    Test ScheduleTask methods.
+    Test AutomatedTask methods.
     """
 
     def test_get_task_config(self):
@@ -59,45 +59,45 @@ class TestScheduleTaskIntegration(ExampleScheduleIntegrationTestCase):
         self.assertEquals(config, expected_config)
 
 
-class TestScheduleMacroTask(unittest.TestCase):
+class TestAutomatedMacroTask(unittest.TestCase):
     """
-    Test ScheduleMacroTask content type.
+    Test AutomatedMacroTask content type.
     """
 
     layer = TEST_INSTALL_INTEGRATION
 
-    def test_ScheduleMacroTask_portal_type_is_registered(self):
+    def test_AutomatedMacroTask_portal_type_is_registered(self):
         portal_types = api.portal.get_tool('portal_types')
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('ScheduleMacroTask' in registered_types)
+        self.assertTrue('AutomatedMacroTask' in registered_types)
 
 
-class TestScheduleMacroTaskFields(MacroTaskScheduleIntegrationTestCase):
+class TestAutomatedMacroTaskFields(MacroTaskScheduleIntegrationTestCase):
     """
     Test schema fields declaration.
     """
 
     def test_class_registration(self):
         """
-        Check if the class of the content type ScheduleMacroTask is the
+        Check if the class of the content type AutomatedMacroTask is the
         correct one.
         """
-        from urban.schedule.content.task import ScheduleMacroTask
-        self.assertTrue(self.macro_task.__class__ == ScheduleMacroTask)
+        from urban.schedule.content.task import AutomatedMacroTask
+        self.assertTrue(self.macro_task.__class__ == AutomatedMacroTask)
 
     def test_schema_registration(self):
         """
-        Check if the schema Interface of the content type ScheduleMacroTask is the
+        Check if the schema Interface of the content type AutomatedMacroTask is the
         correct one.
         """
         portal_types = api.portal.get_tool('portal_types')
         taskconfig_type = portal_types.get(self.macro_task.portal_type)
-        self.assertTrue('IScheduleTask' in taskconfig_type.schema)
+        self.assertTrue('IAutomatedTask' in taskconfig_type.schema)
 
 
-class TestScheduleMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):
+class TestAutomatedMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):
     """
-    Test ScheduleMacroTask methods.
+    Test AutomatedMacroTask methods.
     """
 
     def test_get_task_config(self):

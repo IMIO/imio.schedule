@@ -224,9 +224,11 @@ class MacroTaskScheduleTestBase(BrowserTest):
         # only keep macro tasks
         self.schedule_config = self.portal.config.test_scheduleconfig
         self.macrotask_config = self.schedule_config.test_macrotaskconfig
+        self.subtask_config = self.macrotask_config.test_subtaskconfig
         self.empty_task_container = self.portal.test_empty_taskcontainer
         self.task_container = self.portal.test_taskcontainer
         self.macro_task = self.task_container.TASK_test_macrotaskconfig
+        self.sub_task = self.macro_task.TASK_test_subtaskconfig
 
         # commit to save the setup in the tests.
         transaction.commit()

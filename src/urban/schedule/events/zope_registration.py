@@ -33,6 +33,7 @@ def subscribe_task_configs_for_content_type(task_config, event):
     """
 
     gsm = getGlobalSiteManager()
+    task_config_UID = task_config.UID()
 
     class TaskConfigSubscriber(object):
         """ """
@@ -41,7 +42,7 @@ def subscribe_task_configs_for_content_type(task_config, event):
         def __init__(self, context):
             """ """
             self.context = context
-            self.task_config_UID = task_config.UID()
+            self.task_config_UID = task_config_UID
 
         @property
         def task_config(self):
