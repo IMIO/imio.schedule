@@ -73,7 +73,7 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
 
         api.content.delete(self.schedule_config)
         with self.assertRaises(ScheduleConfigNotFound):
-            task.get_task_config()
+            task.get_schedule_config()
 
     def test_get_task_config(self):
         """
