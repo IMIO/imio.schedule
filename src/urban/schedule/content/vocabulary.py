@@ -95,7 +95,7 @@ class ScheduledContentTypeVocabulary(object):
 
     def __call__(self):
         """
-        Return a vocabulary from a n explicit set content types.
+        Return a vocabulary from an explicit set content types.
         """
 
         voc_terms = []
@@ -115,7 +115,7 @@ class ScheduledContentTypeVocabulary(object):
     def content_types(self):
         """
         To override.
-        Explicitely efine here the content types alowed in the field
+        Explicitely define here the content types allowed in the field
         'scheduled_contenttype'
 
         eg:
@@ -192,31 +192,6 @@ class ContainerStateVocabularyFactory(object):
         voc_terms = [
             SimpleTerm(state_id, state_id, translate(state.title, 'plone', context=request))
             for state_id, state in workfow.states.items()
-        ]
-
-        vocabulary = SimpleVocabulary(voc_terms)
-
-        return vocabulary
-
-
-class TaskSimpleStatesVocabularyFactory(object):
-    """
-    Vocabulary factory listing a simplifed version of the real
-    task workflow into 3 simpler states:
-        - Created (created, to_assign)
-        - To do (to_do, realized)
-        - Ended (closed)
-    """
-
-    def __call__(self, context):
-        """
-        Call the adapter vocabulary for the 'container_state' field
-        and returns it.
-        """
-        voc_terms = [
-            SimpleTerm('created', 'created', _('Created')),
-            SimpleTerm('to_do', 'to_do', _('To do')),
-            SimpleTerm('closed', 'closed', _('Ended')),
         ]
 
         vocabulary = SimpleVocabulary(voc_terms)

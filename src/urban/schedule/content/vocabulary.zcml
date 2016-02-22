@@ -31,13 +31,6 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
-    <!-- Task simple states Vocabulary -->
-    <utility
-        factory=".vocabulary.TaskSimpleStatesVocabularyFactory"
-        name="schedule.task_simple_states"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-    />
-
     <!-- TaskConfig 'creation_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.CreationConditionVocabularyFactory"
