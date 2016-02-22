@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from urban.schedule.interfaces import ScheduleConfigNotFound
+from urban.schedule.interfaces import TaskConfigNotFound
+from urban.schedule.testing import ExampleScheduleFunctionalTestCase
 from urban.schedule.testing import ExampleScheduleIntegrationTestCase
 from urban.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from urban.schedule.testing import TEST_INSTALL_INTEGRATION
@@ -45,7 +48,7 @@ class TestAutomatedTaskFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('IAutomatedTask' in taskconfig_type.schema)
 
 
-class TestAutomatedTaskIntegration(ExampleScheduleIntegrationTestCase):
+class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
     """
     Test AutomatedTask methods.
     """
@@ -62,17 +65,29 @@ class TestAutomatedTaskIntegration(ExampleScheduleIntegrationTestCase):
         """
         Should return the schedule config of the task.
         """
-        schedule_config = self.task.get_schedule_config()
+        task = self.task
+
+        schedule_config = task.get_schedule_config()
         expected_config = self.schedule_config
         self.assertEquals(schedule_config, expected_config)
+
+        api.content.delete(self.schedule_config)
+        with self.assertRaises(ScheduleConfigNotFound):
+            task.get_task_config()
 
     def test_get_task_config(self):
         """
         Should return the associated TaskConfig.
         """
-        config = self.task.get_task_config()
+        task = self.task
+
+        config = task.get_task_config()
         expected_config = self.task_config
         self.assertEquals(config, expected_config)
+
+        api.content.delete(self.task_config)
+        with self.assertRaises(TaskConfigNotFound):
+            task.get_task_config()
 
 
 class TestAutomatedMacroTask(unittest.TestCase):
