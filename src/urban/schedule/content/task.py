@@ -70,6 +70,22 @@ class BaseAutomatedTask(object):
         closed = api.content.get_state(self) == 'closed'
         return closed
 
+    def end_conditions_status(self):
+        """
+        Return a list of all conditions status of this
+        task(True if the condition is matched).
+        eg:
+        [
+            (condition_name_1, True),
+            (condition_name_2, True),
+            (condition_name_3, False),
+        ]
+        """
+        task_config = self.get_task_config()
+        container = self.get_container()
+        status = task_config.end_conditions_status(container, self)
+        return status
+
 
 class AutomatedTask(Item, BaseAutomatedTask):
     """

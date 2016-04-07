@@ -1,0 +1,20 @@
+
+td.td_cell_due_date {
+    text-align: center;
+}
+
+td.td_cell_status {
+    text-align: center;
+}
+
+span.schedule_created {
+    background-color: #6AD7FC;
+}
+
+span.schedule_to_do {
+    background-color: yellow;
+}
+
+span.schedule_closed {
+    background-color: #75AD0A;
+}

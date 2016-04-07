@@ -40,7 +40,6 @@ class CreationCondition(TaskCreationCondition):
     def evaluate(self):
         """
         To override.
-        Do something with task_container and **kwargs to
         evaluate if the condition is True or False
         """
 
@@ -55,7 +54,6 @@ class StartCondition(Condition):
     def evaluate(self):
         """
         To override.
-        Do something with task_container and **kwargs to
         evaluate if the condition is True or False
         """
 
@@ -67,10 +65,9 @@ class EndCondition(Condition):
 
     implements(IEndCondition)
 
-    def evaluate(self, task):
+    def evaluate(self):
         """
         To override.
-        Do something with task, task_container and **kwargs to
         evaluate if the condition is True or False
         """
 
@@ -85,7 +82,6 @@ class MacroTaskCreationCondition(TaskCreationCondition):
     def evaluate(self):
         """
         To override.
-        Do something with task_container and **kwargs to
         evaluate if the condition is True or False
         """
 
@@ -100,7 +96,6 @@ class MacroTaskStartCondition(Condition):
     def evaluate(self):
         """
         To override.
-        Do something with task_container and **kwargs to
         evaluate if the condition is True or False
         """
 
@@ -112,10 +107,9 @@ class MacroTaskEndCondition(Condition):
 
     implements(IMacroTaskEndCondition)
 
-    def evaluate(self, task):
+    def evaluate(self):
         """
         To override.
-        Do something with task, task_container and **kwargs to
         evaluate if the condition is True or False
         """
 

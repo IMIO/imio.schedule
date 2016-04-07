@@ -7,6 +7,7 @@ from plone.supermodel import model
 
 from urban.schedule import _
 from urban.schedule.content.task import IAutomatedTask
+from urban.schedule.interfaces import IDefaultTaskGroup
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import ICreationCondition
 from urban.schedule.interfaces import IEndCondition
@@ -15,7 +16,6 @@ from urban.schedule.interfaces import IStartDate
 from urban.schedule.interfaces import TaskAlreadyExists
 
 from zope import schema
-from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import implements
@@ -28,6 +28,13 @@ class ITaskConfig(model.Schema):
     enabled = schema.Bool(
         title=_(u'Enabled'),
         default=True,
+        required=False,
+    )
+
+    default_assigned_group = schema.Choice(
+        title=_(u'Assigned group'),
+        description=_(u'Select default group assigned to this task.'),
+        vocabulary='schedule.assigned_group',
         required=False,
     )
 
@@ -142,6 +149,27 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_interface()
 
+    def group_to_assign(self, task_container, task):
+        """
+        Returns a default group to assign to the AutomatedTask.
+        """
+        # the value could be either the name of an adapter to call or the id
+        # of an existing group
+        group_id = self.default_assigned_group
+        # try to get the adapter named 'group_id'
+        default_group = None
+        assign_group = queryMultiAdapter(
+            (task_container, task),
+            IDefaultTaskGroup,
+            name=group_id
+        )
+        if assign_group:
+            default_group = assign_group.group_id()
+
+        # if no group was found use group_id
+        group_id = default_group or group_id
+        return group_id
+
     def user_to_assign(self, task_container, task):
         """
         Returns a default user to assign to the AutomatedTask.
@@ -150,6 +178,7 @@ class BaseTaskConfig(object):
         # of an existing user
         user_id = self.default_assigned_user
         # try to get the adapter named 'user_id'
+        default_user = None
         assign_user = queryMultiAdapter(
             (task_container, task),
             IDefaultTaskUser,
@@ -247,6 +276,17 @@ class BaseTaskConfig(object):
         """
         return self.query_task_instances(task_container)
 
+    def evaluate_one_condition(self, to_adapt, interface, name):
+        """
+        """
+        condition = getMultiAdapter(
+            to_adapt,
+            interface=interface,
+            name=name
+        )
+        value = condition.evaluate()
+        return value
+
     def should_create_task(self, task_container):
         """
         Evaluate:
@@ -269,12 +309,12 @@ class BaseTaskConfig(object):
 
         # each conditions is matched?
         for condition_name in self.creation_conditions or []:
-            condition = getAdapter(
-                task_container,
+            condition_value = self.evaluate_one_condition(
+                to_adapt=(task_container, self),
                 interface=ICreationCondition,
                 name=condition_name
             )
-            if not condition.evaluate():
+            if not condition_value:
                 return False
 
         return True
@@ -294,12 +334,12 @@ class BaseTaskConfig(object):
 
         # each conditions is matched?
         for condition_name in self.start_conditions or []:
-            condition = getMultiAdapter(
-                (task_container, task),
+            condition_value = self.evaluate_one_condition(
+                to_adapt=(task_container, task),
                 interface=IStartCondition,
                 name=condition_name
             )
-            if not condition.evaluate():
+            if not condition_value:
                 return False
 
         return True
@@ -317,17 +357,45 @@ class BaseTaskConfig(object):
         if api.content.get_state(task_container) not in (self.ending_states or []):
             return False
 
-        # each conditions is matched?
-        for condition_name in self.end_conditions or []:
-            condition = getMultiAdapter(
-                (task_container, task),
-                interface=IEndCondition,
-                name=condition_name
-            )
-            if not condition.evaluate():
-                return False
+        if not self.match_all_end_conditions(task_container, task):
+            return False
 
         return True
+
+    def match_all_end_conditions(self, task_container, task):
+        """
+        """
+        for condition_name in self.end_conditions or []:
+            value = self.evaluate_one_condition(
+                to_adapt=(task_container, task),
+                interface=IEndCondition,
+                name=condition_name,
+            )
+            if not value:
+                return False
+
+    def end_conditions_status(self, task_container, task):
+        """
+        Return a list of all conditions status for a given task
+        and task container (True if the condition is matched).
+        eg:
+        [
+            (condition_name_1, True),
+            (condition_name_2, True),
+            (condition_name_3, False),
+        ]
+        """
+
+        conditions_status = []
+        for condition_name in self.end_conditions or []:
+            value = self.evaluate_one_condition(
+                to_adapt=(task_container, task),
+                interface=IEndCondition,
+                name=condition_name,
+            )
+            conditions_status.append((condition_name, value))
+
+        return conditions_status
 
     def create_task(self, task_container):
         """
@@ -341,7 +409,8 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'created':
             api.content.transition(obj=task, transition='do_to_assign')
         if api.content.get_state(task) == 'to_assign' and task.assigned_user:
-            api.content.transition(obj=task, transition='do_to_do')
+            with api.env.adopt_roles(['Reviewer']):
+                api.content.transition(obj=task, transition='do_to_do')
 
     def end_task(self, task):
         """
@@ -354,7 +423,8 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'to_do':
             api.content.transition(obj=task, transition='do_realized')
         if api.content.get_state(task) == 'realized':
-            api.content.transition(obj=task, transition='do_closed')
+            with api.env.adopt_roles(['Reviewer']):
+                api.content.transition(obj=task, transition='do_closed')
 
     def compute_due_date(self, task_container, task):
         """
@@ -421,7 +491,9 @@ class TaskConfig(Item, BaseTaskConfig):
         task = self._create_task_instance(creation_place)
 
         task.due_date = self.compute_due_date(task_container, task)
+        task.assigned_group = self.group_to_assign(task_container, task)
         task.assigned_user = self.user_to_assign(task_container, task)
+        task.reindexObject(['due_date', 'assigned_group', 'assigned_user'])
 
         return task
 
@@ -516,7 +588,9 @@ class MacroTaskConfig(Container, BaseTaskConfig):
 
         # compute due date only after all substasks are created
         macrotask.due_date = self.compute_due_date(task_container, macrotask)
+        macrotask.assigned_group = self.group_to_assign(task_container, macrotask)
         macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
+        macrotask.reindexObject(['due_date', 'assigned_group', 'assigned_user'])
 
         return macrotask
 

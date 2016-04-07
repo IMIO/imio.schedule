@@ -24,6 +24,14 @@
   <!-- display adapters -->
   <adapter
      for="urban.schedule.dashboard.columns.StatusColum
+          urban.schedule.content.task.AutomatedTask
+          zope.publisher.interfaces.browser.IBrowserRequest"
+     factory=".columns.TaskStatusDisplay"
+     provides="urban.schedule.dashboard.interfaces.IDisplayTaskStatus"
+  />
+
+  <adapter
+     for="urban.schedule.dashboard.columns.StatusColum
           urban.schedule.content.task.AutomatedMacroTask
           zope.publisher.interfaces.browser.IBrowserRequest"
      factory=".columns.MacroTaskStatusDisplay"

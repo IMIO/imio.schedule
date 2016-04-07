@@ -4,7 +4,7 @@ from DateTime import DateTime
 
 from plone import api
 
-from urban.schedule.interfaces import ICreationTaskLogic
+from urban.schedule.interfaces import IDefaultTaskGroup
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import IMacroTaskStartDate
 from urban.schedule.interfaces import IStartDate
@@ -20,10 +20,11 @@ class CreationTaskLogic(object):
     called during the task craetion.
     """
 
-    implements(ICreationTaskLogic)
+    implements(ITaskLogic)
 
-    def __init__(self, task_container):
+    def __init__(self, task_container, task_config):
         self.task_container = task_container
+        self.task_config = task_config
 
 
 class TaskLogic(object):
@@ -37,6 +38,7 @@ class TaskLogic(object):
     def __init__(self, task_container, task=None):
         self.task_container = task_container
         self.task = task
+        self.task_config = task.get_task_config()
 
 
 class StartDate(TaskLogic):
@@ -113,3 +115,18 @@ class AssignCurrentUser(AssignTaskUser):
         user = api.user.get_current()
         user_id = user.getUserName()
         return user_id
+
+
+class AssignTaskGroup(TaskLogic):
+    """
+    Base class for adapters adapting a TaskContainer to return a group to
+    assign to its tasks.
+    Register adapters inheriting this class in the products using
+    urban.schedule and override 'group_id' method.
+    """
+    implements(IDefaultTaskGroup)
+
+    def group_id(self):
+        """
+        To override.
+        """

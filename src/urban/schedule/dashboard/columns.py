@@ -51,6 +51,16 @@ class TaskStatusDisplay(object):
         self.task = task
         self.request = request
 
+    def render(self):
+        """
+        By default just put a code colour of the state of the task.
+        """
+        css_class = 'schedule_{}'.format(api.content.get_state(self.task))
+        status = u'<span class="{css_class}">&nbsp&nbsp&nbsp</span>'.format(
+            css_class=css_class,
+        )
+        return status
+
 
 class MacroTaskStatusDisplay(TaskStatusDisplay):
     """

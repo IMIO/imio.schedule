@@ -17,6 +17,13 @@
       name="ScheduleConfig"
     />
 
+    <!-- TaskConfig 'default_assigned_group' field Vocabulary -->
+    <utility
+        factory=".vocabulary.AssignedGroupVocabularyFactory"
+        name="schedule.assigned_group"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'default_assigned_user' field Vocabulary -->
     <utility
         factory=".vocabulary.AssignedUserVocabularyFactory"

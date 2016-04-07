@@ -3,14 +3,16 @@
     i18n_domain="urban.schedule">
 
     <adapter
-        for="zope.interface.Interface"
+        for="zope.interface.Interface
+             urban.schedule.content.task_config.IMacroTaskConfig"
         provides="urban.schedule.interfaces.IMacroTaskCreationCondition"
         factory=".condition.CreateIfSubtaskCanBeCreated"
         name="schedule.create_if_subtask_can_be_created"
     />
 
     <adapter
-        for="zope.interface.Interface"
+        for="zope.interface.Interface
+             urban.schedule.content.task_config.IMacroTaskConfig"
         provides="urban.schedule.interfaces.IMacroTaskCreationCondition"
         factory=".condition.CreateIfAllSubtasksCanBeCreated"
         name="schedule.create_if_all_subtasks_can_be_created"

@@ -6,6 +6,7 @@ from Products.CMFPlone import PloneMessageFactory
 
 from urban.schedule import _
 from urban.schedule.interfaces import ICreationCondition
+from urban.schedule.interfaces import IDefaultTaskGroup
 from urban.schedule.interfaces import IDefaultTaskUser
 from urban.schedule.interfaces import IEndCondition
 from urban.schedule.interfaces import IMacroTaskCreationCondition
@@ -15,7 +16,7 @@ from urban.schedule.interfaces import IMacroTaskStartDate
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IStartDate
-from urban.schedule.interfaces import ITaskLogic
+from urban.schedule.interfaces import ITaskBaseLogic
 from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
@@ -138,6 +139,39 @@ class ScheduledContentTypeVocabulary(object):
         return (portal_type, interface_to_tuple(interface))
 
 
+class AssignedGroupVocabularyFactory(object):
+    """
+    Vocabulary factory for 'default_assigned_group' field.
+    """
+
+    def __call__(self, context):
+        """
+        Call the adapter vocabulary for the 'default_assigned_group' field
+        Return available groups for a task config.
+        """
+        gsm = getGlobalSiteManager()
+        scheduled_interface = context.get_scheduled_interface()
+
+        voc_terms = []
+        for adapter in gsm.registeredAdapters():
+            implements_IGroup = adapter.provided is IDefaultTaskGroup
+            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                issubclass(scheduled_interface, adapter.required[0])
+            if implements_IGroup and specific_enough:
+                voc_terms.append(
+                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                )
+
+        # enrich the vocabulary with available groups
+        for group in api.group.get_groups():
+            voc_terms.append(
+                SimpleTerm(group.id, group.id, group.getGroupTitleOrName())
+            )
+
+        vocabulary = SimpleVocabulary(voc_terms)
+        return vocabulary
+
+
 class AssignedUserVocabularyFactory(object):
     """
     Vocabulary factory for 'default_assigned_user' field.
@@ -219,7 +253,7 @@ class TaskLogicVocabularyFactory(object):
 
         terms = []
         for adapter in gsm.registeredAdapters():
-            implements_interface = issubclass(adapter.provided, ITaskLogic) and \
+            implements_interface = issubclass(adapter.provided, ITaskBaseLogic) and \
                 issubclass(self.provides_interface, adapter.provided)
             specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
                 issubclass(scheduled_interface, adapter.required[0])

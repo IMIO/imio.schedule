@@ -18,16 +18,16 @@ class IScheduledContentTypeVocabulary(Interface):
 
 class ITaskLogic(Interface):
     """
-    Base interface for all the TaskConfig logic items:
+    Base interface for the following TaskConfig logic items:
         - conditions,
         - date computation
         - user assignment
     """
 
 
-class ICreationTaskLogic(Interface):
+class IDefaultTaskGroup(ITaskLogic):
     """
-    Base interface for all the TaskConfig creation logic items.
+    Adapts a TaskContainer into a plone group to assign to a task.
     """
 
 
@@ -42,11 +42,10 @@ class ICondition(ITaskLogic):
     Condition object adapting a TaskContainer and task.
     """
 
-
-class ITaskCreationCondition(ICreationTaskLogic):
-    """
-    Condition object adapting a TaskContainer.
-    """
+    def evaluate(self):
+        """
+        evaluate if the condition is True or False
+        """
 
 
 class ICreationCondition(ICondition):
@@ -54,23 +53,11 @@ class ICreationCondition(ICondition):
     Creation condition of task.
     """
 
-    def evaluate(self):
-        """
-        Do something with task_container to
-        evaluate if the condition is True or False
-        """
-
 
 class IStartCondition(ICondition):
     """
     Start condition of task.
     """
-
-    def evaluate(self, task):
-        """
-        Do something with task, task_container to
-        evaluate if the condition is True or False
-        """
 
 
 class IEndCondition(ICondition):
@@ -78,24 +65,12 @@ class IEndCondition(ICondition):
     End condition of task.
     """
 
-    def evaluate(self, task):
-        """
-        Do something with task, task_container to
-        evaluate if the condition is True or False
-        """
-
 
 class IStartDate(ITaskLogic):
     """
     Adapts a TaskContainer into the start date used to compute
     the task due date.
     """
-
-    def due_date(self):
-        """
-        Compute a due date from task_container
-        then return it.
-        """
 
 
 class IMacroTaskCreationCondition(ICreationCondition):

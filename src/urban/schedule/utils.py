@@ -77,6 +77,9 @@ def create_tasks_collection(schedule_config, container, id, **kwargs):
         'b_size': 30
     }
 
+    additional_queries = kwargs.pop('query', [])
+    for query in additional_queries:
+        factory_args['query'].append(query)
     factory_args.update(kwargs)
 
     collection_id = container.invokeFactory('DashboardCollection', **factory_args)
