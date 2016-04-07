@@ -3,14 +3,16 @@
     i18n_domain="urban.schedule">
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task_config.ITaskConfig"
         provides="urban.schedule.interfaces.ICreationCondition"
         factory=".condition.TestCreationCondition"
         name="schedule.test_creation_condition"
     />
 
     <adapter
-        for="Products.ATContentTypes.interfaces.IATFolder"
+        for="Products.ATContentTypes.interfaces.IATFolder
+             urban.schedule.content.task_config.ITaskConfig"
         provides="urban.schedule.interfaces.ICreationCondition"
         factory=".condition.TestNegativeCreationCondition"
         name="schedule.negative_creation_condition"

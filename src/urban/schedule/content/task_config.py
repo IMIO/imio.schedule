@@ -373,6 +373,7 @@ class BaseTaskConfig(object):
             )
             if not value:
                 return False
+        return True
 
     def end_conditions_status(self, task_container, task):
         """

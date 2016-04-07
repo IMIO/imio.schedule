@@ -9,7 +9,6 @@ from urban.schedule.interfaces import IMacroTaskCreationCondition
 from urban.schedule.interfaces import IMacroTaskEndCondition
 from urban.schedule.interfaces import IMacroTaskStartCondition
 from urban.schedule.interfaces import IStartCondition
-from urban.schedule.interfaces import ITaskCreationCondition
 
 from zope.interface import implements
 
@@ -22,15 +21,7 @@ class Condition(TaskLogic):
     implements(ICondition)
 
 
-class TaskCreationCondition(CreationTaskLogic):
-    """
-    Base class for TaskConfig creation conditions.
-    """
-
-    implements(ITaskCreationCondition)
-
-
-class CreationCondition(TaskCreationCondition):
+class CreationCondition(CreationTaskLogic):
     """
     Creation condition of a AutomatedTask.
     """
@@ -72,7 +63,7 @@ class EndCondition(Condition):
         """
 
 
-class MacroTaskCreationCondition(TaskCreationCondition):
+class MacroTaskCreationCondition(CreationCondition):
     """
     Creation condition of a AutomatedMacroTask.
     """

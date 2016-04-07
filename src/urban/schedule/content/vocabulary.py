@@ -16,7 +16,7 @@ from urban.schedule.interfaces import IMacroTaskStartDate
 from urban.schedule.interfaces import IScheduledContentTypeVocabulary
 from urban.schedule.interfaces import IStartCondition
 from urban.schedule.interfaces import IStartDate
-from urban.schedule.interfaces import ITaskBaseLogic
+from urban.schedule.interfaces import ITaskLogic
 from urban.schedule.utils import interface_to_tuple
 
 from zope.schema.vocabulary import SimpleTerm
@@ -253,7 +253,7 @@ class TaskLogicVocabularyFactory(object):
 
         terms = []
         for adapter in gsm.registeredAdapters():
-            implements_interface = issubclass(adapter.provided, ITaskBaseLogic) and \
+            implements_interface = issubclass(adapter.provided, ITaskLogic) and \
                 issubclass(self.provides_interface, adapter.provided)
             specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
                 issubclass(scheduled_interface, adapter.required[0])
