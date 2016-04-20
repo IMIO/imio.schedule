@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from urban.schedule.config import CREATION
 from urban.schedule.interfaces import ScheduleConfigNotFound
 from urban.schedule.interfaces import TaskConfigNotFound
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
@@ -88,6 +89,78 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         api.content.delete(self.task_config)
         with self.assertRaises(TaskConfigNotFound):
             task.get_task_config()
+
+    def test_get_status(self):
+        """
+        Should return CREATION, STARTED or DONE depending
+        on the task workflow state.
+        """
+        task = self.task
+        expected_status = CREATION
+        self.assertEquals(task.get_status(), expected_status)
+
+    def test_start_conditions_status(self):
+        """
+        Check that the implementation is delegated to the
+        'start_conditions_status' method of the task config.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        expected_status = task_config.start_conditions_status(task_container, task)
+        status = task.start_conditions_status()
+
+        msg = "implementation should just call the method 'start_conditions_status' from the task config"
+        self.assertTrue(expected_status == status, msg)
+
+    def test_starting_states_status(self):
+        """
+        Should return the following tuple:
+        (task_container state, [starting states of the task])
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        task_container_state, starting_states = task.starting_states_status()
+        self.assertEquals(task_container_state, api.content.get_state(task_container))
+        self.assertEquals(starting_states, task_config.starting_states)
+
+    def test_end_conditions_status(self):
+        """
+        Check that the implementation is delegated to the
+        'end_conditions_status' method of the task config.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        expected_status = task_config.end_conditions_status(task_container, task)
+        status = task.end_conditions_status()
+
+        msg = "implementation should just call the method 'end_conditions_status' from the task config"
+        self.assertTrue(expected_status == status, msg)
+
+    def test_ending_states_status(self):
+        """
+        Should return the following tuple:
+        (task_container state, [ending states of the task])
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        task_container_state, ending_states = task.ending_states_status()
+        self.assertEquals(task_container_state, api.content.get_state(task_container))
+        self.assertEquals(ending_states, task_config.ending_states)
+
+    def test_get_state(self):
+        """
+        Should return the current workflow state of the task.
+        """
+        task = self.task
+        self.assertEquals(task.get_state(), api.content.get_state(task))
 
 
 class TestAutomatedMacroTask(unittest.TestCase):

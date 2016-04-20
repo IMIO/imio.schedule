@@ -71,14 +71,7 @@ class BaseAutomatedTask(object):
 
     def start_conditions_status(self):
         """
-        Return a list of all conditions status of this
-        task(True if the condition is matched).
-        eg:
-        [
-            (condition_name_1, True),
-            (condition_name_2, True),
-            (condition_name_3, False),
-        ]
+        See start_conditions_status of TaskConfig.
         """
         task_config = self.get_task_config()
         container = self.get_container()
@@ -99,14 +92,7 @@ class BaseAutomatedTask(object):
 
     def end_conditions_status(self):
         """
-        Return a list of all conditions status of this
-        task(True if the condition is matched).
-        eg:
-        [
-            (condition_name_1, True),
-            (condition_name_2, True),
-            (condition_name_3, False),
-        ]
+        See end_conditions_status of TaskConfig.
         """
         task_config = self.get_task_config()
         container = self.get_container()
