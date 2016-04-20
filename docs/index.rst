@@ -1,5 +1,5 @@
 ====================
-urban.schedule
+imio.schedule
 ====================
 
 User documentation

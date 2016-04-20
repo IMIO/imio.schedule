@@ -1,0 +1,232 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2016-04-13 12:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: imio.schedule\n"
+
+msgid " is one of the following states"
+msgstr ""
+
+msgid " to one of the following states"
+msgstr ""
+
+#: ../content/task_config.py:102
+msgid "Additional delay"
+msgstr ""
+
+#: ../content/task_config.py:39
+msgid "Assigned group"
+msgstr ""
+
+#: ../content/task_config.py:46
+msgid "Assigned user"
+msgstr ""
+
+#: ../profiles/default/types/AutomatedMacroTask.xml
+msgid "AutomatedMacroTask"
+msgstr ""
+
+#: ../profiles/default/types/AutomatedTask.xml
+msgid "AutomatedTask"
+msgstr ""
+
+#: ../content/task_config.py:60
+msgid "Creation conditions"
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:18
+msgid "Done"
+msgstr ""
+
+#: ../content/schedule_config.py:21
+#: ../content/task_config.py:33
+msgid "Enabled"
+msgstr ""
+
+#: ../content/task_config.py:88
+msgid "End conditions"
+msgstr ""
+
+#: ../configure.zcml:29
+msgid "Installs the imio.schedule add-on."
+msgstr ""
+
+#: ../profiles/default/types/MacroTaskConfig.xml
+msgid "MacroTask configuration."
+msgstr ""
+
+#: ../profiles/default/types/MacroTaskConfig.xml
+msgid "MacroTaskConfig"
+msgstr ""
+
+#: ../profiles/default/types/AutomatedMacroTask.xml
+msgid "Schedulable Macrotask"
+msgstr ""
+
+#: ../profiles/default/types/AutomatedTask.xml
+msgid "Schedulable Task"
+msgstr ""
+
+#: ../profiles/default/types/ScheduleConfig.xml
+msgid "Schedule configuration."
+msgstr ""
+
+#: ../profiles/default/types/ScheduleConfig.xml
+msgid "ScheduleConfig"
+msgstr ""
+
+#: ../content/schedule_config.py:27
+msgid "Scheduled content type"
+msgstr ""
+
+#: ../content/task_config.py:61
+msgid "Select creation conditions of the task"
+msgstr ""
+
+#: ../content/task_config.py:40
+msgid "Select default group assigned to this task."
+msgstr ""
+
+#: ../content/task_config.py:47
+msgid "Select default user assigned to this task."
+msgstr ""
+
+#: ../content/task_config.py:89
+msgid "Select end conditions of the task."
+msgstr ""
+
+#: ../content/task_config.py:75
+msgid "Select start conditions of the task"
+msgstr ""
+
+#: ../content/schedule_config.py:28
+msgid "Select the content type to apply schedule."
+msgstr ""
+
+#: ../content/task_config.py:96
+msgid "Select the start date used to compute the due date."
+msgstr ""
+
+#: ../content/task_config.py:54
+msgid "Select the state of the container where the task is automatically created."
+msgstr ""
+
+#: ../content/task_config.py:68
+msgid "Select the state of the container where the task is automatically started."
+msgstr ""
+
+#: ../content/task_config.py:82
+msgid "Select the states of the container where the task is automatically closed."
+msgstr ""
+
+msgid "Should pass from actual state "
+msgstr ""
+
+#: ../content/task_config.py:74
+msgid "Start conditions"
+msgstr ""
+
+#: ../content/task_config.py:95
+msgid "Start date"
+msgstr ""
+
+msgid "Started tasks"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:37
+msgid "State status"
+msgstr ""
+
+#: ../testing.zcml:16
+msgid "Steps to ease tests of imio.schedule"
+msgstr ""
+
+#: ../profiles/default/types/TaskConfig.xml
+msgid "Task configuration."
+msgstr ""
+
+#: ../content/task_config.py:53
+msgid "Task container creation state"
+msgstr ""
+
+#: ../content/task_config.py:81
+msgid "Task container end states"
+msgstr ""
+
+#: ../content/task_config.py:67
+msgid "Task container start states"
+msgstr ""
+
+#: ../profiles/default/types/TaskConfig.xml
+msgid "TaskConfig"
+msgstr ""
+
+#: ../content/task_config.py:103
+msgid "This delay is added to the due date of the task."
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:27
+msgid "To do"
+msgstr ""
+
+#: ../content/task_config.py:108
+msgid "Warning delay"
+msgstr ""
+
+#: ../dashboard/vocabulary.py:23
+msgid "collective.task"
+msgstr ""
+
+msgid "schedule.assign_current_user"
+msgstr ""
+
+msgid "schedule.create_if_all_subtasks_can_be_created"
+msgstr ""
+
+msgid "schedule.create_if_subtask_can_be_created"
+msgstr ""
+
+msgid "schedule.start_date.creation_date"
+msgstr ""
+
+msgid "schedule.start_date.subtask_highest_due_date"
+msgstr ""
+
+msgid "schedule.start_if_all_subtasks_started"
+msgstr ""
+
+msgid "schedule.start_if_subtask_started"
+msgstr ""
+
+msgid "schedule.test_creation_condition"
+msgstr ""
+
+msgid "schedule.test_end_condition"
+msgstr ""
+
+msgid "schedule.test_start_condition"
+msgstr ""
+
+#: ../configure.zcml:29
+msgid "imio.schedule"
+msgstr ""
+
+#: ../testing.zcml:16
+msgid "imio.schedule tests"
+msgstr ""

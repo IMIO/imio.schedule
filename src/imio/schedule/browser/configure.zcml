@@ -1,0 +1,36 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="imio.schedule">
+
+  <!-- Publish static files -->
+  <browser:resourceDirectory
+      name="imio.schedule"
+      directory="static"
+      />
+
+  <browser:page
+     for="*"
+     name="taskmacros"
+     template="templates/taskmacros.pt"
+     permission="zope2.View"
+  />
+
+  <browser:page
+     for="imio.schedule.content.task.IAutomatedTask"
+     name="start_status"
+     class=".task_completion.TaskStartStatusView"
+     template="templates/task_completion.pt"
+     permission="zope2.View"
+  />
+
+  <browser:page
+     for="imio.schedule.content.task.IAutomatedTask"
+     name="end_status"
+     class=".task_completion.TaskEndStatusView"
+     template="templates/task_completion.pt"
+     permission="zope2.View"
+  />
+
+</configure>

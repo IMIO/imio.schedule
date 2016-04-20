@@ -3,7 +3,7 @@
    This text does not appear on pypi or github. It is a comment.
 
 ==============================================================================
-urban.schedule
+imio.schedule
 ==============================================================================
 
 Tell me what your product does
@@ -38,14 +38,14 @@ This product has been translated into
 Installation
 ------------
 
-Install urban.schedule by adding it to your buildout::
+Install imio.schedule by adding it to your buildout::
 
     [buildout]
 
     ...
 
     eggs =
-        urban.schedule
+        imio.schedule
 
 
 and then running ``bin/buildout``
@@ -54,8 +54,8 @@ and then running ``bin/buildout``
 Contribute
 ----------
 
-- Issue Tracker: https://github.com/collective/urban.schedule/issues
-- Source Code: https://github.com/collective/urban.schedule
+- Issue Tracker: https://github.com/collective/imio.schedule/issues
+- Source Code: https://github.com/collective/imio.schedule
 - Documentation: https://docs.plone.org/foo/bar
 
 

@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<layers>
-  <layer
-      name="urban.schedule"
-      interface="urban.schedule.interfaces.IUrbanScheduleLayer"
-      />
-</layers>

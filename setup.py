@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Installer for the urban.schedule package."""
+"""Installer for the imio.schedule package."""
 
 from setuptools import find_packages
 from setuptools import setup
@@ -18,9 +18,9 @@ long_description = (
 
 
 setup(
-    name='urban.schedule',
+    name='imio.schedule',
     version='1.0a1',
-    description="Schedule for imio.urban",
+    description="Schedule for imio products",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -35,10 +35,10 @@ setup(
     keywords='Python Plone',
     author='Simon Delcourt',
     author_email='simon.delcourt@imio.be',
-    url='https://pypi.python.org/pypi/urban.schedule',
+    url='https://pypi.python.org/pypi/imio.schedule',
     license='GPL version 2',
     packages=find_packages('src', exclude=['ez_setup']),
-    namespace_packages=['urban'],
+    namespace_packages=['imio'],
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,

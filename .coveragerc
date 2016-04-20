@@ -1,14 +1,14 @@
 [report]
 include =
-    src/urban/*
+    src/imio/*
 omit =
     */test*
     */upgrades/*
     [report]
 omit =
     */test*
-    src/urban/__init__.py
-    src/urban/schedule/__init__.py
-    src/urban/schedule/browser/__init__.py
-    src/urban/schedule/content/__init__.py
-    src/urban/schedule/events/__init__.py
+    src/imio/__init__.py
+    src/imio/schedule/__init__.py
+    src/imio/schedule/browser/__init__.py
+    src/imio/schedule/content/__init__.py
+    src/imio/schedule/events/__init__.py
