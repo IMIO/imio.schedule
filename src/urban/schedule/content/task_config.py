@@ -6,6 +6,10 @@ from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from urban.schedule import _
+from urban.schedule.config import CREATION
+from urban.schedule.config import DONE
+from urban.schedule.config import STARTED
+from urban.schedule.config import states_by_status
 from urban.schedule.content.task import IAutomatedTask
 from urban.schedule.interfaces import IDefaultTaskGroup
 from urban.schedule.interfaces import IDefaultTaskUser
@@ -206,7 +210,7 @@ class BaseTaskConfig(object):
         if states:
             query['review_state'] = states
 
-        task_brains = catalog(**query)
+        task_brains = catalog.unrestrictedSearchResults(**query)
 
         if the_objects:
             return [brain.getObject() for brain in task_brains]
@@ -229,7 +233,7 @@ class BaseTaskConfig(object):
         """
         tasks = self.query_task_instances(
             task_container,
-            states=['created', 'to_assign']
+            states=states_by_status[CREATION]
         )
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
@@ -241,7 +245,7 @@ class BaseTaskConfig(object):
         """
         tasks = self.query_task_instances(
             task_container,
-            states=['to_do', 'in_progress', 'realized']
+            states=states_by_status[STARTED]
         )
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
@@ -251,9 +255,10 @@ class BaseTaskConfig(object):
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is not closed yet.
         """
+        states = states_by_status[CREATION] + states_by_status[STARTED]
         tasks = self.query_task_instances(
             task_container,
-            states=['created', 'to_assign', 'to_do', 'in_progress', 'realized']
+            states=states
         )
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
@@ -265,7 +270,7 @@ class BaseTaskConfig(object):
         """
         tasks = self.query_task_instances(
             task_container,
-            states='closed'
+            states=states_by_status[DONE]
         )
         task_instance = tasks and tasks[0].getObject() or None
         return task_instance
@@ -275,6 +280,19 @@ class BaseTaskConfig(object):
         Check if the task_container already has a task from this config.
         """
         return self.query_task_instances(task_container)
+
+    def evaluate_conditions(self, conditions, to_adapt, interface):
+        """
+        """
+        for condition_name in conditions or []:
+            value = self.evaluate_one_condition(
+                to_adapt=to_adapt,
+                interface=interface,
+                name=condition_name,
+            )
+            if not value:
+                return False
+        return True
 
     def evaluate_one_condition(self, to_adapt, interface, name):
         """
@@ -286,6 +304,31 @@ class BaseTaskConfig(object):
         )
         value = condition.evaluate()
         return value
+
+    def get_conditions_status(self, conditions, to_adapt, interface):
+        """
+        Return two lists of all conditions status for a given task
+        and task container.
+        The first list is all the matched conditions, the second is
+        all the unmatched conditions.
+        eg:
+        [(condition_name_1, True), (condition_name_2, True)]
+        [(condition_name_3, False)]
+        """
+        matched = []
+        not_matched = []
+        for condition_name in conditions or []:
+            value = self.evaluate_one_condition(
+                to_adapt=to_adapt,
+                interface=interface,
+                name=condition_name,
+            )
+            if value:
+                matched.append((condition_name, value))
+            else:
+                not_matched.append((condition_name, value))
+
+        return matched, not_matched
 
     def should_create_task(self, task_container):
         """
@@ -304,20 +347,29 @@ class BaseTaskConfig(object):
             return False
 
         # task container state match creation_state value?
-        if api.content.get_state(task_container) != self.creation_state:
+        if not self.match_creation_state(task_container):
             return False
 
         # each conditions is matched?
-        for condition_name in self.creation_conditions or []:
-            condition_value = self.evaluate_one_condition(
-                to_adapt=(task_container, self),
-                interface=ICreationCondition,
-                name=condition_name
-            )
-            if not condition_value:
-                return False
+        if not self.match_creation_conditions(task_container):
+            return False
 
         return True
+
+    def match_creation_state(self, task_container):
+        """
+        """
+        container_state = api.content.get_state(task_container)
+        return container_state == self.creation_state
+
+    def match_creation_conditions(self, task_container):
+        """
+        """
+        return self.evaluate_conditions(
+            conditions=self.creation_conditions,
+            to_adapt=(task_container, self),
+            interface=ICreationCondition,
+        )
 
     def should_start_task(self, task_container, task):
         """
@@ -329,20 +381,42 @@ class BaseTaskConfig(object):
         """
 
         # task container state match starting_states value?
-        if api.content.get_state(task_container) not in (self.starting_states or []):
+        if not self.match_starting_states(task_container):
             return False
 
         # each conditions is matched?
-        for condition_name in self.start_conditions or []:
-            condition_value = self.evaluate_one_condition(
-                to_adapt=(task_container, task),
-                interface=IStartCondition,
-                name=condition_name
-            )
-            if not condition_value:
-                return False
+        if not self.match_start_conditions(task_container, task):
+            return False
+
+        if not task.assigned_user:
+            return False
 
         return True
+
+    def match_starting_states(self, task_container):
+        """
+        """
+        container_state = api.content.get_state(task_container)
+        return container_state in (self.starting_states or [])
+
+    def match_start_conditions(self, task_container, task):
+        """
+        """
+        return self.evaluate_conditions(
+            conditions=self.start_conditions,
+            to_adapt=(task_container, task),
+            interface=IStartCondition,
+        )
+
+    def start_conditions_status(self, task_container, task):
+        """
+        Return status of each start condition.
+        """
+        return self.get_conditions_status(
+            conditions=self.start_conditions,
+            to_adapt=(task_container, task),
+            interface=IStartCondition,
+        )
 
     def should_end_task(self, task_container, task):
         """
@@ -354,49 +428,38 @@ class BaseTaskConfig(object):
         """
 
         # task container state match any ending_states value?
-        if api.content.get_state(task_container) not in (self.ending_states or []):
+        if not self.match_ending_states(task_container):
             return False
 
-        if not self.match_all_end_conditions(task_container, task):
+        if not self.match_end_conditions(task_container, task):
             return False
 
         return True
 
-    def match_all_end_conditions(self, task_container, task):
+    def match_ending_states(self, task_container):
         """
         """
-        for condition_name in self.end_conditions or []:
-            value = self.evaluate_one_condition(
-                to_adapt=(task_container, task),
-                interface=IEndCondition,
-                name=condition_name,
-            )
-            if not value:
-                return False
-        return True
+        container_state = api.content.get_state(task_container)
+        return container_state in (self.ending_states or [])
+
+    def match_end_conditions(self, task_container, task):
+        """
+        """
+        return self.evaluate_conditions(
+            conditions=self.end_conditions,
+            to_adapt=(task_container, task),
+            interface=IEndCondition,
+        )
 
     def end_conditions_status(self, task_container, task):
         """
-        Return a list of all conditions status for a given task
-        and task container (True if the condition is matched).
-        eg:
-        [
-            (condition_name_1, True),
-            (condition_name_2, True),
-            (condition_name_3, False),
-        ]
+        Return status of each end condition.
         """
-
-        conditions_status = []
-        for condition_name in self.end_conditions or []:
-            value = self.evaluate_one_condition(
-                to_adapt=(task_container, task),
-                interface=IEndCondition,
-                name=condition_name,
-            )
-            conditions_status.append((condition_name, value))
-
-        return conditions_status
+        return self.get_conditions_status(
+            conditions=self.end_conditions,
+            to_adapt=(task_container, task),
+            interface=IEndCondition,
+        )
 
     def create_task(self, task_container):
         """
@@ -407,10 +470,10 @@ class BaseTaskConfig(object):
         """
         Default implementation is to put the task on the state 'to_do'.
         """
-        if api.content.get_state(task) == 'created':
-            api.content.transition(obj=task, transition='do_to_assign')
-        if api.content.get_state(task) == 'to_assign' and task.assigned_user:
-            with api.env.adopt_roles(['Reviewer']):
+        with api.env.adopt_roles(['Manager']):
+            if api.content.get_state(task) == 'created':
+                api.content.transition(obj=task, transition='do_to_assign')
+            if api.content.get_state(task) == 'to_assign' and task.assigned_user:
                 api.content.transition(obj=task, transition='do_to_do')
 
     def end_task(self, task):
@@ -494,7 +557,8 @@ class TaskConfig(Item, BaseTaskConfig):
         task.due_date = self.compute_due_date(task_container, task)
         task.assigned_group = self.group_to_assign(task_container, task)
         task.assigned_user = self.user_to_assign(task_container, task)
-        task.reindexObject(['due_date', 'assigned_group', 'assigned_user'])
+        task.reindexObject()
+        # task.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
 
         return task
 
@@ -591,7 +655,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         macrotask.due_date = self.compute_due_date(task_container, macrotask)
         macrotask.assigned_group = self.group_to_assign(task_container, macrotask)
         macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
-        macrotask.reindexObject(['due_date', 'assigned_group', 'assigned_user'])
+        macrotask.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
 
         return macrotask
 
@@ -609,7 +673,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         if not task_done:
             return False
 
-        subtasks_done = all([subtask.is_done() for subtask in task.get_subtasks()])
+        subtasks_done = all([subtask.get_status() == DONE for subtask in task.get_subtasks()])
         if not subtasks_done:
             return False
 

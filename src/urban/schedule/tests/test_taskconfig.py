@@ -2,6 +2,7 @@
 
 from Acquisition import aq_base
 
+from urban.schedule.config import DONE
 from urban.schedule.content.task import AutomatedMacroTask
 from urban.schedule.content.task import AutomatedTask
 from urban.schedule.testing import ExampleScheduleFunctionalTestCase
@@ -686,7 +687,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         # the subtask is open
 
         api.content.transition(obj=subtask, transition='back_in_realized')
-        self.assertFalse(subtask.is_done())
+        self.assertFalse(subtask.get_status() == DONE)
 
         msg = "MacroTask should not be ended as long its subtask is open"
         end = macrotask_config.should_end_task(task_container, subtask)

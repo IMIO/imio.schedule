@@ -6,6 +6,7 @@ from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from urban.schedule.config import status_by_state
 from urban.schedule.interfaces import ScheduleConfigNotFound
 from urban.schedule.interfaces import TaskConfigNotFound
 
@@ -62,13 +63,39 @@ class BaseAutomatedTask(object):
                 'UID {}'.format(self.task_config_UID)
             )
 
-    def is_done(self):
+    def get_status(self):
         """
-        Default implementation is to say if the task
-        is on state 'closed'.
+        Return the status of the task
         """
-        closed = api.content.get_state(self) == 'closed'
-        return closed
+        return status_by_state[api.content.get_state(self)]
+
+    def start_conditions_status(self):
+        """
+        Return a list of all conditions status of this
+        task(True if the condition is matched).
+        eg:
+        [
+            (condition_name_1, True),
+            (condition_name_2, True),
+            (condition_name_3, False),
+        ]
+        """
+        task_config = self.get_task_config()
+        container = self.get_container()
+        status = task_config.start_conditions_status(container, self)
+        return status
+
+    def starting_states_status(self):
+        """
+        """
+        config = self.get_task_config()
+        starting_states = config.starting_states
+        if not starting_states:
+            return
+
+        container = self.get_container()
+        container_state = api.content.get_state(container)
+        return (container_state, starting_states)
 
     def end_conditions_status(self):
         """
@@ -85,6 +112,21 @@ class BaseAutomatedTask(object):
         container = self.get_container()
         status = task_config.end_conditions_status(container, self)
         return status
+
+    def ending_states_status(self):
+        """
+        """
+        config = self.get_task_config()
+        ending_states = config.ending_states
+        if not ending_states:
+            return
+
+        container = self.get_container()
+        container_state = api.content.get_state(container)
+        return (container_state, ending_states)
+
+    def get_state(self):
+        return api.content.get_state(self)
 
 
 class AutomatedTask(Item, BaseAutomatedTask):

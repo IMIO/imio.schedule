@@ -2,7 +2,11 @@
 
 from Acquisition import aq_base
 
+from urban.schedule.interfaces import TaskAlreadyExists
 from urban.schedule.utils import get_task_configs
+
+#from zope.event import notify
+#from zope.lifecycleevent import ObjectModifiedEvent
 
 
 def create_new_tasks(task_container, event):
@@ -27,7 +31,10 @@ def create_new_tasks(task_container, event):
     for config in task_configs:
         if config.is_main_taskconfig():
             if config.should_create_task(task_container):
-                config.create_task(task_container)
+                try:
+                    config.create_task(task_container)
+                except TaskAlreadyExists:
+                    continue
         # case of a sub-task creation, the parent should have been created first
         else:
             macro_config = config.getParentNode()

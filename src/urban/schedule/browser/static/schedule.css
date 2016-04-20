@@ -18,3 +18,15 @@ span.schedule_to_do {
 span.schedule_closed {
     background-color: #75AD0A;
 }
+
+table.task_status_table {
+    width: 100%;
+}
+
+table.task_status_table {
+    width: 100%;
+}
+
+p.warning {
+    color: red;
+}

@@ -4,6 +4,8 @@ from collective.eeafaceted.z3ctable.columns import BaseColumn
 
 from plone import api
 
+from urban.schedule.config import CREATION
+from urban.schedule.config import STARTED
 from urban.schedule.dashboard.interfaces import IDisplayTaskStatus
 
 from zope.component import queryMultiAdapter
@@ -23,6 +25,18 @@ class StatusColum(BaseColumn):
     """
 
     sort_index = -1
+
+    def renderHeadCell(self):
+        """Override rendering of head of the cell to include jQuery
+           call to initialize annexes menu and to show the 'more/less details' if we are listing items."""
+        # activate necessary javascripts
+        if not self.header_js:
+            # avoid problems while concataining None and unicode
+            self.header_js = u''
+        self.header_js += u'<script type="text/javascript">' + \
+            u'$("#task_status a").prepOverlay({subtype: "ajax"});' + \
+            '</script>'
+        return super(StatusColum, self).renderHeadCell()
 
     def renderCell(self, item):
         """
@@ -55,10 +69,18 @@ class TaskStatusDisplay(object):
         """
         By default just put a code colour of the state of the task.
         """
-        css_class = 'schedule_{}'.format(api.content.get_state(self.task))
+        task = self.task
+        css_class = 'schedule_{}'.format(api.content.get_state(task))
         status = u'<span class="{css_class}">&nbsp&nbsp&nbsp</span>'.format(
             css_class=css_class,
         )
+        if task.get_status() in [CREATION, STARTED]:
+            status = '<a class="link-overlay" href="{task_url}/@@{view}">{status}</a>'.format(
+                task_url=self.task.absolute_url(),
+                view=task.get_status() is CREATION and 'start_status' or 'end_status',
+                status=status
+            )
+        status = '<span id="task_status">{}</span>'.format(status)
         return status
 
 

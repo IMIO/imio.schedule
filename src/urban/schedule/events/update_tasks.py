@@ -25,13 +25,13 @@ def start_tasks(task_container, event):
     if not task_configs:
         return
 
-    for config in task_configs:
-        task = config.get_created_task(task_container)
-
-        if task and config.should_start_task(task_container, task):
-            # delegate the starting action to the config so different behaviors
-            # can be easily configured
-            config.start_task(task)
+    with api.env.adopt_roles(['Manager']):
+        for config in task_configs:
+            task = config.get_created_task(task_container)
+            if task and config.should_start_task(task_container, task):
+                # delegate the starting action to the config so different behaviors
+                # can be easily configured
+                config.start_task(task)
 
 
 def end_tasks(task_container, event):
@@ -55,7 +55,6 @@ def end_tasks(task_container, event):
     with api.env.adopt_roles(['Manager']):
         for config in task_configs:
             task = config.get_task(task_container)
-
             if task and config.should_end_task(task_container, task):
                 # delegate the closure action to the config so different behaviors
                 # can be easily configured
@@ -80,8 +79,9 @@ def update_due_date(task_container, event):
     if not task_configs:
         return
 
-    for config in task_configs:
-        task = config.get_open_task(task_container)
-        if task:
-            task.due_date = config.compute_due_date(task_container, task)
-            task.reindexObject(idxs=('due_date',))
+    with api.env.adopt_roles(['Manager']):
+        for config in task_configs:
+            task = config.get_open_task(task_container)
+            if task:
+                task.due_date = config.compute_due_date(task_container, task)
+                task.reindexObject(idxs=('due_date',))

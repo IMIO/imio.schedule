@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-04-06 08:13+0000\n"
+"POT-Creation-Date: 2016-04-13 12:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,21 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
-#: ../content/task_config.py:99
+msgid " is one of the following states"
+msgstr ""
+
+msgid " to one of the following states"
+msgstr ""
+
+#: ../content/task_config.py:102
 msgid "Additional delay"
 msgstr ""
 
-#: ../content/task_config.py:36
+#: ../content/task_config.py:39
 msgid "Assigned group"
 msgstr ""
 
-#: ../content/task_config.py:43
+#: ../content/task_config.py:46
 msgid "Assigned user"
 msgstr ""
 
@@ -37,16 +43,20 @@ msgstr ""
 msgid "AutomatedTask"
 msgstr ""
 
-#: ../content/task_config.py:57
+#: ../content/task_config.py:60
 msgid "Creation conditions"
 msgstr ""
 
+#: ../browser/templates/task_completion.pt:18
+msgid "Done"
+msgstr ""
+
 #: ../content/schedule_config.py:21
-#: ../content/task_config.py:30
+#: ../content/task_config.py:33
 msgid "Enabled"
 msgstr ""
 
-#: ../content/task_config.py:85
+#: ../content/task_config.py:88
 msgid "End conditions"
 msgstr ""
 
@@ -82,23 +92,23 @@ msgstr ""
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:58
+#: ../content/task_config.py:61
 msgid "Select creation conditions of the task"
 msgstr ""
 
-#: ../content/task_config.py:37
+#: ../content/task_config.py:40
 msgid "Select default group assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:44
+#: ../content/task_config.py:47
 msgid "Select default user assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:86
+#: ../content/task_config.py:89
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:72
+#: ../content/task_config.py:75
 msgid "Select start conditions of the task"
 msgstr ""
 
@@ -106,28 +116,41 @@ msgstr ""
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:93
+#: ../content/task_config.py:96
 msgid "Select the start date used to compute the due date."
 msgstr ""
 
-#: ../content/task_config.py:51
+#: ../content/task_config.py:54
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:65
+#: ../content/task_config.py:68
 msgid "Select the state of the container where the task is automatically started."
 msgstr ""
 
-#: ../content/task_config.py:79
+#: ../content/task_config.py:82
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
-#: ../content/task_config.py:71
+msgid "Should pass from actual state "
+msgstr ""
+
+#: ../content/task_config.py:74
 msgid "Start conditions"
 msgstr ""
 
-#: ../content/task_config.py:92
+#: ../content/task_config.py:95
 msgid "Start date"
+msgstr ""
+
+msgid "Started tasks"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:37
+msgid "State status"
 msgstr ""
 
 #: ../testing.zcml:16
@@ -138,15 +161,15 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:50
+#: ../content/task_config.py:53
 msgid "Task container creation state"
 msgstr ""
 
-#: ../content/task_config.py:78
+#: ../content/task_config.py:81
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:64
+#: ../content/task_config.py:67
 msgid "Task container start states"
 msgstr ""
 
@@ -154,11 +177,15 @@ msgstr ""
 msgid "TaskConfig"
 msgstr ""
 
-#: ../content/task_config.py:100
+#: ../content/task_config.py:103
 msgid "This delay is added to the due date of the task."
 msgstr ""
 
-#: ../content/task_config.py:105
+#: ../browser/templates/task_completion.pt:27
+msgid "To do"
+msgstr ""
+
+#: ../content/task_config.py:108
 msgid "Warning delay"
 msgstr ""
 

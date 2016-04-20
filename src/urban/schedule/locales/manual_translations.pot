@@ -17,6 +17,9 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: urban.schedule\n"
 
+msgid " is one of the following states"
+msgstr ""
+
 msgid "schedule.assign_current_user"
 msgstr ""
 
@@ -45,4 +48,16 @@ msgid "schedule.start_if_all_subtasks_started"
 msgstr ""
 
 msgid "schedule.start_if_subtask_started"
+msgstr ""
+
+msgid "Should pass from actual state "
+msgstr ""
+
+msgid " to one of the following states"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Started tasks"
 msgstr ""

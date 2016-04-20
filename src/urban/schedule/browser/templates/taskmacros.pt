@@ -1,0 +1,33 @@
+<div metal:define-macro="conditions_status_macro" i18n:domain="urban.schedule">
+    <div tal:repeat="status conditions_status">
+        <span tal:attributes="class python: status[1] and 'schedule_closed' or 'schedule_to_do'">
+        &nbsp&nbsp&nbsp
+        </span>
+        &nbsp
+        <span i18n:translate="" tal:content="python: status[0]" />
+    </div>
+</div>
+
+<div metal:define-macro="state_status_macro" i18n:domain="urban.schedule">
+    <tal:vars define="closed python: state_status[0] in state_status[1]">
+        <span tal:attributes="class python: closed and 'schedule_closed' or 'schedule_to_do'">
+        &nbsp&nbsp&nbsp
+        </span>
+        &nbsp
+        <span>
+            <tal:not_closed condition="not: closed">
+                <span i18n:translate="" tal:replace="python: 'Should pass from actual state '" />
+                '<b i18n:domain="plone" i18n:translate="" tal:content="python: state_status[0]" />'
+                <span i18n:domain="urban.schedule" i18n:translate="" tal:replace="python: ' to one of the following states'" />:
+            </tal:not_closed>
+            <tal:closed condition="closed">
+                <span i18n:translate="" tal:replace="python: 'State'" />
+                '<b  i18n:domain="plone" i18n:translate="" tal:content="python: state_status[0]" />'
+                <span i18n:translate="" tal:replace="python: ' is one of the following states'" />:
+            </tal:closed>
+            <tal:states repeat="state python: state_status[1]">
+                '<b i18n:domain="plone"  i18n:translate="" tal:content="python: state" />',
+            </tal:states>.
+        </span>
+    </tal:vars>
+</div>
