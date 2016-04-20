@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="urban.schedule">
+
+    <!-- Assigned user adapter returning current logged user -->
+    <adapter
+        for="zope.interface.Interface
+             urban.schedule.content.task.IAutomatedTask"
+        provides="urban.schedule.interfaces.IDefaultTaskGroup"
+        factory=".logic.AssignAuthenticatedUsersGroup"
+        name="schedule.assign_authenticatedusers_group"
+    />
+
+</configure>

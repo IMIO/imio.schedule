@@ -484,6 +484,23 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         msg = "Task should not be started because the starting state does not match container state"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
+    def test_start_conditions_status(self):
+        """
+        Test different cases for the 'start_conditions_status' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [('schedule.test_start_condition', 'Should start')])
+        self.assertTrue(unmatched_conditions == [])
+
+        task_config.start_conditions = ('schedule.negative_start_condition',)
+        matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [])
+        self.assertTrue(unmatched_conditions == [('schedule.negative_start_condition', False)])
+
     def test_should_end_task(self):
         """
         Test different cases for the 'should_end_task' method.
@@ -514,6 +531,23 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task_config.ending_states = ('pending',)
         msg = "Task should not be ended because the ending state does not match container state"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
+
+    def test_end_conditions_status(self):
+        """
+        Test different cases for the 'end_conditions_status' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [('schedule.test_end_condition', 'Should end')])
+        self.assertTrue(unmatched_conditions == [])
+
+        task_config.end_conditions = ('schedule.negative_end_condition',)
+        matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [])
+        self.assertTrue(unmatched_conditions == [('schedule.negative_end_condition', False)])
 
     def test_create_task(self):
         """

@@ -4,5 +4,6 @@
 
     <include file="conditions.zcml" />
     <include file="due_date.zcml" />
+    <include file="logic.zcml" />
 
 </configure>
