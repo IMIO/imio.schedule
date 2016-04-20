@@ -474,13 +474,21 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
+        task.assigned_user = None
+        msg = "Task should not be started because no user is defined on the task"
+        self.assertFalse(task_config.should_start_task(task_container, task), msg)
+
+        # set the task_config field 'start_conditions' with a negative condition
+        # => task should not start
+        task.assigned_user = 'user'
         task_config.start_conditions = ('schedule.negative_start_condition',)
         msg = "Task should not be started because the start condition is not matched"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not start
-        task_config.starting_states = ('pending',)
+        task_config.start_conditions = ('schedule.test_start_condition',)
+        task_config.starting_states = ('published',)
         msg = "Task should not be started because the starting state does not match container state"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
