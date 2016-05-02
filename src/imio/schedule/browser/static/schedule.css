@@ -30,3 +30,11 @@ table.task_status_table {
 p.warning {
     color: red;
 }
+
+a.term-level-1 {
+    padding-left: 1em
+}
+
+a.term-level-2 {
+    padding-left: 2em
+}

@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
+from eea.facetednavigation.layout.interfaces import IFacetedLayout
+
+from imio.dashboard.browser.facetedcollectionportlet import Assignment
+from imio.dashboard.utils import _updateDefaultCollectionFor
 
 from imio.schedule.interfaces import IToTaskConfig
 
+from plone import api
+from plone.portlets.interfaces import IPortletManager
+from plone.portlets.interfaces import ILocalPortletAssignmentManager
+from plone.portlets.interfaces import IPortletAssignmentMapping
+from plone.portlets.constants import CONTEXT_CATEGORY
+
+from zope.annotation import IAnnotations
 from zope.component import getAdapters
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 
 import importlib
 
@@ -55,34 +67,37 @@ def interface_to_tuple(interface):
     return (interface.__module__, interface.__name__)
 
 
-def create_tasks_collection(schedule_config, container, id, **kwargs):
+def set_schedule_view(folder, faceted_config_path, schedule_configs, default_collection=None):
     """
-    Create a DashboardCollection in container with a base
-    query returning all the AutomatedTask instances from
-    schedule_config.
+    Boilerplate code to set up the schedule view on a folderish context.
     """
 
-    factory_args = {
-        'id': id,
-        'query': [
-            {
-                'i': 'CompoundCriterion',
-                'o': 'plone.app.querystring.operation.compound.is',
-                'v': schedule_config.UID()
-            }
-        ],
-        'customViewFields': ('due_date', 'Creator'),
-        'sort_on': u'due_date',
-        'sort_reversed': True,
-        'b_size': 30
-    }
+    if type(schedule_configs) not in [list, tuple]:
+        schedule_configs = [schedule_configs]
 
-    additional_queries = kwargs.pop('query', [])
-    for query in additional_queries:
-        factory_args['query'].append(query)
-    factory_args.update(kwargs)
+    annotations = IAnnotations(folder)
+    key = 'imio.schedule.schedule_configs'
+    annotations[key] = [cfg.UID() for cfg in schedule_configs]
 
-    collection_id = container.invokeFactory('DashboardCollection', **factory_args)
-    collection = getattr(container, collection_id)
+    # block parent portlets
+    manager = getUtility(IPortletManager, name='plone.leftcolumn')
+    blacklist = getMultiAdapter((folder, manager), ILocalPortletAssignmentManager)
+    blacklist.setBlacklistStatus(CONTEXT_CATEGORY, True)
 
-    return collection
+    # assign collection portlet
+    manager = getUtility(IPortletManager, name='plone.leftcolumn', context=folder)
+    mapping = getMultiAdapter((folder, manager), IPortletAssignmentMapping)
+    if 'schedules' not in mapping.keys():
+        mapping['schedules'] = Assignment('schedules')
+
+    subtyper = folder.restrictedTraverse('@@faceted_subtyper')
+    if not subtyper.is_faceted:
+        subtyper.enable()
+        folder.restrictedTraverse('@@faceted_settings').toggle_left_column()
+        IFacetedLayout(folder).update_layout('faceted-table-items')
+        folder.unrestrictedTraverse('@@faceted_exportimport').import_xml(
+            import_file=open(faceted_config_path)
+        )
+
+    default_collection = default_collection or schedule_configs[0].dashboard_collection
+    _updateDefaultCollectionFor(folder, default_collection.UID())

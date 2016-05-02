@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-04-13 12:12+0000\n"
+"POT-Creation-Date: 2016-04-22 11:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgstr "Tâche configurable"
 msgid "Creation conditions"
 msgstr "Conditions de création de la tâche"
 
-#: ../browser/templates/task_completion.pt:18
+#: ../browser/templates/task_completion.pt:22
 msgid "Done"
 msgstr "Fait"
 
@@ -146,10 +146,6 @@ msgstr "Tâches en cours"
 msgid "State"
 msgstr "L'état"
 
-#: ../browser/templates/task_completion.pt:37
-msgid "State status"
-msgstr "État du conteneur de la tâche"
-
 #: ../testing.zcml:16
 msgid "Steps to ease tests of imio.schedule"
 msgstr ""
@@ -178,7 +174,7 @@ msgstr "Configuration de tâche"
 msgid "This delay is added to the due date of the task."
 msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 
-#: ../browser/templates/task_completion.pt:27
+#: ../browser/templates/task_completion.pt:36
 msgid "To do"
 msgstr "À faire"
 
@@ -188,6 +184,14 @@ msgstr "Délai d'alerte"
 
 #: ../dashboard/vocabulary.py:23
 msgid "collective.task"
+msgstr ""
+
+#: ../configure.zcml:29
+msgid "imio.schedule"
+msgstr ""
+
+#: ../testing.zcml:16
+msgid "imio.schedule tests"
 msgstr ""
 
 msgid "schedule.assign_current_user"
@@ -219,11 +223,3 @@ msgstr "Condition de fin TEST"
 
 msgid "schedule.test_start_condition"
 msgstr "Condition de démarrage TEST"
-
-#: ../configure.zcml:29
-msgid "imio.schedule"
-msgstr ""
-
-#: ../testing.zcml:16
-msgid "imio.schedule tests"
-msgstr ""

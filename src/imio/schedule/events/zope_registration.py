@@ -129,7 +129,7 @@ def update_task_configs_subscriptions(schedule_config, event):
 def register_schedule_collection_criterion(schedule_config, event):
     """
     Register adapter turning a schedule config into a collection
-    criterion filtering all task from this schedule config.
+    criterion filtering all tasks from this schedule config.
     """
 
     gsm = getGlobalSiteManager()
@@ -150,7 +150,7 @@ def register_schedule_collection_criterion(schedule_config, event):
         provided=ICompoundCriterionFilter,
         name=schedule_config.UID()
     )
-    msg = "Registered CollectionCriterion adapter '{}'".format(
+    msg = "Registered schedule CollectionCriterion adapter '{}'".format(
         schedule_config.Title()
     )
     logger.info(msg)
@@ -170,8 +170,58 @@ def unregister_schedule_collection_criterion(schedule_config, event):
         name=schedule_config.UID()
     )
     if removed:
-        msg = "Unregistered CollectionCriterion adapter '{}'".format(
+        msg = "Unregistered schedule CollectionCriterion adapter '{}'".format(
             schedule_config.Title()
+        )
+        logger.info(msg)
+
+
+def register_task_collection_criterion(task_config, event):
+    """
+    Register adapter turning a task config into a collection
+    criterion filtering all tasks from this task config.
+    """
+
+    gsm = getGlobalSiteManager()
+    task_config_UID = task_config.UID()
+
+    class FilterTasksCriterion(object):
+
+        def __init__(self, context):
+            self.context = context
+
+        @property
+        def query(self):
+            return {'task_config_UID': {'query': task_config_UID}}
+
+    gsm.registerAdapter(
+        factory=FilterTasksCriterion,
+        required=(Interface,),
+        provided=ICompoundCriterionFilter,
+        name=task_config.UID()
+    )
+    msg = "Registered task CollectionCriterion adapter '{}'".format(
+        task_config.Title()
+    )
+    logger.info(msg)
+
+
+def unregister_task_collection_criterion(task_config, event):
+    """
+    Unregister adapter turning a task config into a collection
+    criterion.
+    """
+
+    gsm = getGlobalSiteManager()
+
+    removed = gsm.unregisterAdapter(
+        required=(Interface,),
+        provided=ICompoundCriterionFilter,
+        name=task_config.UID()
+    )
+    if removed:
+        msg = "Unregistered task CollectionCriterion adapter '{}'".format(
+            task_config.Title()
         )
         logger.info(msg)
 
@@ -181,8 +231,8 @@ _vocabularies = {}
 
 def register_tasks_vocabulary(schedule_config, event):
     """
-    Register adapter turning a schedule config into a collection
-    criterion filtering all task from this schedule config.
+    Register adapter turning a schedule config into a vocabulary
+    listing all task configs from this schedule config.
     """
 
     gsm = getGlobalSiteManager()
@@ -216,8 +266,7 @@ def register_tasks_vocabulary(schedule_config, event):
 
 def unregister_tasks_vocabulary(schedule_config, event):
     """
-    Unregister adapter turning a schedule config into a collection
-    criterion.
+    Unregister adapter turning a schedule config into a vocabulary.
     """
 
     gsm = getGlobalSiteManager()
@@ -245,17 +294,18 @@ def register_at_instance_startup(site, event):
         - all the TaskConfig adapters
         - collections criterions
         - tasks vocabulary of each ScheduleConfig
-    when zope instanceis started.
+    when zope instance is started.
     """
     if site not in _registered_sites:
 
-        # register task configs subscribers
+        # register task configs subscribers and task configs criterion
         catalog = api.portal.get_tool('portal_catalog')
         task_brains = catalog.unrestrictedSearchResults(object_provides=ITaskConfig.__identifier__)
         all_task_configs = [site.unrestrictedTraverse(brain.getPath()) for brain in task_brains]
 
         for task_config in all_task_configs:
             subscribe_task_configs_for_content_type(task_config, event)
+            register_task_collection_criterion(task_config, event)
 
         # register schedule configs criterion and tasks vocabulary
         schedule_brains = catalog.unrestrictedSearchResults(object_provides=IScheduleConfig.__identifier__)

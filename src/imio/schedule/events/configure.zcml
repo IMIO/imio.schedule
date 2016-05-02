@@ -28,6 +28,10 @@
                    zope.lifecycleevent.IObjectRemovedEvent"
               handler=".zope_registration.unregister_tasks_vocabulary"/>
 
+  <subscriber for="imio.schedule.content.schedule_config.IScheduleConfig
+                   zope.lifecycleevent.IObjectAddedEvent"
+              handler=".dashboard_collection.create"/>
+
   <subscriber for="imio.schedule.content.task_config.ITaskConfig
                    zope.lifecycleevent.IObjectAddedEvent"
               handler=".zope_registration.subscribe_task_configs_for_content_type"/>
@@ -35,6 +39,18 @@
   <subscriber for="imio.schedule.content.task_config.ITaskConfig
                    zope.lifecycleevent.IObjectRemovedEvent"
               handler=".zope_registration.unsubscribe_task_configs_for_content_type"/>
+
+  <subscriber for="imio.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectAddedEvent"
+              handler=".zope_registration.register_task_collection_criterion"/>
+
+  <subscriber for="imio.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectRemovedEvent"
+              handler=".zope_registration.unregister_task_collection_criterion"/>
+
+  <subscriber for="imio.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectAddedEvent"
+              handler=".dashboard_collection.create"/>
 
   <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"

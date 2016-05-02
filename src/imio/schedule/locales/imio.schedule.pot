@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-04-13 12:12+0000\n"
+"POT-Creation-Date: 2016-04-22 11:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Creation conditions"
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:18
+#: ../browser/templates/task_completion.pt:22
 msgid "Done"
 msgstr ""
 
@@ -149,10 +149,6 @@ msgstr ""
 msgid "State"
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:37
-msgid "State status"
-msgstr ""
-
 #: ../testing.zcml:16
 msgid "Steps to ease tests of imio.schedule"
 msgstr ""
@@ -181,7 +177,7 @@ msgstr ""
 msgid "This delay is added to the due date of the task."
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:27
+#: ../browser/templates/task_completion.pt:36
 msgid "To do"
 msgstr ""
 
@@ -191,6 +187,14 @@ msgstr ""
 
 #: ../dashboard/vocabulary.py:23
 msgid "collective.task"
+msgstr ""
+
+#: ../configure.zcml:29
+msgid "imio.schedule"
+msgstr ""
+
+#: ../testing.zcml:16
+msgid "imio.schedule tests"
 msgstr ""
 
 msgid "schedule.assign_current_user"
@@ -221,12 +225,4 @@ msgid "schedule.test_end_condition"
 msgstr ""
 
 msgid "schedule.test_start_condition"
-msgstr ""
-
-#: ../configure.zcml:29
-msgid "imio.schedule"
-msgstr ""
-
-#: ../testing.zcml:16
-msgid "imio.schedule tests"
 msgstr ""

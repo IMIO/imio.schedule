@@ -2,7 +2,6 @@
 
 from plone import api
 from plone.dexterity.content import Container
-from plone.dexterity.content import Item
 from plone.supermodel import model
 
 from imio.schedule import _
@@ -534,7 +533,7 @@ class BaseTaskConfig(object):
         return task
 
 
-class TaskConfig(Item, BaseTaskConfig):
+class TaskConfig(Container, BaseTaskConfig):
     """
     TaskConfig dexterity class.
     """
@@ -639,7 +638,19 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         Return all the subtasks configs of this macro task.
         """
-        return self.objectValues()
+        catalog = api.portal.get_tool('portal_catalog')
+        config_path = '/'.join(self.getPhysicalPath())
+
+        query = {
+            'object_provides': ITaskConfig.__identifier__,
+            'path': {'query': config_path, 'depth': 1},
+            'sort_on': 'getObjPositionInParent',
+        }
+
+        config_brains = catalog(**query)
+        subtask_configs = [brain.getObject() for brain in config_brains]
+
+        return subtask_configs
 
     def create_task(self, task_container):
         """

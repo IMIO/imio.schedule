@@ -105,6 +105,18 @@ class IToTaskConfig(Interface):
     """
 
 
+class IScheduleView(Interface):
+    """
+    Marker interface to provides on folderish with the schedule faceted view.
+    """
+
+
+class IScheduleCollection(Interface):
+    """
+    Marker interface for collections associated to schedule/task config.
+    """
+
+
 class ScheduleConfigNotFound(Exception):
     """
     Raised when a ScheduleConfig is not found.

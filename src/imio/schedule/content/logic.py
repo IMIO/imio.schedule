@@ -35,7 +35,7 @@ class TaskLogic(object):
 
     implements(ITaskLogic)
 
-    def __init__(self, task_container, task=None):
+    def __init__(self, task_container, task):
         self.task_container = task_container
         self.task = task
         self.task_config = task.get_task_config()

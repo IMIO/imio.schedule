@@ -147,6 +147,7 @@ class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
             type='ScheduleConfig',
             id='schedule_config_2',
             container=self.portal.config,
+            scheduled_contenttype=self.schedule_config.scheduled_contenttype,
         )
 
         # to test unregistration, we have to be sure something was registered
@@ -183,7 +184,8 @@ class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
             type='ScheduleConfig',
             id='schedule_config_2',
             container=self.portal.config,
-            title='YOLO'
+            title='YOLO',
+            scheduled_contenttype=self.schedule_config.scheduled_contenttype,
         )
 
         # to test unregistration, we have to be sure something was registered
