@@ -62,10 +62,10 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    starting_states = schema.Choice(
+    starting_states = schema.Set(
         title=_(u'Task container start states'),
         description=_(u'Select the state of the container where the task is automatically started.'),
-        vocabulary='schedule.container_state',
+        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
@@ -395,6 +395,9 @@ class BaseTaskConfig(object):
     def match_starting_states(self, task_container):
         """
         """
+        if not self.starting_states:
+            return True
+
         container_state = api.content.get_state(task_container)
         return container_state in (self.starting_states or [])
 
@@ -438,6 +441,9 @@ class BaseTaskConfig(object):
     def match_ending_states(self, task_container):
         """
         """
+        if not self.ending_states:
+            return True
+
         container_state = api.content.get_state(task_container)
         return container_state in (self.ending_states or [])
 
