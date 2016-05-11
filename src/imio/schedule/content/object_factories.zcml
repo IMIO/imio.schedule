@@ -1,0 +1,35 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  i18n_domain="imio.schedule">
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.CreationConditionAdapter"
+    name="imio.schedule.content.task_config.ICreationConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.StartConditionAdapter"
+    name="imio.schedule.content.task_config.IStartConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.EndConditionAdapter"
+    name="imio.schedule.content.task_config.IEndConditionSchema"
+    />
+
+</configure>

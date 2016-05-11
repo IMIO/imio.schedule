@@ -10,6 +10,7 @@ from imio.schedule.config import DONE
 from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
+from imio.schedule.content.subform_context_choice import SubFormContextChoice
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import ICreationCondition
@@ -21,7 +22,53 @@ from imio.schedule.interfaces import TaskAlreadyExists
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.interface import Interface
 from zope.interface import implements
+
+
+class ICreationConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IStartConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.start_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IEndConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.end_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
 
 
 class ITaskConfig(model.Schema):
@@ -58,7 +105,10 @@ class ITaskConfig(model.Schema):
     creation_conditions = schema.List(
         title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
-        value_type=schema.Choice(source='schedule.creation_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=ICreationConditionSchema,
+        ),
         required=True,
     )
 
@@ -72,7 +122,10 @@ class ITaskConfig(model.Schema):
     start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='schedule.start_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IStartConditionSchema,
+        ),
         required=True,
     )
 
@@ -86,7 +139,10 @@ class ITaskConfig(model.Schema):
     end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='schedule.end_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IEndConditionSchema,
+        ),
         required=True,
     )
 

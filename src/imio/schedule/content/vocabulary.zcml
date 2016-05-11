@@ -94,4 +94,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig logical operator vocabulary -->
+    <utility
+        factory=".vocabulary.LogicalOperatorVocabularyFactory"
+        name="schedule.logical_operator"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
 </configure>
