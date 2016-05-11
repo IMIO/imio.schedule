@@ -339,11 +339,11 @@ class BaseTaskConfig(object):
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """
         """
-        for condition_name in conditions or []:
+        for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
-                name=condition_name,
+                name=condition_object.condition,
             )
             if not value:
                 return False
@@ -372,16 +372,16 @@ class BaseTaskConfig(object):
         """
         matched = []
         not_matched = []
-        for condition_name in conditions or []:
+        for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
-                name=condition_name,
+                name=condition_object.condition,
             )
             if value:
-                matched.append((condition_name, value))
+                matched.append((condition_object.condition, value))
             else:
-                not_matched.append((condition_name, value))
+                not_matched.append((condition_object.condition, value))
 
         return matched, not_matched
 
@@ -624,6 +624,51 @@ class TaskConfig(Container, BaseTaskConfig):
         return task
 
 
+class IMacroCreationConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IMacroStartConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_start_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IMacroEndConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_end_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
 class IMacroTaskConfig(ITaskConfig):
     """
     TaskConfig dexterity schema.
@@ -632,7 +677,10 @@ class IMacroTaskConfig(ITaskConfig):
     creation_conditions = schema.List(
         title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
-        value_type=schema.Choice(source='schedule.macrotask_creation_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroCreationConditionSchema,
+        ),
         required=True,
     )
 
@@ -646,7 +694,10 @@ class IMacroTaskConfig(ITaskConfig):
     start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='schedule.macrotask_start_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroStartConditionSchema,
+        ),
         required=True,
     )
 
@@ -660,7 +711,10 @@ class IMacroTaskConfig(ITaskConfig):
     end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='schedule.macrotask_end_conditions'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroEndConditionSchema,
+        ),
         required=True,
     )
 

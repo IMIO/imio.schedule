@@ -32,4 +32,34 @@
     name="imio.schedule.content.task_config.IEndConditionSchema"
     />
 
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.MacroCreationConditionAdapter"
+    name="imio.schedule.content.task_config.IMacroCreationConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.MacroStartConditionAdapter"
+    name="imio.schedule.content.task_config.IMacroStartConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.MacroEndConditionAdapter"
+    name="imio.schedule.content.task_config.IMacroEndConditionSchema"
+    />
+
 </configure>
