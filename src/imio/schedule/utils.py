@@ -17,6 +17,7 @@ from zope.annotation import IAnnotations
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.schema.vocabulary import SimpleVocabulary
 
 import importlib
 
@@ -103,3 +104,17 @@ def set_schedule_view(folder, faceted_config_path, schedule_configs, default_col
 
     default_collection = default_collection or schedule_configs[0].dashboard_collection
     _updateDefaultCollectionFor(folder, default_collection.UID())
+
+
+def dict_list_2_vocabulary(dict_list):
+    """dict_list_2_vocabulary
+    Converts a dictionary list to a SimpleVocabulary
+
+    :param dict_list: dictionary list
+    """
+    terms = []
+    for item in dict_list:
+        for key in sorted([k for k in item]):
+            terms.append(SimpleVocabulary.createTerm(
+                key, str(key), item[key]))
+    return SimpleVocabulary(terms)

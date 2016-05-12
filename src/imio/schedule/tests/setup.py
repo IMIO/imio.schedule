@@ -5,6 +5,12 @@ from plone import api
 from Products.ATContentTypes.interfaces import IATFolder
 
 from imio.schedule.utils import interface_to_tuple
+from imio.schedule.content.object_factories import CreationConditionObject
+from imio.schedule.content.object_factories import StartConditionObject
+from imio.schedule.content.object_factories import EndConditionObject
+from imio.schedule.content.object_factories import MacroCreationConditionObject
+from imio.schedule.content.object_factories import MacroStartConditionObject
+from imio.schedule.content.object_factories import MacroEndConditionObject
 
 
 def schedule_example_install(context):
@@ -80,6 +86,28 @@ def add_schedule_config(context):
 
     # create task config
     task_cfg_id = 'test_taskconfig'
+    creation_conditions = CreationConditionObject()
+    creation_conditions.__dict__ = {
+        'condition': u'schedule.test_creation_condition',
+        'operator': 'AND',
+    }
+    start_conditions = StartConditionObject()
+    start_conditions.__dict__ = {
+        'condition': u'schedule.test_start_condition',
+        'operator': 'AND',
+    }
+    end_conditions = EndConditionObject()
+    end_conditions.__dict__ = {
+        'condition': u'schedule.test_end_condition',
+        'operator': 'AND',
+    }
+    macro_creation_conditions = MacroCreationConditionObject()
+    macro_creation_conditions.__dict__ = creation_conditions.__dict__
+    macro_start_conditions = MacroStartConditionObject()
+    macro_start_conditions.__dict__ = start_conditions.__dict__
+    macro_end_conditions = MacroEndConditionObject()
+    macro_end_conditions.__dict__ = end_conditions.__dict__
+
     if task_cfg_id not in schedule_config.objectIds():
         api.content.create(
             container=schedule_config,
@@ -88,9 +116,9 @@ def add_schedule_config(context):
             title='Test TaskConfig',
             default_assigned_user='schedule.assign_current_user',
             default_assigned_group='schedule.assign_authenticatedusers_group',
-            creation_conditions=('schedule.test_creation_condition',),
-            start_conditions=('schedule.test_start_condition',),
-            end_conditions=('schedule.test_end_condition',),
+            creation_conditions=[creation_conditions],
+            start_conditions=[start_conditions],
+            end_conditions=[end_conditions],
             creation_state='private',
             starting_states=('pending',),
             ending_states=('published',),
@@ -108,9 +136,9 @@ def add_schedule_config(context):
             title='Test MacroTaskConfig',
             default_assigned_user='schedule.assign_current_user',
             default_assigned_group='schedule.assign_authenticatedusers_group',
-            creation_conditions=('schedule.test_creation_condition',),
-            start_conditions=('schedule.test_start_condition',),
-            end_conditions=('schedule.test_end_condition',),
+            creation_conditions=[macro_creation_conditions],
+            start_conditions=[macro_start_conditions],
+            end_conditions=[macro_end_conditions],
             creation_state='private',
             starting_states=('pending',),
             ending_states=('published',),
@@ -129,9 +157,9 @@ def add_schedule_config(context):
             title='Test SubTaskConfig',
             default_assigned_user='schedule.assign_current_user',
             default_assigned_group='schedule.assign_authenticatedusers_group',
-            creation_conditions=('schedule.test_creation_condition',),
-            start_conditions=('schedule.test_start_condition',),
-            end_conditions=('schedule.test_end_condition',),
+            creation_conditions=[creation_conditions],
+            start_conditions=[start_conditions],
+            end_conditions=[end_conditions],
             creation_state='private',
             starting_states=('pending',),
             ending_states=('published',),

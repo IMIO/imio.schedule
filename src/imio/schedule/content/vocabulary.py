@@ -18,6 +18,7 @@ from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
 from imio.schedule.utils import interface_to_tuple
+from imio.schedule.utils import dict_list_2_vocabulary
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -336,3 +337,12 @@ class MacroTaskStartDateVocabularyFactory(TaskLogicVocabularyFactory):
     """
 
     provides_interface = IMacroTaskStartDate
+
+
+class LogicalOperatorVocabularyFactory(BaseVocabularyFactory):
+
+    def __call__(self, context):
+        return dict_list_2_vocabulary([
+            {'AND': _(u'and')},
+            {'OR': _(u'or')},
+        ])

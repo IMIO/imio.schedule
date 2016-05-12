@@ -442,13 +442,17 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         # set the task_config field 'creation_conditions' with a negative condition
         # => task should not be created
         task_config.enabled = True
-        task_config.creation_conditions = ('schedule.negative_creation_condition',)
+        task_config.creation_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_creation_condition',
+        })()]
         msg = "Task should not be created because the creation condition is not matched"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not be created
-        task_config.creation_conditions = ('schedule.test_creation_condition',)
+        task_config.creation_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.test_creation_condition',
+        })()]
         task_config.creation_state = 'pending'
         msg = "Task should not be created because the creation state does not match container state"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
@@ -481,13 +485,17 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
         task.assigned_user = 'user'
-        task_config.start_conditions = ('schedule.negative_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_start_condition',
+        })()]
         msg = "Task should not be started because the start condition is not matched"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not start
-        task_config.start_conditions = ('schedule.test_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.test_start_condition',
+        })()]
         task_config.starting_states = ('published',)
         msg = "Task should not be started because the starting state does not match container state"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
@@ -504,7 +512,9 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         self.assertTrue(matched_conditions == [('schedule.test_start_condition', 'Should start')])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.start_conditions = ('schedule.negative_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_start_condition',
+        })()]
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
         self.assertTrue(unmatched_conditions == [('schedule.negative_start_condition', False)])
@@ -530,7 +540,9 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'end_conditions' with a negative condition
         # => task should not end
-        task_config.end_conditions = ('schedule.negative_end_condition',)
+        task_config.end_conditions = [type('object', (object, ), {
+            'condition': 'schedule.negative_end_condition',
+        })()]
         msg = "Task should not be ended because the end condition is not matched"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
@@ -552,7 +564,9 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         self.assertTrue(matched_conditions == [('schedule.test_end_condition', 'Should end')])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.end_conditions = ('schedule.negative_end_condition',)
+        task_config.end_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_end_condition',
+        })()]
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
         self.assertTrue(unmatched_conditions == [('schedule.negative_end_condition', False)])
