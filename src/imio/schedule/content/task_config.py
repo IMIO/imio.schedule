@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
-from plone.dexterity.content import Container
-from plone.supermodel import model
-
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
@@ -18,10 +14,16 @@ from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import TaskAlreadyExists
 
+from plone import api
+from plone.dexterity.content import Container
+from plone.supermodel import model
+
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import implements
+
+import datetime
 
 
 class ITaskConfig(model.Schema):
@@ -120,11 +122,18 @@ class BaseTaskConfig(object):
         Return the content type of task to create.
         """
 
+    def level(self):
+        """
+        Return depth contenance level.
+        """
+        level = self.aq_parent.level() + 1
+        return level
+
     def is_main_taskconfig(self):
         """
         Tells wheter this task config is a sub task or not.
         """
-        return self.getParentNode() is self.get_schedule_config()
+        return self.level() == 1
 
     def get_schedule_config(self):
         """
@@ -296,11 +305,14 @@ class BaseTaskConfig(object):
     def evaluate_one_condition(self, to_adapt, interface, name):
         """
         """
-        condition = getMultiAdapter(
-            to_adapt,
-            interface=interface,
-            name=name
-        )
+        try:
+            condition = getMultiAdapter(
+                to_adapt,
+                interface=interface,
+                name=name
+            )
+        except:
+            import ipdb; ipdb.set_trace()
         value = condition.evaluate()
         return value
 
@@ -423,11 +435,15 @@ class BaseTaskConfig(object):
     def should_end_task(self, task_container, task):
         """
         Evaluate:
+         - If the task has an assigned user
          - If the task container is on the state selected on 'ending_states'
          - All the existence conditions of a task.
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically close a task.
         """
+
+        if not task.assigned_user:
+            return False
 
         # task container state match any ending_states value?
         if not self.match_ending_states(task_container):
@@ -508,7 +524,7 @@ class BaseTaskConfig(object):
         )
         start_date = date_adapter.start_date()
         if not start_date:
-            return None
+            return datetime.date(9999, 1, 1)
 
         additional_delay = self.additional_delay or 0
         due_date = start_date + additional_delay
@@ -580,10 +596,10 @@ class IMacroTaskConfig(ITaskConfig):
         required=True,
     )
 
-    starting_states = schema.Choice(
+    starting_states = schema.Set(
         title=_(u'Task container start states'),
         description=_(u'Select the state of the container where the task is automatically started.'),
-        vocabulary='schedule.container_state',
+        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
@@ -658,17 +674,18 @@ class MacroTaskConfig(Container, BaseTaskConfig):
 
         return subtask_configs
 
-    def create_task(self, task_container):
+    def create_task(self, task_container, creation_place=None):
         """
         Create the macrotask and subtasks.
         """
-        macrotask = self._create_task_instance(task_container)
+        creation_place = creation_place or task_container
+        macrotask = self._create_task_instance(creation_place)
 
         for config in self.get_subtask_configs():
             if config.should_create_task(task_container):
                 config.create_task(task_container, creation_place=macrotask)
 
-        # compute due date only after all substasks are created
+        # compute some fields only after all substasks are created
         macrotask.due_date = self.compute_due_date(task_container, macrotask)
         macrotask.assigned_group = self.group_to_assign(task_container, macrotask)
         macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
@@ -680,6 +697,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         See 'should_end_task' in BaseTaskConfig
         Evaluate:
+         - If the task has an assigned user
          - If the task container is on the state selected on 'ending_states'
          - All the existence conditions of a task with 'task' and 'kwargs'.
            Returns True only if ALL the conditions are matched.

@@ -33,4 +33,20 @@
      permission="zope2.View"
   />
 
+  <browser:page
+     for="imio.schedule.content.task.IAutomatedTask"
+     name="simple_start_status"
+     class=".task_completion.TaskStartSimpleStatusView"
+     template="templates/task_completion.pt"
+     permission="zope2.View"
+  />
+
+  <browser:page
+     for="imio.schedule.content.task.IAutomatedTask"
+     name="simple_end_status"
+     class=".task_completion.TaskEndSimpleStatusView"
+     template="templates/task_completion.pt"
+     permission="zope2.View"
+  />
+
 </configure>

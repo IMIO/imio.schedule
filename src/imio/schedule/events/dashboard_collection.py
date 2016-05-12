@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from imio.schedule import _
+from imio.schedule.content.schedule_config import IScheduleConfig
 from imio.schedule.interfaces import IScheduleCollection
 
 from plone import api
@@ -11,11 +13,12 @@ def create(schedule_container, event):
     """
     """
     collection_id = 'dashboard_collection'
+    title = IScheduleConfig.providedBy(schedule_container) and _('All') or schedule_container.Title()
 
     if collection_id not in schedule_container.objectIds():
         factory_args = {
             'id': 'dashboard_collection',
-            'title': schedule_container.Title(),
+            'title': title,
             'query': [
                 {
                     'i': 'CompoundCriterion',

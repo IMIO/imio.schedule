@@ -6,6 +6,7 @@ from plone import api
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from imio.schedule.config import DONE
 from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
@@ -113,6 +114,24 @@ class BaseAutomatedTask(object):
 
     def get_state(self):
         return api.content.get_state(self)
+
+    def get_subtasks(self):
+        """
+        A normal task has no sub tasks.
+        """
+        return []
+
+    @property
+    def end_date(self):
+        """
+        """
+        if self.get_status() == DONE:
+            wf_history = self.workflow_history['task_workflow'][::-1]
+            for action in wf_history:
+                if status_by_state[action['review_state']] is DONE:
+                    end_date = action['time']
+                    return end_date.asdatetime()
+        return None
 
 
 class AutomatedTask(Item, BaseAutomatedTask):

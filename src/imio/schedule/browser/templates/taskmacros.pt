@@ -21,13 +21,40 @@
                 <span i18n:domain="imio.schedule" i18n:translate="" tal:replace="python: ' to one of the following states'" />:
             </tal:not_closed>
             <tal:closed condition="closed">
-                <span i18n:translate="" tal:replace="python: 'State'" />
-                '<b  i18n:domain="plone" i18n:translate="" tal:content="python: state_status[0]" />'
-                <span i18n:translate="" tal:replace="python: ' is one of the following states'" />:
+                <span i18n:translate="" tal:replace="python: 'is one of the following states'" />:
             </tal:closed>
             <tal:states repeat="state python: state_status[1]">
-                '<b i18n:domain="plone"  i18n:translate="" tal:content="python: state" />',
+                '<b i18n:domain="plone"  i18n:translate="" tal:content="python: state" />'
+                 <tal:sep condition="not: repeat/state/end">,</tal:sep>
             </tal:states>.
         </span>
     </tal:vars>
+</div>
+
+<div metal:define-macro="subtasks_status_macro" i18n:domain="imio.schedule">
+    <div>Subtasks:</div>
+    <table>
+        <tr>
+            <th i18n:translate=""></th>
+            <th i18n:translate="">Title</th>
+            <th i18n:translate="">Due date</th>
+            <th i18n:translate="">End date</th>
+        </tr>
+        <tr tal:repeat="subtask subtasks">
+            <td>
+                <span tal:attributes="class python: 'schedule_%s' % view.get_state(subtask)">
+                    &nbsp&nbsp&nbsp
+                </span>
+            </td>
+            <td>
+                <span tal:content="python: subtask.Title()" />
+            </td>
+            <td tal:define="due_date python: view.display_date(subtask.due_date)">
+                <span tal:content="due_date" />
+             </td>
+            <td tal:define="end_date python: view.display_date(subtask.end_date)">
+                <span tal:content="end_date" />
+            </td>
+        </tr>
+    </table>
 </div>

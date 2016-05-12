@@ -25,7 +25,6 @@ class ScheduleCollectionVocabulary(CollectionVocabulary):
             brains = catalog(
                 path={
                     'query': '/'.join(config.getPhysicalPath()),
-                    'depth': 3
                 },
                 object_provides='plone.app.collection.interfaces.ICollection',
                 sort_on='getObjPositionInParent'

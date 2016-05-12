@@ -22,7 +22,8 @@ def create_new_tasks(task_container, event):
         if task_container.checkCreationFlag():
             return
 
-    task_configs = get_task_configs(task_container)
+    # ascending=True <= it's important to create to macro tasks first
+    task_configs = get_task_configs(task_container, ascending=True)
 
     if not task_configs:
         return

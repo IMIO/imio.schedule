@@ -1,6 +1,6 @@
 <tal:defines define="term view/term;
                      category view/category;
-                     level view/depth_level;
+                     level python: context.aq_parent.level();
                      widget python: view.widget;
                      wid python:widget.data.getId();">
           <li tal:define="

@@ -38,6 +38,12 @@ class ScheduleConfig(Container):
 
     implements(IScheduleConfig)
 
+    def level(self):
+        """
+        Return depth contenance level.
+        """
+        return 0
+
     def query_task_configs(self, query={}):
         """
         Query the TaskConfig of this ScheduleConfig.

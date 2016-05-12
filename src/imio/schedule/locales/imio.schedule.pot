@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-04-22 11:06+0000\n"
+"POT-Creation-Date: 2016-05-11 15:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,15 +23,19 @@ msgstr ""
 msgid " to one of the following states"
 msgstr ""
 
-#: ../content/task_config.py:102
+#: ../content/task_config.py:103
 msgid "Additional delay"
 msgstr ""
 
-#: ../content/task_config.py:39
+#: ../events/dashboard_collection.py:16
+msgid "All"
+msgstr ""
+
+#: ../content/task_config.py:40
 msgid "Assigned group"
 msgstr ""
 
-#: ../content/task_config.py:46
+#: ../content/task_config.py:47
 msgid "Assigned user"
 msgstr ""
 
@@ -43,24 +47,33 @@ msgstr ""
 msgid "AutomatedTask"
 msgstr ""
 
-#: ../content/task_config.py:60
+#: ../content/task_config.py:61
 msgid "Creation conditions"
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:22
+#: ../browser/templates/task_completion.pt:31
 msgid "Done"
 msgstr ""
 
+#: ../browser/templates/taskmacros.pt:40
+#: ../dashboard/columns.py:113
+msgid "Due date"
+msgstr ""
+
 #: ../content/schedule_config.py:21
-#: ../content/task_config.py:33
+#: ../content/task_config.py:34
 msgid "Enabled"
 msgstr ""
 
-#: ../content/task_config.py:88
+#: ../content/task_config.py:89
 msgid "End conditions"
 msgstr ""
 
-#: ../configure.zcml:29
+#: ../browser/templates/taskmacros.pt:41
+msgid "End date"
+msgstr ""
+
+#: ../configure.zcml:30
 msgid "Installs the imio.schedule add-on."
 msgstr ""
 
@@ -92,23 +105,23 @@ msgstr ""
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:61
+#: ../content/task_config.py:62
 msgid "Select creation conditions of the task"
 msgstr ""
 
-#: ../content/task_config.py:40
+#: ../content/task_config.py:41
 msgid "Select default group assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:47
+#: ../content/task_config.py:48
 msgid "Select default user assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:89
+#: ../content/task_config.py:90
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:75
+#: ../content/task_config.py:76
 msgid "Select start conditions of the task"
 msgstr ""
 
@@ -116,30 +129,30 @@ msgstr ""
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:96
+#: ../content/task_config.py:97
 msgid "Select the start date used to compute the due date."
 msgstr ""
 
-#: ../content/task_config.py:54
+#: ../content/task_config.py:55
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:68
+#: ../content/task_config.py:69
 msgid "Select the state of the container where the task is automatically started."
 msgstr ""
 
-#: ../content/task_config.py:82
+#: ../content/task_config.py:83
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
 msgid "Should pass from actual state "
 msgstr ""
 
-#: ../content/task_config.py:74
+#: ../content/task_config.py:75
 msgid "Start conditions"
 msgstr ""
 
-#: ../content/task_config.py:95
+#: ../content/task_config.py:96
 msgid "Start date"
 msgstr ""
 
@@ -153,19 +166,23 @@ msgstr ""
 msgid "Steps to ease tests of imio.schedule"
 msgstr ""
 
+#: ../dashboard/columns.py:112
+msgid "Subtask"
+msgstr ""
+
 #: ../profiles/default/types/TaskConfig.xml
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:53
+#: ../content/task_config.py:54
 msgid "Task container creation state"
 msgstr ""
 
-#: ../content/task_config.py:81
+#: ../content/task_config.py:82
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:67
+#: ../content/task_config.py:68
 msgid "Task container start states"
 msgstr ""
 
@@ -173,15 +190,19 @@ msgstr ""
 msgid "TaskConfig"
 msgstr ""
 
-#: ../content/task_config.py:103
+#: ../content/task_config.py:104
 msgid "This delay is added to the due date of the task."
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:36
+#: ../browser/templates/taskmacros.pt:39
+msgid "Title"
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:51
 msgid "To do"
 msgstr ""
 
-#: ../content/task_config.py:108
+#: ../content/task_config.py:109
 msgid "Warning delay"
 msgstr ""
 
@@ -189,7 +210,7 @@ msgstr ""
 msgid "collective.task"
 msgstr ""
 
-#: ../configure.zcml:29
+#: ../configure.zcml:30
 msgid "imio.schedule"
 msgstr ""
 
