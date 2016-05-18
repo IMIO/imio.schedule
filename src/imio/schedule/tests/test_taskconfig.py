@@ -513,7 +513,7 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_start_condition', 'Should start')])
+        self.assertTrue(matched_conditions == [('schedule.test_start_condition', True)])
         self.assertTrue(unmatched_conditions == [])
 
         task_config.start_conditions = [type('condition', (object, ), {
@@ -567,7 +567,7 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_end_condition', 'Should end')])
+        self.assertTrue(matched_conditions == [('schedule.test_end_condition', True)])
         self.assertTrue(unmatched_conditions == [])
 
         task_config.end_conditions = [type('condition', (object, ), {

@@ -3,7 +3,6 @@
 from collective.compoundcriterion.interfaces import ICompoundCriterionFilter
 
 from plone import api
-from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from Products.ATContentTypes.interfaces import IATDocument
 
@@ -12,12 +11,9 @@ from imio.schedule.testing import ExampleScheduleFunctionalTestCase
 from imio.schedule.utils import interface_to_tuple
 
 from zope.component import getAdapter
-from zope.component import getUtility
 from zope.component import queryAdapter
-from zope.component import queryUtility
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
-from zope.schema.interfaces import IVocabularyFactory
 
 
 class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
@@ -160,41 +156,3 @@ class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
         adapter = queryAdapter(self.portal, ICompoundCriterionFilter, schedule_config_UID)
         msg = "the ICompoundCriterionFilter adapter should have been unregistered when deleting the ScheduleConfig"
         self.assertTrue(adapter is None, msg)
-
-    def test_vocabulary_registration_on_ScheduleConfig_creation(self):
-        """
-        When creating a new ScheduleConfig,
-        A vocabulary, named with the ScheduleConfig title, listing all its subtasks
-        should be registered.
-        """
-        normalizer = getUtility(IIDNormalizer)
-        voc_name = normalizer.normalize(self.schedule_config.Title())
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        msg = "a vocabulary factory should have been registered for this ScheduleConfig"
-        self.assertTrue(voc_factory is not None, msg)
-
-    def test_vocabularty_unregistration_on_ScheduleConfig_deletion(self):
-        """
-        When deleting a ScheduleConfig, its IVocabularyFactory should be
-        unregistered.
-        """
-
-        normalizer = getUtility(IIDNormalizer)
-        schedule_config = api.content.create(
-            type='ScheduleConfig',
-            id='schedule_config_2',
-            container=self.portal.config,
-            title='YOLO',
-            scheduled_contenttype=self.schedule_config.scheduled_contenttype,
-        )
-
-        # to test unregistration, we have to be sure something was registered
-        voc_name = normalizer.normalize(schedule_config.Title())
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        msg = "a vocabulary factory should have been registered for this ScheduleConfig"
-        self.assertTrue(voc_factory is not None, msg)
-
-        api.content.delete(schedule_config)
-        voc_factory = queryUtility(IVocabularyFactory, voc_name)
-        msg = "vocabulary factory should have been unregistered when deleting this ScheduleConfig"
-        self.assertTrue(voc_factory is None, msg)

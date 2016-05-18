@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
-from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
@@ -197,22 +196,6 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         translation = translate(term.title, context=self.portal.REQUEST, target_language='fr')
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Date de création du dossier', msg)
-
-    def test_tasks_vocabulary_values(self):
-        """
-        Test values of the vocabulary listing task configs of a schedule task.
-        """
-        task_config = self.task_config
-        normalizer = getUtility(IIDNormalizer)
-        voc_name = normalizer.normalize(self.schedule_config.Title())
-        voc_factory = getUtility(IVocabularyFactory, voc_name)
-
-        vocabulary = voc_factory(self.portal)
-        self.assertTrue(task_config.UID() in vocabulary)
-
-        term = vocabulary.getTerm(task_config.UID())
-        msg = 'Display value should have been the TaskConfig title'
-        self.assertEquals(term.title, task_config.Title(), msg)
 
 
 class TestMacroTaskVocabularies(MacroTaskScheduleIntegrationTestCase):
