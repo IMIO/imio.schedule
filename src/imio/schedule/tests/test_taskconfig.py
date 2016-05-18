@@ -753,5 +753,5 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         self.assertFalse(subtask.get_status() == DONE)
 
         msg = "MacroTask should not be ended as long its subtask is open"
-        end = macrotask_config.should_end_task(task_container, subtask)
+        end = macrotask_config.should_end_task(task_container, macrotask)
         self.assertFalse(end, msg)
