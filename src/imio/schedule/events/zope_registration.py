@@ -3,7 +3,6 @@
 from collective.compoundcriterion.interfaces import ICompoundCriterionFilter
 
 from plone import api
-from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from imio.schedule.content.schedule_config import IScheduleConfig
 from imio.schedule.content.task_config import ITaskConfig
@@ -13,12 +12,8 @@ from imio.schedule.utils import interface_to_tuple
 from imio.schedule.utils import tuple_to_interface
 
 from zope.component import getGlobalSiteManager
-from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implements
-from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
 
 
 import logging
@@ -226,65 +221,6 @@ def unregister_task_collection_criterion(task_config, event):
         logger.info(msg)
 
 
-_vocabularies = {}
-
-
-def register_tasks_vocabulary(schedule_config, event):
-    """
-    Register adapter turning a schedule config into a vocabulary
-    listing all task configs from this schedule config.
-    """
-
-    gsm = getGlobalSiteManager()
-    normalizer = getUtility(IIDNormalizer)
-
-    class TaskConfigsVocabulary(object):
-
-        implements(IVocabularyFactory)
-
-        schedule_config_UID = schedule_config.UID()
-        name = normalizer.normalize(schedule_config.Title())
-
-        def __call__(self, context):
-            catalog = api.portal.get_tool('portal_catalog')
-            schedule_config = catalog(UID=self.schedule_config_UID)[0].getObject()
-            collection_brains = schedule_config.query_maintask_configs()
-            vocabulary = SimpleVocabulary(
-                [SimpleTerm(b.UID, b.UID, b.Title) for b in collection_brains]
-            )
-            return vocabulary
-
-    voc_factory = TaskConfigsVocabulary()
-    gsm.registerUtility(voc_factory, name=voc_factory.name)
-    _vocabularies[schedule_config.UID()] = voc_factory
-
-    msg = "Registered schedule tasks vocabulary '{}'".format(
-        voc_factory.name
-    )
-    logger.info(msg)
-
-
-def unregister_tasks_vocabulary(schedule_config, event):
-    """
-    Unregister adapter turning a schedule config into a vocabulary.
-    """
-
-    gsm = getGlobalSiteManager()
-
-    voc_factory = _vocabularies.get(schedule_config.UID(), None)
-    if not voc_factory:
-        return
-
-    removed = gsm.unregisterUtility(voc_factory, name=voc_factory.name)
-
-    if removed:
-        _vocabularies.pop(schedule_config.UID())
-        msg = "Unregistered schedule tasks vocabulary '{}'".format(
-            voc_factory.name
-        )
-        logger.info(msg)
-
-
 _registered_sites = set()
 
 
@@ -313,6 +249,5 @@ def register_at_instance_startup(site, event):
 
         for schedule_config in all_schedule_configs:
             register_schedule_collection_criterion(schedule_config, event)
-            register_tasks_vocabulary(schedule_config, event)
 
         _registered_sites.add(site)
