@@ -84,7 +84,7 @@ class SubtaskHighestDueDate(MacroTaskStartDate):
         if not subtasks:
             return None
         due_dates = [DateTime(str(t.due_date)) for t in subtasks if t.due_date]
-        due_dates = due_dates and max(due_dates) or None
+        return due_dates and max(due_dates) or None
 
 
 class AssignTaskUser(TaskLogic):
