@@ -22,14 +22,6 @@
 
   <subscriber for="imio.schedule.content.schedule_config.IScheduleConfig
                    zope.lifecycleevent.IObjectAddedEvent"
-              handler=".zope_registration.register_tasks_vocabulary"/>
-
-  <subscriber for="imio.schedule.content.schedule_config.IScheduleConfig
-                   zope.lifecycleevent.IObjectRemovedEvent"
-              handler=".zope_registration.unregister_tasks_vocabulary"/>
-
-  <subscriber for="imio.schedule.content.schedule_config.IScheduleConfig
-                   zope.lifecycleevent.IObjectAddedEvent"
               handler=".dashboard_collection.create"/>
 
   <subscriber for="imio.schedule.content.task_config.ITaskConfig
