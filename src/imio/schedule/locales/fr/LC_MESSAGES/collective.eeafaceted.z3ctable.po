@@ -18,7 +18,7 @@ msgid "header_assigned_user_column"
 msgstr "Assigné à"
 
 msgid "header_due_date"
-msgstr "Date déchéance"
+msgstr "Échéance"
 
 msgid "header_status"
 msgstr "Statut"
