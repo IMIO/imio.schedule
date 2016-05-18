@@ -10,6 +10,7 @@ from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from imio.schedule.testing import TEST_INSTALL_INTEGRATION
 
+from mock import Mock
 from plone import api
 
 import unittest
@@ -235,6 +236,14 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
+
+    def setUp(self):
+        super(TestTaskConfigMethodsIntegration, self).setUp()
+        self._evaluate_one_condition = self.task_config.evaluate_one_condition
+
+    def tearDown(self):
+        self.task_config.evaluate_one_condition = self._evaluate_one_condition
+        super(TestTaskConfigMethodsIntegration, self).tearDown()
 
     def test_get_task_type(self):
         """
@@ -633,6 +642,76 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
 
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
+
+    def test_evaluate_conditions_and(self):
+        """
+        Evaluate conditions with AND operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_or(self):
+        """
+        Evaluate conditions with OR operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_and_or(self):
+        """
+        Evaluate conditions with AND and OR operators
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
 
 
 class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):

@@ -53,6 +53,7 @@ setup(
     ],
     extras_require={
         'test': [
+            'Mock',
             'plone.app.testing',
             'plone.app.robotframework[debug]',
         ],
