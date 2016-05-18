@@ -7,5 +7,6 @@
     <include file="vocabulary.zcml" />
     <include file="object_factories.zcml" />
     <include file="widget.zcml" />
+    <include file="view.zcml" />
 
 </configure>

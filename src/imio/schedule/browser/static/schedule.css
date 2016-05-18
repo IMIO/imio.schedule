@@ -46,3 +46,9 @@ a.term-level-4 {
 a.term-level-3 {
     padding-left: 3em
 }
+
+.portaltype-taskconfig #content #content-core .enableFormTabbing,
+.portaltype-macrotaskconfig #content #content-core .enableFormTabbing {
+    border: 0!important;
+    margin-top: 0;
+}
