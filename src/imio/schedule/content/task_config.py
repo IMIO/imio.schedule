@@ -77,75 +77,21 @@ class ITaskConfig(model.Schema):
     """
     TaskConfig dexterity schema.
     """
+
+    model.fieldset(
+        'general',
+        label=_(u"General informations"),
+        fields=[
+            'enabled', 'start_date', 'additional_delay',
+            'warning_delay', 'default_assigned_group',
+            'default_assigned_user'
+        ]
+    )
+
     enabled = schema.Bool(
         title=_(u'Enabled'),
         default=True,
         required=False,
-    )
-
-    default_assigned_group = schema.Choice(
-        title=_(u'Assigned group'),
-        description=_(u'Select default group assigned to this task.'),
-        vocabulary='schedule.assigned_group',
-        required=False,
-    )
-
-    default_assigned_user = schema.Choice(
-        title=_(u'Assigned user'),
-        description=_(u'Select default user assigned to this task.'),
-        vocabulary='schedule.assigned_user',
-        required=True,
-    )
-
-    creation_state = schema.Choice(
-        title=_(u'Task container creation state'),
-        description=_(u'Select the state of the container where the task is automatically created.'),
-        vocabulary='schedule.container_state',
-        required=False,
-    )
-
-    creation_conditions = schema.List(
-        title=_(u'Creation conditions'),
-        description=_(u'Select creation conditions of the task'),
-        value_type=schema.Object(
-            title=_(u'Conditions'),
-            schema=ICreationConditionSchema,
-        ),
-        required=True,
-    )
-
-    starting_states = schema.Set(
-        title=_(u'Task container start states'),
-        description=_(u'Select the state of the container where the task is automatically started.'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
-    start_conditions = schema.List(
-        title=_(u'Start conditions'),
-        description=_(u'Select start conditions of the task'),
-        value_type=schema.Object(
-            title=_(u'Conditions'),
-            schema=IStartConditionSchema,
-        ),
-        required=True,
-    )
-
-    ending_states = schema.Set(
-        title=_(u'Task container end states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
-    end_conditions = schema.List(
-        title=_(u'End conditions'),
-        description=_(u'Select end conditions of the task.'),
-        value_type=schema.Object(
-            title=_(u'Conditions'),
-            schema=IEndConditionSchema,
-        ),
-        required=True,
     )
 
     start_date = schema.Choice(
@@ -163,6 +109,89 @@ class ITaskConfig(model.Schema):
 
     warning_delay = schema.Int(
         title=_(u'Warning delay'),
+        required=False,
+    )
+
+    default_assigned_group = schema.Choice(
+        title=_(u'Assigned group'),
+        description=_(u'Select default group assigned to this task.'),
+        vocabulary='schedule.assigned_group',
+        required=False,
+    )
+
+    default_assigned_user = schema.Choice(
+        title=_(u'Assigned user'),
+        description=_(u'Select default user assigned to this task.'),
+        vocabulary='schedule.assigned_user',
+        required=True,
+    )
+
+    model.fieldset(
+        'creation',
+        label=_(u"Creation"),
+        fields=['creation_state', 'creation_conditions']
+    )
+
+    creation_state = schema.Set(
+        title=_(u'Task container creation state'),
+        description=_(u'Select the state of the container where the task is automatically created.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    creation_conditions = schema.List(
+        title=_(u'Creation conditions'),
+        description=_(u'Select creation conditions of the task'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=ICreationConditionSchema,
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        'start',
+        label=_(u"Start"),
+        fields=['starting_states', 'start_conditions']
+    )
+
+    starting_states = schema.Set(
+        title=_(u'Task container start states'),
+        description=_(u'Select the state of the container where the task is automatically started.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    start_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select start conditions of the task'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IStartConditionSchema,
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        'ending',
+        label=_(u"Ending"),
+        fields=['ending_states', 'end_conditions']
+    )
+
+    ending_states = schema.Set(
+        title=_(u'Task container end states'),
+        description=_(u'Select the states of the container where the task is automatically closed.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    end_conditions = schema.List(
+        title=_(u'End conditions'),
+        description=_(u'Select end conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IEndConditionSchema,
+        ),
         required=False,
     )
 
@@ -348,28 +377,40 @@ class BaseTaskConfig(object):
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """
         """
+        value = True
+
         for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
                 name=condition_object.condition,
             )
-            if not value:
+            operator = condition_object.operator
+
+            # in these cases, its useless to evaluate further because:
+            # TRUE or (... ) <=> TRUE
+            # FALSE and (... ) <=> FALSE
+            if operator == 'OR' and value is True:
+                return True
+            elif operator == 'AND' and value is False:
                 return False
-        return True
+            # else, just continue to loop to evaluate the rest of the expression because:
+            # FALSE or (... ) <=> (... )
+            # TRUE and (... ) <=> (... )
+            # so only the remaining '(... )' expression is relevant
+
+        # return the last value
+        return value
 
     def evaluate_one_condition(self, to_adapt, interface, name):
         """
         """
-        try:
-            condition = getMultiAdapter(
-                to_adapt,
-                interface=interface,
-                name=name
-            )
-        except:
-            import ipdb; ipdb.set_trace()
-        value = condition.evaluate()
+        condition = getMultiAdapter(
+            to_adapt,
+            interface=interface,
+            name=name
+        )
+        value = condition.evaluate() and True or False
         return value
 
     def get_conditions_status(self, conditions, to_adapt, interface):
@@ -426,8 +467,11 @@ class BaseTaskConfig(object):
     def match_creation_state(self, task_container):
         """
         """
+        if not self.creation_state:
+            return True
+
         container_state = api.content.get_state(task_container)
-        return container_state == self.creation_state
+        return container_state in (self.creation_state or [])
 
     def match_creation_conditions(self, task_container):
         """
@@ -690,6 +734,20 @@ class IMacroTaskConfig(ITaskConfig):
     TaskConfig dexterity schema.
     """
 
+    start_date = schema.Choice(
+        title=_(u'Start date'),
+        description=_(u'Select the start date used to compute the due date.'),
+        vocabulary='schedule.macrotask_start_date',
+        required=True,
+    )
+
+    creation_state = schema.Set(
+        title=_(u'Task container creation state'),
+        description=_(u'Select the state of the container where the task is automatically created.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
     creation_conditions = schema.List(
         title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
@@ -697,7 +755,7 @@ class IMacroTaskConfig(ITaskConfig):
             title=_(u'Conditions'),
             schema=IMacroCreationConditionSchema,
         ),
-        required=True,
+        required=False,
     )
 
     starting_states = schema.Set(
@@ -714,7 +772,7 @@ class IMacroTaskConfig(ITaskConfig):
             title=_(u'Conditions'),
             schema=IMacroStartConditionSchema,
         ),
-        required=True,
+        required=False,
     )
 
     ending_states = schema.Set(
@@ -731,24 +789,6 @@ class IMacroTaskConfig(ITaskConfig):
             title=_(u'Conditions'),
             schema=IMacroEndConditionSchema,
         ),
-        required=True,
-    )
-
-    start_date = schema.Choice(
-        title=_(u'Start date'),
-        description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='schedule.macrotask_start_date',
-        required=True,
-    )
-
-    additional_delay = schema.Int(
-        title=_(u'Additional delay'),
-        description=_(u'This delay is added to the due date of the task.'),
-        required=False,
-    )
-
-    warning_delay = schema.Int(
-        title=_(u'Warning delay'),
         required=False,
     )
 
