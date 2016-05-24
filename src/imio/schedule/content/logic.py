@@ -4,6 +4,8 @@ from DateTime import DateTime
 
 from plone import api
 
+from imio.schedule.config import STARTED
+from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IMacroTaskStartDate
@@ -69,6 +71,21 @@ class MacroTaskStartDate(StartDate):
         Compute a due date from task_container
         then return it.
         """
+
+
+class TaskStartingDate(StartDate):
+    """
+    Return the date when the task started.
+    """
+
+    def start_date(self):
+        """
+        Return the date when the task started.
+        """
+        history = self.task.workflow_history.values()[0]
+        for state_history in history:
+            if status_by_state[state_history.get('review_state')] is STARTED:
+                return state_history['time']
 
 
 class SubtaskHighestDueDate(MacroTaskStartDate):

@@ -106,6 +106,9 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
         """
         """
         subtasks = self.task.get_subtasks()
+        if not subtasks:
+            return self.display_task_status(self.task)
+
         rows = [
             u'<tr><th class="subtask_status_icon">{icon}</th>\
             <th i18n:translate="">{subtask}</th>\

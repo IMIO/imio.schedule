@@ -48,6 +48,7 @@ setup(
         'imio.dashboard',
         'plone.api',
         'plone.app.dexterity',
+        'Products.cron4plone',
         'setuptools',
     ],
     extras_require={

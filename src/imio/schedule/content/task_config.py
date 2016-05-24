@@ -389,9 +389,9 @@ class BaseTaskConfig(object):
 
             # in these cases, its useless to evaluate further because:
             # TRUE or (... ) <=> TRUE
-            # FALSE and (... ) <=> FALSE
             if operator == 'OR' and value is True:
                 return True
+            # FALSE and (... ) <=> FALSE
             elif operator == 'AND' and value is False:
                 return False
             # else, just continue to loop to evaluate the rest of the expression because:

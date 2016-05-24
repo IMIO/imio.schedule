@@ -63,6 +63,20 @@ class EndCondition(Condition):
         """
 
 
+class EndCondition(Condition):
+    """
+    End condition of a AutomatedTask.
+    """
+
+    implements(IEndCondition)
+
+    def evaluate(self):
+        """
+        To override.
+        evaluate if the condition is True or False
+        """
+
+
 class MacroTaskCreationCondition(CreationCondition):
     """
     Creation condition of a AutomatedMacroTask.
