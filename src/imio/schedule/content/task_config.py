@@ -11,6 +11,7 @@ from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IEndCondition
+from imio.schedule.interfaces import IRecurrenceCondition
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import TaskAlreadyExists
@@ -192,6 +193,25 @@ class ITaskConfig(model.Schema):
             title=_(u'Conditions'),
             schema=IEndConditionSchema,
         ),
+        required=False,
+    )
+
+    model.fieldset(
+        'recurrence',
+        label=_(u'Recurrence'),
+        fields=['recurrence_states', 'recurrence_condition'],
+    )
+
+    recurrence_states = schema.Set(
+        title=_(u'Task container recurrence states'),
+        description=_(u'Select the state of the container where the task should be recurred'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    recurrence_condition = schema.Choice(
+        title=_(u'Recurrence condition'),
+        vocabulary='schedule.recurrence_condition',
         required=False,
     )
 
@@ -582,6 +602,32 @@ class BaseTaskConfig(object):
             interface=IEndCondition,
         )
 
+    def should_recurred(self, task_container):
+        """
+        Evaluate if the a new task should be created for the task container
+        depending on the recurrence condition
+        """
+        if self.recurrence_condition is None:
+            return False
+
+        if self.match_recurrence_states(task_container) is False:
+            return False
+
+        return self.evaluate_one_condition(
+            to_adapt=(task_container, self),
+            interface=IRecurrenceCondition,
+            name=self.recurrence_condition,
+        )
+
+    def match_recurrence_states(self, task_container):
+        """
+        """
+        if not self.recurrence_states:
+            return True
+
+        container_state = api.content.get_state(task_container)
+        return container_state in (self.recurrence_states or [])
+
     def create_task(self, task_container):
         """
         To implements in subclasses.
@@ -632,12 +678,10 @@ class BaseTaskConfig(object):
 
         return due_date
 
-    def _create_task_instance(self, creation_place):
+    def _create_task_instance(self, creation_place, task_id):
         """
         Helper method to use to implement 'create_task'.
         """
-        task_id = 'TASK_{}'.format(self.id)
-
         if task_id in creation_place.objectIds():
             raise TaskAlreadyExists(task_id)
 
@@ -654,6 +698,31 @@ class BaseTaskConfig(object):
         )
         return task
 
+    @property
+    def default_task_id(self):
+        return 'TASK_{0}'.format(self.id)
+
+    def create_recurring_task(self, task_container, creation_place=None):
+        """
+        Create a recurring task
+        """
+        creation_place = creation_place or task_container
+        object_ids = creation_place.objectIds()
+        if self.default_task_id in object_ids:
+            related_ids = [i for i in object_ids
+                           if i.startswith(self.default_task_id)]
+            task_id = '{0}-{1}'.format(
+                self.default_task_id,
+                len(related_ids),
+            )
+        else:
+            task_id = self.default_task_id
+        return self.create_task(
+            task_container,
+            creation_place=creation_place,
+            task_id=task_id,
+        )
+
 
 class TaskConfig(Container, BaseTaskConfig):
     """
@@ -668,12 +737,13 @@ class TaskConfig(Container, BaseTaskConfig):
         """
         return 'AutomatedTask'
 
-    def create_task(self, task_container, creation_place=None):
+    def create_task(self, task_container, creation_place=None, task_id=None):
         """
         Just create the task and return it.
         """
         creation_place = creation_place or task_container
-        task = self._create_task_instance(creation_place)
+        task_id = task_id or self.default_task_id
+        task = self._create_task_instance(creation_place, task_id)
 
         task.due_date = self.compute_due_date(task_container, task)
         task.assigned_group = self.group_to_assign(task_container, task)
@@ -824,12 +894,13 @@ class MacroTaskConfig(Container, BaseTaskConfig):
 
         return subtask_configs
 
-    def create_task(self, task_container, creation_place=None):
+    def create_task(self, task_container, creation_place=None, task_id=None):
         """
         Create the macrotask and subtasks.
         """
         creation_place = creation_place or task_container
-        macrotask = self._create_task_instance(creation_place)
+        task_id = task_id or self.default_task_id
+        macrotask = self._create_task_instance(creation_place, task_id)
 
         for config in self.get_subtask_configs():
             if config.should_create_task(task_container):

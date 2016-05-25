@@ -133,3 +133,9 @@ class TaskAlreadyExists(Exception):
     """
     Raised when a Task already exists.
     """
+
+
+class IRecurrenceCondition(ITaskLogic):
+    """
+    Base interface for the TaskConfig recurrence conditions
+    """

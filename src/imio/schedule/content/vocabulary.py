@@ -17,6 +17,7 @@ from imio.schedule.interfaces import IScheduledContentTypeVocabulary
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
+from imio.schedule.interfaces import IRecurrenceCondition
 from imio.schedule.utils import interface_to_tuple
 from imio.schedule.utils import dict_list_2_vocabulary
 
@@ -301,6 +302,14 @@ class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
     """
 
     provides_interface = IStartDate
+
+
+class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'recurrence_condition' field.
+    Return recurrence conditions for a task config.
+    """
+    provides_interface = IRecurrenceCondition
 
 
 class MacroTaskCreationConditionVocabularyFactory(TaskLogicVocabularyFactory):

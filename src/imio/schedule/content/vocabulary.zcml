@@ -66,6 +66,13 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig 'recurrence_condition' field Vocabulary -->
+    <utility
+        factory=".vocabulary.RecurrenceConditionVocabularyFactory"
+        name="schedule.recurrence_condition"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'creation_conditions' field Vocabulary for MacroTaskConfig -->
     <utility
         factory=".vocabulary.MacroTaskCreationConditionVocabularyFactory"
