@@ -62,4 +62,14 @@
     name="imio.schedule.content.task_config.IMacroEndConditionSchema"
     />
 
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.MacroRecurrenceConditionAdapter"
+    name="imio.schedule.content.task_config.IMacroRecurrenceConditionSchema"
+    />
+
 </configure>

@@ -306,7 +306,7 @@ class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
 
 class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
-    Vocabulary factory for 'recurrence_condition' field.
+    Vocabulary factory for 'recurrence_conditions' field.
     Return recurrence conditions for a task config.
     """
     provides_interface = IRecurrenceCondition

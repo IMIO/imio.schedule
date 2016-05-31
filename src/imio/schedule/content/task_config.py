@@ -11,7 +11,6 @@ from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IEndCondition
-from imio.schedule.interfaces import IRecurrenceCondition
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import TaskAlreadyExists
@@ -193,25 +192,6 @@ class ITaskConfig(model.Schema):
             title=_(u'Conditions'),
             schema=IEndConditionSchema,
         ),
-        required=False,
-    )
-
-    model.fieldset(
-        'recurrence',
-        label=_(u'Recurrence'),
-        fields=['recurrence_states', 'recurrence_condition'],
-    )
-
-    recurrence_states = schema.Set(
-        title=_(u'Task container recurrence states'),
-        description=_(u'Select the state of the container where the task should be recurred'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
-    recurrence_condition = schema.Choice(
-        title=_(u'Recurrence condition'),
-        vocabulary='schedule.recurrence_condition',
         required=False,
     )
 
@@ -607,16 +587,16 @@ class BaseTaskConfig(object):
         Evaluate if the a new task should be created for the task container
         depending on the recurrence condition
         """
-        if self.recurrence_condition is None:
+        if not getattr(self, 'recurrence_conditions', None):
             return False
 
         if self.match_recurrence_states(task_container) is False:
             return False
 
-        return self.evaluate_one_condition(
+        return self.evaluate_conditions(
+            conditions=self.recurrence_conditions,
             to_adapt=(task_container, self),
-            interface=IRecurrenceCondition,
-            name=self.recurrence_condition,
+            interface=ICreationCondition,
         )
 
     def match_recurrence_states(self, task_container):
@@ -802,6 +782,22 @@ class IMacroEndConditionSchema(Interface):
     )
 
 
+class IMacroRecurrenceConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_creation_conditions',
+        # vocabulary='schedule.recurrence_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
 class IMacroTaskConfig(ITaskConfig):
     """
     TaskConfig dexterity schema.
@@ -840,6 +836,29 @@ class IMacroTaskConfig(ITaskConfig):
         value_type=schema.Object(
             title=_(u'Conditions'),
             schema=IMacroEndConditionSchema,
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        'recurrence',
+        label=_(u'Recurrence'),
+        fields=['recurrence_states', 'recurrence_conditions'],
+    )
+
+    recurrence_states = schema.Set(
+        title=_(u'Task container recurrence states'),
+        description=_(u'Select the state of the container where the task should be recurred'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    recurrence_conditions = schema.List(
+        title=_(u'Recurrence condition'),
+        description=_(u'Select recurrence conditions of the task.'),
+        value_type=schema.Object(
+            title=_('Conditions'),
+            schema=IMacroRecurrenceConditionSchema,
         ),
         required=False,
     )
