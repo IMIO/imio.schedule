@@ -811,13 +811,6 @@ class IMacroTaskConfig(ITaskConfig):
         required=True,
     )
 
-    creation_state = schema.Set(
-        title=_(u'Task container creation state'),
-        description=_(u'Select the state of the container where the task is automatically created.'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
     creation_conditions = schema.List(
         title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
@@ -828,13 +821,6 @@ class IMacroTaskConfig(ITaskConfig):
         required=False,
     )
 
-    starting_states = schema.Set(
-        title=_(u'Task container start states'),
-        description=_(u'Select the state of the container where the task is automatically started.'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
     start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
@@ -842,13 +828,6 @@ class IMacroTaskConfig(ITaskConfig):
             title=_(u'Conditions'),
             schema=IMacroStartConditionSchema,
         ),
-        required=False,
-    )
-
-    ending_states = schema.Set(
-        title=_(u'Task container end states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
