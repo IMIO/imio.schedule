@@ -138,6 +138,8 @@ class UpdateRecurrenceHandler(TaskEventHandler):
                 macro_config = config.getParentNode()
                 parent_task = macro_config.get_open_task(self.container)
                 if parent_task and config.should_recurred(self.container):
+                    if config.get_open_task(parent_task) is not None:
+                        continue
                     config.create_recurring_task(
                         self.container,
                         creation_place=parent_task,

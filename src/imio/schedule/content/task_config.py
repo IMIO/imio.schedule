@@ -706,8 +706,11 @@ class BaseTaskConfig(object):
         """
         Create a recurring task
         """
+        is_subtask = creation_place is not None
         creation_place = creation_place or task_container
         object_ids = creation_place.objectIds()
+        if is_subtask and self.default_task_id in object_ids:
+            return
         if self.default_task_id in object_ids:
             related_ids = [i for i in object_ids
                            if i.startswith(self.default_task_id)]
