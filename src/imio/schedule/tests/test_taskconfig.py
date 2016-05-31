@@ -240,9 +240,17 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
     def setUp(self):
         super(TestTaskConfigMethodsIntegration, self).setUp()
         self._evaluate_one_condition = self.task_config.evaluate_one_condition
+        self._evaluate_conditions = self.task_config.evaluate_conditions
+        self._match_recurrence_states = self.task_config.match_recurrence_states
+        self._create_task = self.task_config.create_task
+        self._api_get_state = api.content.get_state
 
     def tearDown(self):
         self.task_config.evaluate_one_condition = self._evaluate_one_condition
+        self.task_config.evaluate_conditions = self._evaluate_conditions
+        self.task_config.match_recurrence_states = self._match_recurrence_states
+        self.task_config.create_task = self._create_task
+        api.content.get_state = self._api_get_state
         super(TestTaskConfigMethodsIntegration, self).tearDown()
 
     def test_get_task_type(self):
@@ -712,6 +720,59 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
         result = self.task_config.evaluate_conditions(conditions, None, None)
         self.assertFalse(result)
+
+    def test_should_recurred(self):
+        """
+        Test different cases for the 'should_recurred' method
+        """
+        self.task_config.recurrence_conditions = None
+        self.task_config.match_recurrence_states = Mock(return_value=False)
+        self.task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.recurrence_conditions = ['foo']
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(self.task_config.should_recurred(None))
+
+    def test_match_recurrence_states(self):
+        """
+        Test method 'match_recurrence_states'
+        """
+        self.task_config.recurrence_states = []
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['foo']
+        api.content.get_state = Mock(return_value='foo')
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['bar']
+        self.assertFalse(self.task_config.match_recurrence_states(None))
+
+    def test_create_recurring_task(self):
+        """
+        Test different cases for the 'create_recurring_task' method
+        """
+        container = type('container', (object, ), {})()
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        self.assertIsNone(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=[])
+        self.task_config.create_task = Mock(return_value=True)
+        self.assertTrue(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        self.assertTrue(self.task_config.create_recurring_task(container))
 
 
 class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):

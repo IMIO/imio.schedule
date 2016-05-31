@@ -249,7 +249,8 @@ class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
         """
         Unregister the adapters here since the zope instance never shut downs.
         """
-        unsubscribe_task_configs_for_content_type(self.task_config, None)
+        unsubscribe_task_configs_for_content_type(self.macrotask_config, None)
+        unsubscribe_task_configs_for_content_type(self.subtask_config, None)
 
         api.content.delete(self.task_container)
         api.content.delete(self.empty_task_container)

@@ -4,6 +4,7 @@ from plone import api
 
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
+from imio.schedule.testing import MacroTaskScheduleFunctionalTestCase
 
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
@@ -230,6 +231,32 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         msg = 'new due date should have been reindexed'
         task_brain = catalog(due_date=task.due_date, UID=task.UID())
         self.assertTrue(task_brain, msg)
+
+
+class TestMacroTaskUpdate(MacroTaskScheduleFunctionalTestCase):
+    """
+    Test task update with different changes of TaskContainer.
+    """
+
+    def tearDown(self):
+        api.content.transition(obj=self.macro_task, to_state='created')
+
+    def test_update_recurrence_handler(self):
+        """
+        When modifying a contenttype the recurrence should be evaluated
+        """
+        transitions = ['do_to_assign', 'do_realized', 'do_closed']
+        self.macrotask_config.recurrence_conditions = self.macrotask_config.creation_conditions
+        self.macrotask_config.recurrence_states = ('private', )
+        for transition in transitions:
+            api.content.transition(obj=self.macro_task, transition=transition)
+        notify(ObjectModifiedEvent(self.task_container))
+
+        self.assertTrue('TASK_test_macrotaskconfig-1' in self.task_container)
+        macro_task = self.task_container['TASK_test_macrotaskconfig-1']
+        self.assertTrue('TASK_test_subtaskconfig' in macro_task)
+        for transition in transitions:
+            api.content.transition(obj=macro_task, transition=transition)
 
 
 class TestTaskEnding(ExampleScheduleFunctionalTestCase):
