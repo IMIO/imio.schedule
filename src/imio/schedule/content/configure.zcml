@@ -3,6 +3,7 @@
     i18n_domain="imio.schedule">
 
     <include file="conditions.zcml" />
+    <include file="delay.zcml" />
     <include file="logic.zcml" />
     <include file="vocabulary.zcml" />
     <include file="object_factories.zcml" />

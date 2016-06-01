@@ -7,13 +7,13 @@ from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.content.subform_context_choice import SubFormContextChoice
+from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
-from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IEndCondition
 from imio.schedule.interfaces import IStartCondition
-from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import TaskAlreadyExists
+from imio.schedule.interfaces import ICalculationDelay
 
 from plone import api
 from plone.dexterity.content import Container
@@ -24,8 +24,6 @@ from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import Interface
 from zope.interface import implements
-
-import datetime
 
 
 class ICreationConditionSchema(Interface):
@@ -193,6 +191,22 @@ class ITaskConfig(model.Schema):
             schema=IEndConditionSchema,
         ),
         required=False,
+    )
+
+    model.fieldset(
+        'delay',
+        label=_(u'Calculation delay'),
+        fields=['calculation_delay'],
+    )
+
+    calculation_delay = schema.List(
+        title=_(u'Calculation delay method'),
+        value_type=schema.Choice(
+            title=_(u'Calculation delay'),
+            vocabulary='schedule.calculation_delay',
+            default='schedule.calculation_default_delay',
+        ),
+        required=True,
     )
 
 
@@ -378,7 +392,6 @@ class BaseTaskConfig(object):
         """
         """
         value = True
-
         for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
@@ -643,18 +656,21 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
-        date_adapter = getMultiAdapter(
-            (task_container, task),
-            interface=IStartDate,
-            name=self.start_date
-        )
-        start_date = date_adapter.start_date()
-        if not start_date:
-            return datetime.date(9999, 1, 1)
-
-        additional_delay = self.additional_delay or 0
-        due_date = start_date + additional_delay
-        due_date = due_date.asdatetime().date()
+        adapters = getattr(self, 'calculation_delay', [])
+        # Backward compatibility
+        if not adapters:
+            adapters = ['schedule.calculation_default_delay']
+        due_date = None
+        for adapter in adapters:
+            calculator = getMultiAdapter(
+                (task_container, task),
+                interface=ICalculationDelay,
+                name=adapter,
+            )
+            if due_date is None:
+                due_date = calculator.due_date
+            else:
+                due_date = calculator.compute_due_date(due_date)
 
         return due_date
 

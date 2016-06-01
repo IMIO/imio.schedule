@@ -139,3 +139,9 @@ class IRecurrenceCondition(ITaskLogic):
     """
     Base interface for the TaskConfig recurrence conditions
     """
+
+
+class ICalculationDelay(ITaskLogic):
+    """
+    Base interface for the TaskConfig calculation delay methods
+    """

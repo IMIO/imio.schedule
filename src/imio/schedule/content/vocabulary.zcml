@@ -108,4 +108,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         />
 
+    <!-- TaskConfig calculation delay vocabulary -->
+    <utility
+        factory=".vocabulary.CalculationDelayVocabularyFactory"
+        name="schedule.calculation_delay"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
 </configure>

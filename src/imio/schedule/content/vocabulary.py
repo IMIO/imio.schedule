@@ -18,6 +18,7 @@ from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
 from imio.schedule.interfaces import IRecurrenceCondition
+from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.utils import interface_to_tuple
 from imio.schedule.utils import dict_list_2_vocabulary
 
@@ -310,6 +311,14 @@ class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
     Return recurrence conditions for a task config.
     """
     provides_interface = IRecurrenceCondition
+
+
+class CalculationDelayVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'calculation_delay' field.
+    Return calculation delay methods for a task config.
+    """
+    provides_interface = ICalculationDelay
 
 
 class MacroTaskCreationConditionVocabularyFactory(TaskLogicVocabularyFactory):
