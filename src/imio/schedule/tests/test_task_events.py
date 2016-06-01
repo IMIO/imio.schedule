@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from mock import Mock
 
+from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
 from imio.schedule.testing import MacroTaskScheduleFunctionalTestCase
@@ -14,6 +16,14 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
     """
     Test task creation with different changes of TaskContainer.
     """
+
+    def setUp(self):
+        super(TestTaskCreation, self).setUp()
+        self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+
+    def tearDown(self):
+        CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
+        super(TestTaskCreation, self).tearDown()
 
     def test_task_creation_on_container_modification(self):
         """
@@ -105,7 +115,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         """
         msg = 'default du date should have been today + 10 days'
         due_date = self.task.due_date
-        expected_date = self.task_container.creation_date + 10
+        expected_date = self.task_container.creation_date
         expected_date = expected_date.asdatetime().date()
         self.assertEquals(due_date, expected_date, msg)
 
@@ -190,13 +200,12 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         When modifying a contentype scheduled with a ScheduleConfig
         Task due date should be updated.
         """
-        task_config = self.task_config
         task_container = self.task_container
         task = self.task
         old_due_date = task.due_date
 
         # set an additional delay of 42 days on the task config
-        task_config.additional_delay = 42
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=42)
         msg = "The task due date should not have changed"
         self.assertEquals(task.due_date, old_due_date)
 
@@ -211,13 +220,12 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         When modifying a contentype scheduled with a ScheduleConfig
         Task due date should be updated and reindexed.
         """
-        task_config = self.task_config
         task_container = self.task_container
         task = self.task
         old_due_date = task.due_date
 
         # set an additional delay of 42 days on the task config
-        task_config.additional_delay = 42
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=42)
         msg = "The task due date should not have changed"
         self.assertEquals(task.due_date, old_due_date)
 

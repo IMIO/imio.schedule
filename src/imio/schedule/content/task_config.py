@@ -80,7 +80,7 @@ class ITaskConfig(model.Schema):
         'general',
         label=_(u"General informations"),
         fields=[
-            'enabled', 'start_date', 'additional_delay',
+            'enabled', 'start_date',
             'warning_delay', 'default_assigned_group',
             'default_assigned_user'
         ]
@@ -97,12 +97,6 @@ class ITaskConfig(model.Schema):
         description=_(u'Select the start date used to compute the due date.'),
         vocabulary='schedule.start_date',
         required=True,
-    )
-
-    additional_delay = schema.Int(
-        title=_(u'Additional delay'),
-        description=_(u'This delay is added to the due date of the task.'),
-        required=False,
     )
 
     warning_delay = schema.Int(

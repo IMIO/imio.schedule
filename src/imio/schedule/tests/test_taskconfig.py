@@ -3,6 +3,7 @@
 from Acquisition import aq_base
 
 from imio.schedule.config import DONE
+from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import AutomatedMacroTask
 from imio.schedule.content.task import AutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
@@ -213,24 +214,6 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_date' is not editable"
         self.assertTrue('Date de départ' in contents, msg)
 
-    def test_additional_delay_attribute(self):
-        task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'additional_delay'))
-
-    def test_additional_delay_field_display(self):
-        self.browser.open(self.task_config.absolute_url())
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not displayed"
-        self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
-        msg = "field 'additional_delay' is not translated"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
-    def test_additional_delay_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not editable"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
 
 class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
     """
@@ -244,6 +227,7 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         self._match_recurrence_states = self.task_config.match_recurrence_states
         self._create_task = self.task_config.create_task
         self._api_get_state = api.content.get_state
+        self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
 
     def tearDown(self):
         self.task_config.evaluate_one_condition = self._evaluate_one_condition
@@ -251,6 +235,7 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         self.task_config.match_recurrence_states = self._match_recurrence_states
         self.task_config.create_task = self._create_task
         api.content.get_state = self._api_get_state
+        CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
         super(TestTaskConfigMethodsIntegration, self).tearDown()
 
     def test_get_task_type(self):
@@ -645,7 +630,8 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        expected_date = task_container.creation_date + task_config.additional_delay
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=10)
+        expected_date = task_container.creation_date + 10
         expected_date = expected_date.asdatetime().date()
 
         due_date = task_config.compute_due_date(task_container, task)
