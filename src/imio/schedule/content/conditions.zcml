@@ -34,4 +34,12 @@
         name="schedule.start_if_all_subtasks_started"
     />
 
+    <adapter
+        for="zope.interface.Interface
+             imio.schedule.content.task_config.ITaskConfig"
+        provides="imio.schedule.interfaces.IRecurrenceCondition"
+        factory=".condition.NoRecurencyCondition"
+        name="schedule.no_recurrency_condition"
+    />
+
 </configure>

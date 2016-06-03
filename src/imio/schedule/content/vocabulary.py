@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio.schedule import _
+from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
@@ -9,6 +10,7 @@ from imio.schedule.interfaces import IMacroTaskCreationCondition
 from imio.schedule.interfaces import IMacroTaskEndCondition
 from imio.schedule.interfaces import IMacroTaskStartCondition
 from imio.schedule.interfaces import IMacroTaskStartDate
+from imio.schedule.interfaces import IRecurrenceCondition
 from imio.schedule.interfaces import IScheduledContentTypeVocabulary
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
@@ -333,6 +335,22 @@ class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
     """
 
     provides_interface = IStartDate
+
+
+class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'recurrence_conditions' field.
+    Return recurrence conditions for a task config.
+    """
+    provides_interface = IRecurrenceCondition
+
+
+class CalculationDelayVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'calculation_delay' field.
+    Return calculation delay methods for a task config.
+    """
+    provides_interface = ICalculationDelay
 
 
 class MacroTaskCreationConditionVocabularyFactory(TaskLogicVocabularyFactory):

@@ -3,6 +3,7 @@
 from Acquisition import aq_base
 
 from imio.schedule.config import DONE
+from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import AutomatedMacroTask
 from imio.schedule.content.task import AutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
@@ -10,6 +11,7 @@ from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from imio.schedule.testing import TEST_INSTALL_INTEGRATION
 
+from mock import Mock
 from plone import api
 
 import unittest
@@ -212,29 +214,29 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_date' is not editable"
         self.assertTrue('Date de départ' in contents, msg)
 
-    def test_additional_delay_attribute(self):
-        task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'additional_delay'))
-
-    def test_additional_delay_field_display(self):
-        self.browser.open(self.task_config.absolute_url())
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not displayed"
-        self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
-        msg = "field 'additional_delay' is not translated"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
-    def test_additional_delay_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not editable"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
 
 class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
+
+    def setUp(self):
+        super(TestTaskConfigMethodsIntegration, self).setUp()
+        self._evaluate_one_condition = self.task_config.evaluate_one_condition
+        self._evaluate_conditions = self.task_config.evaluate_conditions
+        self._match_recurrence_states = self.task_config.match_recurrence_states
+        self._create_task = self.task_config.create_task
+        self._api_get_state = api.content.get_state
+        self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+
+    def tearDown(self):
+        self.task_config.evaluate_one_condition = self._evaluate_one_condition
+        self.task_config.evaluate_conditions = self._evaluate_conditions
+        self.task_config.match_recurrence_states = self._match_recurrence_states
+        self.task_config.create_task = self._create_task
+        api.content.get_state = self._api_get_state
+        CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
+        super(TestTaskConfigMethodsIntegration, self).tearDown()
 
     def test_get_task_type(self):
         """
@@ -628,11 +630,135 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        expected_date = task_container.creation_date + task_config.additional_delay
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=10)
+        expected_date = task_container.creation_date + 10
         expected_date = expected_date.asdatetime().date()
 
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
+
+    def test_evaluate_conditions_and(self):
+        """
+        Evaluate conditions with AND operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_or(self):
+        """
+        Evaluate conditions with OR operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_and_or(self):
+        """
+        Evaluate conditions with AND and OR operators
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_should_recurred(self):
+        """
+        Test different cases for the 'should_recurred' method
+        """
+        self.task_config.recurrence_conditions = None
+        self.task_config.match_recurrence_states = Mock(return_value=False)
+        self.task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.recurrence_conditions = ['foo']
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(self.task_config.should_recurred(None))
+
+        self.task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(self.task_config.should_recurred(None))
+
+    def test_match_recurrence_states(self):
+        """
+        Test method 'match_recurrence_states'
+        """
+        self.task_config.recurrence_states = []
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['foo']
+        api.content.get_state = Mock(return_value='foo')
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['bar']
+        self.assertFalse(self.task_config.match_recurrence_states(None))
+
+    def test_create_recurring_task(self):
+        """
+        Test different cases for the 'create_recurring_task' method
+        """
+        container = type('container', (object, ), {})()
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        self.assertIsNone(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=[])
+        self.task_config.create_task = Mock(return_value=True)
+        self.assertTrue(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        self.assertTrue(self.task_config.create_recurring_task(container))
 
 
 class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):

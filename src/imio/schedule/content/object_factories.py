@@ -5,11 +5,12 @@ from zope.interface import implements
 from zope.schema.fieldproperty import FieldProperty
 
 from imio.schedule.content.task_config import ICreationConditionSchema
-from imio.schedule.content.task_config import IStartConditionSchema
 from imio.schedule.content.task_config import IEndConditionSchema
 from imio.schedule.content.task_config import IMacroCreationConditionSchema
-from imio.schedule.content.task_config import IMacroStartConditionSchema
 from imio.schedule.content.task_config import IMacroEndConditionSchema
+from imio.schedule.content.task_config import IMacroRecurrenceConditionSchema
+from imio.schedule.content.task_config import IMacroStartConditionSchema
+from imio.schedule.content.task_config import IStartConditionSchema
 
 
 class BaseConditionObject(object):
@@ -94,3 +95,14 @@ class MacroEndConditionObject(BaseConditionObject):
 
 class MacroEndConditionAdapter(FactoryAdapter):
     factory = MacroEndConditionObject
+
+
+class MacroRecurrenceConditionObject(BaseConditionObject):
+    implements(IMacroRecurrenceConditionSchema)
+
+    condition = FieldProperty(IMacroRecurrenceConditionSchema['condition'])
+    operator = FieldProperty(IMacroRecurrenceConditionSchema['operator'])
+
+
+class MacroRecurrenceConditionAdapter(FactoryAdapter):
+    factory = MacroRecurrenceConditionObject
