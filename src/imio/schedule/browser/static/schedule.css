@@ -39,10 +39,14 @@ a.term-level-2 {
     padding-left: 2em
 }
 
+a.term-level-3 {
+    padding-left: 3em
+}
+
 a.term-level-4 {
     padding-left: 4em
 }
 
-a.term-level-3 {
-    padding-left: 3em
+a.term-level-5 {
+    padding-left: 5em
 }

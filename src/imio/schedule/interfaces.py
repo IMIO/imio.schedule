@@ -2,6 +2,7 @@
 """Module where all interfaces, events and exceptions live."""
 
 from zope.interface import Interface
+from zope.interface.interfaces import IInterface
 
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
@@ -114,6 +115,12 @@ class IScheduleView(Interface):
 class IScheduleCollection(Interface):
     """
     Marker interface for collections associated to schedule/task config.
+    """
+
+
+class ITaskMarkerInterface(IInterface):
+    """
+    Marker interface for for AutomatedTask custom marker interfaces vocabulary.
     """
 
 

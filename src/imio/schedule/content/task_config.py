@@ -22,6 +22,8 @@ from plone.supermodel import model
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.component.interface import getInterface
+from zope.interface import alsoProvides
 from zope.interface import Interface
 from zope.interface import implements
 
@@ -84,7 +86,7 @@ class ITaskConfig(model.Schema):
         fields=[
             'enabled', 'start_date', 'additional_delay',
             'warning_delay', 'default_assigned_group',
-            'default_assigned_user'
+            'default_assigned_user', 'marker_interfaces'
         ]
     )
 
@@ -124,6 +126,13 @@ class ITaskConfig(model.Schema):
         description=_(u'Select default user assigned to this task.'),
         vocabulary='schedule.assigned_user',
         required=True,
+    )
+
+    marker_interfaces = schema.Set(
+        title=_(u'Marker interfaces'),
+        description=_(u'Custom marker interfaces for this task.'),
+        value_type=schema.Choice(source='schedule.task_marker_interfaces'),
+        required=False,
     )
 
     model.fieldset(
@@ -652,6 +661,10 @@ class BaseTaskConfig(object):
             schedule_config_UID=self.get_schedule_config().UID(),
             task_config_UID=self.UID(),
         )
+
+        marker_interfaces = [getInterface('', i) for i in self.marker_interfaces or []]
+        alsoProvides(task, *marker_interfaces)
+
         return task
 
 
@@ -675,11 +688,10 @@ class TaskConfig(Container, BaseTaskConfig):
         creation_place = creation_place or task_container
         task = self._create_task_instance(creation_place)
 
-        task.due_date = self.compute_due_date(task_container, task)
         task.assigned_group = self.group_to_assign(task_container, task)
         task.assigned_user = self.user_to_assign(task_container, task)
+        task.due_date = self.compute_due_date(task_container, task)
         task.reindexObject()
-        # task.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
 
         return task
 
@@ -836,10 +848,10 @@ class MacroTaskConfig(Container, BaseTaskConfig):
                 config.create_task(task_container, creation_place=macrotask)
 
         # compute some fields only after all substasks are created
-        macrotask.due_date = self.compute_due_date(task_container, macrotask)
         macrotask.assigned_group = self.group_to_assign(task_container, macrotask)
         macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
-        macrotask.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
+        macrotask.due_date = self.compute_due_date(task_container, macrotask)
+        macrotask.reindexObject()
 
         return macrotask
 

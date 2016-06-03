@@ -15,7 +15,7 @@
 
     <adapter
         for="zope.interface.Interface
-             imio.schedule.content.task.AutomatedTask"
+             imio.schedule.content.task.IAutomatedTask"
         provides="imio.schedule.interfaces.IStartDate"
         factory=".logic.TaskStartingDate"
         name="schedule.start_date.starting_date"

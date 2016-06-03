@@ -141,11 +141,17 @@ class AutomatedTask(Item, BaseAutomatedTask):
     implements(IAutomatedTask)
 
 
+class IAutomatedMacroTask(IAutomatedTask):
+    """
+    AutomatedTask dexterity schema.
+    """
+
+
 class AutomatedMacroTask(Container, BaseAutomatedTask):
     """
     """
 
-    implements(IAutomatedTask)
+    implements(IAutomatedMacroTask)
 
     def get_subtasks(self):
         """

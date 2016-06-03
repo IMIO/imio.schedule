@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
-
-from Products.CMFPlone import PloneMessageFactory
-
 from imio.schedule import _
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
@@ -17,8 +13,14 @@ from imio.schedule.interfaces import IScheduledContentTypeVocabulary
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
+from imio.schedule.interfaces import ITaskMarkerInterface
 from imio.schedule.utils import interface_to_tuple
 from imio.schedule.utils import dict_list_2_vocabulary
+
+from plone import api
+
+from Products.CMFPlone.i18nl10n import utranslate
+from Products.CMFPlone import PloneMessageFactory
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -232,6 +234,36 @@ class ContainerStateVocabularyFactory(object):
         vocabulary = SimpleVocabulary(voc_terms)
 
         return vocabulary
+
+
+class TaskMarkerInterfacesVocabulary(object):
+    """
+    Return available custom Task Marker Interface.
+    """
+
+    def __call__(self, context):
+        gsm = getGlobalSiteManager()
+        interfaces = gsm.getUtilitiesFor(ITaskMarkerInterface)
+        items = []
+
+        for interface_name, marker_interface in interfaces:
+            items.append(
+                SimpleTerm(
+                    interface_name,
+                    marker_interface.__doc__,
+                    utranslate(
+                        msgid=marker_interface.__doc__,
+                        domain='imio.schedule',
+                        context=context,
+                        default=marker_interface.__doc__
+                    )
+                )
+            )
+
+        #sort elements by title
+        items.sort(lambda a, b: cmp(a.title, b.title))
+
+        return SimpleVocabulary(items)
 
 
 class TaskLogicVocabularyFactory(object):

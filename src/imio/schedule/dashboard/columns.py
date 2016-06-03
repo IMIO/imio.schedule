@@ -8,6 +8,7 @@ from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
 from imio.schedule.dashboard.interfaces import IDisplayTaskStatus
+from imio.schedule.dashboard.interfaces import IStatusColumn
 
 from zope.component import queryMultiAdapter
 from zope.interface import implements
@@ -28,6 +29,7 @@ class StatusColum(BaseColumn):
     """
     Column displaying the status of the tasks and its subtasks if it has any.
     """
+    implements(IStatusColumn)
 
     sort_index = -1
 
