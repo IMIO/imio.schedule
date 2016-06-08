@@ -115,4 +115,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         />
 
+    <!-- Task owner vocabulary -->
+    <utility
+        component=".vocabulary.TaskOwnerVocabulary"
+        name="schedule.task_owner"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
 </configure>
