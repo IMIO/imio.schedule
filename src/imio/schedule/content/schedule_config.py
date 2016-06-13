@@ -80,7 +80,8 @@ class ScheduleConfig(Container):
         Return all the TaskConfig of this ScheduleConfig.
         """
         config_brains = self.query_task_configs()
-        task_configs = [brain.getObject() for brain in config_brains]
+        with api.env.adopt_roles(['Manager']):
+            task_configs = [brain.getObject() for brain in config_brains]
 
         return task_configs
 
