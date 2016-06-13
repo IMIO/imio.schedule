@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from collective.task import _ as CTMF
 from collective.task.behaviors import ITask
+from collective.task.behaviors import get_parent_assigned_group
+from collective.task.behaviors import get_users_vocabulary
+from collective.task.field import LocalRoleMasterSelectField
 
 from plone import api
+from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
@@ -18,6 +23,23 @@ class IAutomatedTask(ITask):
     """
     AutomatedTask dexterity schema.
     """
+
+    directives.order_before(assigned_group='assigned_user')
+    directives.order_before(assigned_group='ITask.assigned_user')
+    assigned_group = LocalRoleMasterSelectField(
+        title=CTMF(u"Assigned group"),
+        required=True,
+        vocabulary="collective.task.AssignedGroups",
+        slave_fields=(
+            {'name': 'ITask.assigned_user',
+             'slaveID': '#form-widgets-ITask-assigned_user',
+             'action': 'vocabulary',
+             'vocab_method': get_users_vocabulary,
+             'control_param': 'group',
+             },
+        ),
+        defaultFactory=get_parent_assigned_group
+    )
 
 
 class BaseAutomatedTask(object):

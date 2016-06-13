@@ -4,7 +4,7 @@ td.td_cell_due_date {
 }
 
 td.td_cell_status {
-    text-align: center;
+    text-align: left;
 }
 
 span.schedule_created {

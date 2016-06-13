@@ -21,15 +21,18 @@ from imio.schedule.utils import dict_list_2_vocabulary
 
 from plone import api
 
-from Products.CMFPlone.i18nl10n import utranslate
-from Products.CMFPlone import PloneMessageFactory
+from plone.principalsource.source import PrincipalSource
 
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
+from Products.CMFPlone import PloneMessageFactory
+from Products.CMFPlone.i18nl10n import utranslate
+
 from zope.component import getAdapter
 from zope.component import getGlobalSiteManager
 from zope.i18n import translate
 from zope.interface import implements
+from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class BaseVocabularyFactory(object):
@@ -396,3 +399,27 @@ class LogicalOperatorVocabularyFactory(BaseVocabularyFactory):
             {'AND': _(u'and')},
             {'OR': _(u'or')},
         ])
+
+
+class TaskOwnerSource(PrincipalSource):
+
+    def __init__(self, context):
+        super(TaskOwnerSource, self).__init__(context)
+
+    def _search(self, id=None, exact_match=True):
+        users = api.user.get_users(self.context.assigned_group)
+        if id is not None:
+            return [{'id': u.id} for u in users if u.id == id]
+        return [{'id': u.id} for u in users]
+
+
+class TaskOwnerSourceBinder(object):
+    """Bind the principal source with either users or groups
+    """
+    implements(IContextSourceBinder)
+
+    def __call__(self, context):
+        return TaskOwnerSource(context)
+
+
+TaskOwnerVocabulary = TaskOwnerSourceBinder()

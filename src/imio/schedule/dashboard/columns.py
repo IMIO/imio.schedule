@@ -115,9 +115,10 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
             u'<tr><th class="subtask_status_icon">{icon}</th>\
             <th i18n:translate="">{subtask}</th>\
             <th i18n:translate="">{due_date}</th></tr>'.format(
-            icon=self.display_task_status(self.task),
-            subtask=_('Subtask'),
-            due_date=_('Due date'))
+                icon=self.display_task_status(self.task),
+                subtask=_('Subtask'),
+                due_date=_('Due date'),
+            ),
         ]
         for task in subtasks:
             title = task.Title()
