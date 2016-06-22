@@ -34,6 +34,7 @@ class TaskChangeOwnerForm(Form):
             messages.addStatusMessage(self.status, type="error")
             return
         self.context.assigned_user = data.get('new_owner')
+        self.context.reindexObject()
         self.status = _(u'Owner changed')
 
 
