@@ -152,3 +152,14 @@ class ICalculationDelay(ITaskLogic):
     """
     Base interface for the TaskConfig calculation delay methods
     """
+
+
+class IToIcon(Interface):
+    """
+    Adapts an object into an icon.
+    """
+
+    def get_icon_url(self):
+        """
+        Return the icon url.
+        """

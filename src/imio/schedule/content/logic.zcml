@@ -23,7 +23,7 @@
 
     <adapter
         for="zope.interface.Interface
-             imio.schedule.content.task.AutomatedMacroTask"
+             imio.schedule.content.task.IAutomatedMacroTask"
         provides="imio.schedule.interfaces.IMacroTaskStartDate"
         factory=".logic.SubtaskHighestDueDate"
         name="schedule.start_date.subtask_highest_due_date"
