@@ -15,6 +15,8 @@
             title term_label;
             id string:${wid}${term_id};
             data-kept-criteria python:widget.kept_criteria_as_json(term_id);">
+               <hr tal:condition="python: level is 1">
+               <br tal:condition="python: level is 1"/>
                <a href="javascript:;"
                        tal:attributes="class python: 'term-level-{}'.format(level);
                                   href python: not redirect_to and 'javascript:;;' or redirect_to">
