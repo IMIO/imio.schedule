@@ -215,7 +215,7 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         self.assertTrue('Date de départ' in contents, msg)
 
 
-class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
+class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
@@ -711,19 +711,22 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         """
         Test different cases for the 'should_recurred' method
         """
-        self.task_config.recurrence_conditions = None
-        self.task_config.match_recurrence_states = Mock(return_value=False)
-        self.task_config.evaluate_conditions = Mock(return_value=False)
-        self.assertFalse(self.task_config.should_recurred(None))
+        task_config = self.task_config
+        task_config.activate_recurrency = False
+        task_config.recurrence_conditions = None
+        task_config.match_recurrence_states = Mock(return_value=False)
+        task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(task_config.should_recurred(None))
 
-        self.task_config.recurrence_conditions = ['foo']
-        self.assertFalse(self.task_config.should_recurred(None))
+        task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(task_config.should_recurred(None))
 
-        self.task_config.match_recurrence_states = Mock(return_value=True)
-        self.assertFalse(self.task_config.should_recurred(None))
+        task_config.activate_recurrency = True
+        self.assertTrue(task_config.should_recurred(None))
 
-        self.task_config.evaluate_conditions = Mock(return_value=True)
-        self.assertTrue(self.task_config.should_recurred(None))
+        task_config.recurrence_conditions = ['foo']
+        task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(task_config.should_recurred(None))
 
     def test_match_recurrence_states(self):
         """
@@ -743,7 +746,9 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         """
         Test different cases for the 'create_recurring_task' method
         """
-        container = type('container', (object, ), {})()
+        container = type('container', (dict, ), {})()
+        container['TASK_test_taskconfig'] = None
+        api.content.get_state = Mock(return_value='foo')
         container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
         self.assertIsNone(self.task_config.create_recurring_task(
             container,
@@ -758,6 +763,7 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         ))
 
         container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        api.content.get_state = Mock(return_value='closed')
         self.assertTrue(self.task_config.create_recurring_task(container))
 
 
@@ -799,6 +805,20 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
     """
     Test MacroTaskConfig methods.
     """
+
+    def setUp(self):
+        super(TestMacroTaskConfigMethodsIntegration, self).setUp()
+        self._mt_match_recurrence_states = self.macrotask_config.match_recurrence_states
+        self._mt_evaluate_conditions = self.macrotask_config.evaluate_conditions
+        self._st_match_recurrence_states = self.subtask_config.match_recurrence_states
+        self._st_evaluate_conditions = self.subtask_config.evaluate_conditions
+
+    def tearDown(self):
+        self.macrotask_config.match_recurrence_states = self._mt_match_recurrence_states
+        self.macrotask_config.evaluate_conditions = self._mt_evaluate_conditions
+        self.subtask_config.match_recurrence_states = self._st_match_recurrence_states
+        self.subtask_config.evaluate_conditions = self._st_evaluate_conditions
+        super(TestMacroTaskConfigMethodsIntegration, self).tearDown()
 
     def test_MacroTasConfigk_inherits_from_TaskConfig(self):
         """
@@ -881,3 +901,24 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         msg = "MacroTask should not be ended as long its subtask is open"
         end = macrotask_config.should_end_task(task_container, macrotask)
         self.assertFalse(end, msg)
+
+    def test_should_recurred_macrotask(self):
+        """
+        Test different cases for the 'should_recurred' method for macro task
+        """
+        task_config = self.macrotask_config
+        task_config.activate_recurrency = False
+        task_config.recurrence_conditions = None
+        task_config.match_recurrence_states = Mock(return_value=False)
+        task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.activate_recurrency = True
+        self.assertTrue(task_config.should_recurred(None))
+
+        task_config.recurrence_conditions = ['foo']
+        task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(task_config.should_recurred(None))

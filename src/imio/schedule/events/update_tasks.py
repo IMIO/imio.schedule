@@ -94,7 +94,7 @@ def end_tasks(task_container, event):
 
     with api.env.adopt_roles(['Manager']):
         for config in task_configs:
-            task = config.get_task(task_container)
+            task = config.get_open_task(task_container)
             if task and config.should_end_task(task_container, task):
                 # delegate the closure action to the config so different behaviors
                 # can be easily configured

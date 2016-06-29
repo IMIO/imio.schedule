@@ -10,6 +10,7 @@ from imio.schedule.content.task_config import IMacroCreationConditionSchema
 from imio.schedule.content.task_config import IMacroEndConditionSchema
 from imio.schedule.content.task_config import IMacroRecurrenceConditionSchema
 from imio.schedule.content.task_config import IMacroStartConditionSchema
+from imio.schedule.content.task_config import IRecurrenceConditionSchema
 from imio.schedule.content.task_config import IStartConditionSchema
 
 
@@ -95,6 +96,17 @@ class MacroEndConditionObject(BaseConditionObject):
 
 class MacroEndConditionAdapter(FactoryAdapter):
     factory = MacroEndConditionObject
+
+
+class RecurrenceConditionObject(BaseConditionObject):
+    implements(IRecurrenceConditionSchema)
+
+    condition = FieldProperty(IRecurrenceConditionSchema['condition'])
+    operator = FieldProperty(IRecurrenceConditionSchema['operator'])
+
+
+class RecurrenceConditionAdapter(FactoryAdapter):
+    factory = RecurrenceConditionObject
 
 
 class MacroRecurrenceConditionObject(BaseConditionObject):

@@ -254,8 +254,14 @@ class TestMacroTaskUpdate(MacroTaskScheduleFunctionalTestCase):
         When modifying a contenttype the recurrence should be evaluated
         """
         transitions = ['do_to_assign', 'do_realized', 'do_closed']
+        self.macrotask_config.activate_recurrency = True
         self.macrotask_config.recurrence_conditions = self.macrotask_config.creation_conditions
         self.macrotask_config.recurrence_states = ('private', )
+
+        self.subtask_config.activate_recurrency = True
+        self.subtask_config.recurrence_conditions = self.subtask_config.creation_conditions
+        self.subtask_config.recurrence_states = ('private', )
+
         for transition in transitions:
             api.content.transition(obj=self.macro_task, transition=transition)
         notify(ObjectModifiedEvent(self.task_container))

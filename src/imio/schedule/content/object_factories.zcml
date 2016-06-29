@@ -68,6 +68,16 @@
          zope.interface.Interface
          zope.interface.Interface"
     provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.RecurrenceConditionAdapter"
+    name="imio.schedule.content.task_config.IRecurrenceConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
     factory=".object_factories.MacroRecurrenceConditionAdapter"
     name="imio.schedule.content.task_config.IMacroRecurrenceConditionSchema"
     />
