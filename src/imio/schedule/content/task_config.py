@@ -502,7 +502,7 @@ class BaseTaskConfig(object):
 
         return matched, not_matched
 
-    def should_create_task(self, task_container):
+    def should_create_task(self, task_container, parent_container=None):
         """
         Evaluate:
          - If the task container is on the state selected on 'starting_states'
@@ -515,7 +515,7 @@ class BaseTaskConfig(object):
             return False
 
         # does the Task already exists?
-        if self.task_already_exists(task_container):
+        if self.task_already_exists(parent_container or task_container):
             return False
 
         # task container state match creation_state value?

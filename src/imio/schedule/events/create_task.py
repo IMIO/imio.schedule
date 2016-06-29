@@ -40,5 +40,5 @@ def create_new_tasks(task_container, event):
             else:
                 macro_config = config.getParentNode()
                 parent_task = macro_config.get_open_task(task_container)
-                if parent_task and config.should_create_task(task_container):
+                if parent_task and config.should_create_task(task_container, parent_container=parent_task):
                     config.create_task(task_container, creation_place=parent_task)
