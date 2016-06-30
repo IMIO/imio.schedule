@@ -10,12 +10,4 @@
     name="schedule.calculation_default_delay"
     />
 
-  <adapter
-    for="zope.interface.Interface
-         imio.schedule.content.task.IAutomatedMacroTask"
-    provides="imio.schedule.interfaces.ICalculationDelay"
-    factory=".delay.MacroTaskCalculationDefaultDelay"
-    name="schedule.calculation_default_delay"
-    />
-
 </configure>

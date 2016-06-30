@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 from zope.component import getMultiAdapter
 
 from imio.schedule.content.logic import TaskLogic
-from imio.schedule.interfaces import IMacroTaskStartDate
 from imio.schedule.interfaces import IStartDate
 
 
@@ -53,10 +52,3 @@ class CalculationDefaultDelay(BaseCalculationDelay):
 
     def calculate_delay(self):
         return 0
-
-
-class MacroTaskCalculationDefaultDelay(CalculationDefaultDelay):
-    """
-    """
-
-    start_date_interface = IMacroTaskStartDate
