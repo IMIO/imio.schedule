@@ -181,3 +181,19 @@ class AutomatedMacroTask(Container, BaseAutomatedTask):
         """
         sub_tasks = [obj for obj in self.objectValues() if ITask.providedBy(obj)]
         return sub_tasks
+
+    def get_last_subtasks(self):
+        """
+        Return each last different sub task of this macro task.
+        """
+        subtask_type = set()
+        sub_tasks = []
+
+        for obj in reversed(self.objectValues()):
+            if ITask.providedBy(obj):
+                subtask = obj
+                if subtask.task_config_UID not in subtask_type:
+                    subtask_type.add(subtask.task_config_UID)
+                    sub_tasks.append(subtask)
+
+        return reversed(sub_tasks)

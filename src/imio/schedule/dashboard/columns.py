@@ -7,6 +7,7 @@ from plone import api
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
+from imio.schedule.content.task import IAutomatedMacroTask
 from imio.schedule.dashboard.interfaces import IDisplayTaskStatus
 from imio.schedule.dashboard.interfaces import IStatusColumn
 
@@ -107,7 +108,7 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
     def render(self):
         """
         """
-        subtasks = self.task.get_subtasks()
+        subtasks = self.task.get_last_subtasks()
         if not subtasks:
             return self.display_task_status(self.task)
 
@@ -115,15 +116,15 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
             u'<tr><th class="subtask_status_icon">{icon}</th>\
             <th i18n:translate="">{subtask}</th>\
             <th i18n:translate="">{due_date}</th></tr>'.format(
-                icon=self.display_task_status(self.task),
-                subtask=_('Subtask'),
-                due_date=_('Due date'),
-            ),
+            icon=self.display_task_status(self.task),
+            subtask=_('Subtask'),
+            due_date=_('Due date'),
+        ),
         ]
         for task in subtasks:
             title = task.Title()
             status_icon = u'<td class="subtask_status_icon">{status}</td>'.format(
-                status=self.display_task_status(task, with_subtasks=True),
+                status=self.display_task_status(task, with_subtasks=IAutomatedMacroTask.providedBy(task)),
             )
             status_title = u'<td class="subtask_status_title">{title}</td>'.format(
                 title=title.decode('utf-8'),

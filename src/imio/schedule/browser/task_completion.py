@@ -35,7 +35,7 @@ class TaskCompletionView(BrowserView):
         done = []
         created = []
         started = []
-        for subtask in self.task.get_subtasks():
+        for subtask in self.task.get_last_subtasks():
             status = status_by_state[self.get_state(subtask)]
             if status is DONE:
                 done.append(subtask)
