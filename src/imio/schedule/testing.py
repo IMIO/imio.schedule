@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -186,6 +187,9 @@ class MacrotaskScheduleLayer(ScheduleLayer):
     def setUpPloneSite(self, portal):
         super(MacrotaskScheduleLayer, self).setUpPloneSite(portal)
 
+        applyProfile(portal, 'Products.CMFPlone:dependencies')
+        # ponr skin for robot tests
+        applyProfile(portal, 'plonetheme.sunburst:default')
         applyProfile(portal, 'imio.schedule:testing')
 
         # delete simple tasks
@@ -249,7 +253,8 @@ class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
         """
         Unregister the adapters here since the zope instance never shut downs.
         """
-        unsubscribe_task_configs_for_content_type(self.task_config, None)
+        unsubscribe_task_configs_for_content_type(self.macrotask_config, None)
+        unsubscribe_task_configs_for_content_type(self.subtask_config, None)
 
         api.content.delete(self.task_container)
         api.content.delete(self.empty_task_container)
@@ -258,3 +263,13 @@ class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
         transaction.commit()
 
         super(MacroTaskScheduleTestBase, self).tearDown()
+
+
+SCHEDULE_TEST_ROBOT = FunctionalTesting(
+    bases=(
+        MACROTASK_SCHEDULE_FIXTURE,
+        REMOTE_LIBRARY_BUNDLE_FIXTURE,
+        z2.ZSERVER_FIXTURE
+    ),
+    name="URBAN_ROBOT"
+)

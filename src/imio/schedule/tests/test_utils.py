@@ -25,9 +25,10 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         """
         from imio.schedule.utils import get_task_configs
 
+        expected_UIDS = [task_config.UID() for task_config in self.schedule_config.get_all_task_configs()]
         folder = self.portal.config
-        expected_UIDS = [task_config.UID() for task_config in self.schedule_config.objectValues()]
-        task_config_UIDS = [task_config.UID() for task_config in get_task_configs(folder)]
+        task_configs = get_task_configs(folder)
+        task_config_UIDS = [task_config.UID() for task_config in task_configs]
         self.assertEqual(set(task_config_UIDS), set(expected_UIDS))
 
     def test_tuple_to_interface(self):
@@ -52,20 +53,3 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         expected_tuple = ('Products.ATContentTypes.interfaces.folder', 'IATFolder')
         interface_tuple = interface_to_tuple(IATFolder)
         self.assertEqual(interface_tuple, expected_tuple)
-
-    def test_create_tasks_collection(self):
-        """
-        Test the method create_tasks_collection.
-        """
-        from imio.schedule.utils import create_tasks_collection
-        task = self.task
-
-        collection = create_tasks_collection(
-            self.schedule_config,
-            container=self.portal,
-            id='my_collection'
-        )
-
-        collected = [brain.getObject() for brain in collection.queryCatalog()]
-        msg = "collection should have returned all the tasks created from the test ScheduleConfig"
-        self.assertEquals([task], collected, msg)

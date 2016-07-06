@@ -3,6 +3,7 @@
 from Acquisition import aq_base
 
 from imio.schedule.config import DONE
+from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import AutomatedMacroTask
 from imio.schedule.content.task import AutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
@@ -10,6 +11,7 @@ from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from imio.schedule.testing import TEST_INSTALL_INTEGRATION
 
+from mock import Mock
 from plone import api
 
 import unittest
@@ -212,29 +214,29 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_date' is not editable"
         self.assertTrue('Date de départ' in contents, msg)
 
-    def test_additional_delay_attribute(self):
-        task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'additional_delay'))
 
-    def test_additional_delay_field_display(self):
-        self.browser.open(self.task_config.absolute_url())
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not displayed"
-        self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
-        msg = "field 'additional_delay' is not translated"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
-    def test_additional_delay_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
-        contents = self.browser.contents
-        msg = "field 'additional_delay' is not editable"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
-
-
-class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
+class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
     """
     Test TaskConfig methods.
     """
+
+    def setUp(self):
+        super(TestTaskConfigMethodsIntegration, self).setUp()
+        self._evaluate_one_condition = self.task_config.evaluate_one_condition
+        self._evaluate_conditions = self.task_config.evaluate_conditions
+        self._match_recurrence_states = self.task_config.match_recurrence_states
+        self._create_task = self.task_config.create_task
+        self._api_get_state = api.content.get_state
+        self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+
+    def tearDown(self):
+        self.task_config.evaluate_one_condition = self._evaluate_one_condition
+        self.task_config.evaluate_conditions = self._evaluate_conditions
+        self.task_config.match_recurrence_states = self._match_recurrence_states
+        self.task_config.create_task = self._create_task
+        api.content.get_state = self._api_get_state
+        CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
+        super(TestTaskConfigMethodsIntegration, self).tearDown()
 
     def test_get_task_type(self):
         """
@@ -434,6 +436,11 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         create = task_config.should_create_task(empty_task_container)
         self.assertTrue(create, msg)
 
+        # no creation states given means any state allow task creation
+        task_config.creation_state = None
+        create = task_config.should_create_task(empty_task_container)
+        self.assertTrue(create, msg)
+
         # disable the task config => task should not be created
         task_config.enabled = False
         msg = "Task should not be created because the creation condition is not matched"
@@ -442,13 +449,19 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         # set the task_config field 'creation_conditions' with a negative condition
         # => task should not be created
         task_config.enabled = True
-        task_config.creation_conditions = ('schedule.negative_creation_condition',)
+        task_config.creation_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_creation_condition',
+            'operator': 'AND',
+        })()]
         msg = "Task should not be created because the creation condition is not matched"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not be created
-        task_config.creation_conditions = ('schedule.test_creation_condition',)
+        task_config.creation_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.test_creation_condition',
+            'operator': 'AND',
+        })()]
         task_config.creation_state = 'pending'
         msg = "Task should not be created because the creation state does not match container state"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
@@ -472,6 +485,11 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         start = task_config.should_start_task(task_container, task)
         self.assertTrue(start, msg)
 
+        # no starting creation states given means any state allow task start
+        task_config.starting_states = None
+        start = task_config.should_start_task(task_container, task)
+        self.assertTrue(start, msg)
+
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
         task.assigned_user = None
@@ -481,13 +499,19 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
         task.assigned_user = 'user'
-        task_config.start_conditions = ('schedule.negative_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_start_condition',
+            'operator': 'AND',
+        })()]
         msg = "Task should not be started because the start condition is not matched"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not start
-        task_config.start_conditions = ('schedule.test_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.test_start_condition',
+            'operator': 'AND',
+        })()]
         task_config.starting_states = ('published',)
         msg = "Task should not be started because the starting state does not match container state"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
@@ -501,10 +525,13 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_start_condition', 'Should start')])
+        self.assertTrue(matched_conditions == [('schedule.test_start_condition', True)])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.start_conditions = ('schedule.negative_start_condition',)
+        task_config.start_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_start_condition',
+            'operator': 'AND',
+        })()]
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
         self.assertTrue(unmatched_conditions == [('schedule.negative_start_condition', False)])
@@ -528,9 +555,17 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         end = task_config.should_end_task(task_container, task)
         self.assertTrue(end, msg)
 
+        # no ending creation states given means any state allow task end
+        task_config.ending_states = None
+        end = task_config.should_end_task(task_container, task)
+        self.assertTrue(end, msg)
+
         # set the task_config field 'end_conditions' with a negative condition
         # => task should not end
-        task_config.end_conditions = ('schedule.negative_end_condition',)
+        task_config.end_conditions = [type('object', (object, ), {
+            'condition': 'schedule.negative_end_condition',
+            'operator': 'AND',
+        })()]
         msg = "Task should not be ended because the end condition is not matched"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
@@ -549,10 +584,13 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_end_condition', 'Should end')])
+        self.assertTrue(matched_conditions == [('schedule.test_end_condition', True)])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.end_conditions = ('schedule.negative_end_condition',)
+        task_config.end_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_end_condition',
+            'operator': 'AND',
+        })()]
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
         self.assertTrue(unmatched_conditions == [('schedule.negative_end_condition', False)])
@@ -567,6 +605,11 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         created_task = task_config.create_task(task_container)
 
         self.assertTrue(isinstance(created_task, AutomatedTask))
+
+        # should raise TaskAlreadyExists when trying to use same task id
+        from imio.schedule.interfaces import TaskAlreadyExists
+        kwargs = {'task_container': task_container, 'task_id': created_task.id}
+        self.assertRaises(TaskAlreadyExists, task_config.create_task, **kwargs)
 
     def test_start_task(self):
         """
@@ -607,11 +650,141 @@ class TestTaskConfigMethodsIntegration (ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        expected_date = task_container.creation_date + task_config.additional_delay
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=10)
+        expected_date = task_container.creation_date + 10
         expected_date = expected_date.asdatetime().date()
 
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
+
+    def test_evaluate_conditions_and(self):
+        """
+        Evaluate conditions with AND operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_or(self):
+        """
+        Evaluate conditions with OR operator
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(return_value=True)
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_evaluate_conditions_and_or(self):
+        """
+        Evaluate conditions with AND and OR operators
+        """
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'AND'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False, False])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertTrue(result)
+
+        conditions = [
+            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
+            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type('condition', (object, ), {'condition': 3, 'operator': 'OR'})(),
+        ]
+        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
+        result = self.task_config.evaluate_conditions(conditions, None, None)
+        self.assertFalse(result)
+
+    def test_should_recurred(self):
+        """
+        Test different cases for the 'should_recurred' method
+        """
+        task_config = self.task_config
+        task_config.activate_recurrency = False
+        task_config.recurrence_conditions = None
+        task_config.match_recurrence_states = Mock(return_value=False)
+        task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.activate_recurrency = True
+        self.assertTrue(task_config.should_recurred(None))
+
+        task_config.recurrence_conditions = ['foo']
+        task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(task_config.should_recurred(None))
+
+    def test_match_recurrence_states(self):
+        """
+        Test method 'match_recurrence_states'
+        """
+        self.task_config.recurrence_states = []
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['foo']
+        api.content.get_state = Mock(return_value='foo')
+        self.assertTrue(self.task_config.match_recurrence_states(None))
+
+        self.task_config.recurrence_states = ['bar']
+        self.assertFalse(self.task_config.match_recurrence_states(None))
+
+    def test_create_recurring_task(self):
+        """
+        Test different cases for the 'create_recurring_task' method
+        """
+        container = type('container', (dict, ), {})()
+        container['TASK_test_taskconfig'] = None
+        api.content.get_state = Mock(return_value='foo')
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        self.assertIsNone(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=[])
+        self.task_config.create_task = Mock(return_value=True)
+        self.assertTrue(self.task_config.create_recurring_task(
+            container,
+            creation_place=container,
+        ))
+
+        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
+        api.content.get_state = Mock(return_value='closed')
+        self.assertTrue(self.task_config.create_recurring_task(container))
 
 
 class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):
@@ -652,6 +825,20 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
     """
     Test MacroTaskConfig methods.
     """
+
+    def setUp(self):
+        super(TestMacroTaskConfigMethodsIntegration, self).setUp()
+        self._mt_match_recurrence_states = self.macrotask_config.match_recurrence_states
+        self._mt_evaluate_conditions = self.macrotask_config.evaluate_conditions
+        self._st_match_recurrence_states = self.subtask_config.match_recurrence_states
+        self._st_evaluate_conditions = self.subtask_config.evaluate_conditions
+
+    def tearDown(self):
+        self.macrotask_config.match_recurrence_states = self._mt_match_recurrence_states
+        self.macrotask_config.evaluate_conditions = self._mt_evaluate_conditions
+        self.subtask_config.match_recurrence_states = self._st_match_recurrence_states
+        self.subtask_config.evaluate_conditions = self._st_evaluate_conditions
+        super(TestMacroTaskConfigMethodsIntegration, self).tearDown()
 
     def test_MacroTasConfigk_inherits_from_TaskConfig(self):
         """
@@ -732,5 +919,26 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         self.assertFalse(subtask.get_status() == DONE)
 
         msg = "MacroTask should not be ended as long its subtask is open"
-        end = macrotask_config.should_end_task(task_container, subtask)
+        end = macrotask_config.should_end_task(task_container, macrotask)
         self.assertFalse(end, msg)
+
+    def test_should_recurred_macrotask(self):
+        """
+        Test different cases for the 'should_recurred' method for macro task
+        """
+        task_config = self.macrotask_config
+        task_config.activate_recurrency = False
+        task_config.recurrence_conditions = None
+        task_config.match_recurrence_states = Mock(return_value=False)
+        task_config.evaluate_conditions = Mock(return_value=False)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.match_recurrence_states = Mock(return_value=True)
+        self.assertFalse(task_config.should_recurred(None))
+
+        task_config.activate_recurrency = True
+        self.assertTrue(task_config.should_recurred(None))
+
+        task_config.recurrence_conditions = ['foo']
+        task_config.evaluate_conditions = Mock(return_value=True)
+        self.assertTrue(task_config.should_recurred(None))

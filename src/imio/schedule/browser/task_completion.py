@@ -1,5 +1,11 @@
 # encoding: utf-8
 
+from imio.schedule.config import DONE
+from imio.schedule.config import STARTED
+from imio.schedule.config import status_by_state
+
+from plone import api
+
 from Products.Five import BrowserView
 
 
@@ -16,39 +22,77 @@ class TaskCompletionView(BrowserView):
 
     def get_conditions_status(self):
         """
-        List all the tasks with conditions that are not yet matched (except for workflow state).
+        List all the tasks conditions status (except for workflow state).
         """
 
     def get_state_status(self):
         """
         """
+
+    def get_subtasks_status(self):
+        """
+        """
+        done = []
+        created = []
+        started = []
+        for subtask in self.task.get_last_subtasks():
+            status = status_by_state[self.get_state(subtask)]
+            if status is DONE:
+                done.append(subtask)
+            elif status is STARTED:
+                started.append(subtask)
+            else:
+                created.append(subtask)
+
+        return created, started, done
+
+    def get_state(self, context):
+        """
+        Return the context workflow state.
+        """
+        return api.content.get_state(context)
+
+    def display_date(self, date):
+        """
+        """
+        if not date:
+            return '-'
+        if date.year == 9999:
+            return u'\u221E'.encode('utf-8')
+
+        return date.strftime('%d/%m/%Y')
 
 
 class TaskStartStatusView(TaskCompletionView):
     """
     View of the popup showing the start completion details of a created task.
     Display the status of each start condition of the task.
+    Display the status of each subtask.
     Display if the starting state is matched or not.
     """
 
-    def get_done_conditions(self):
+    def get_conditions_status(self):
         """
-        List all the tasks with conditions that are not yet matched (except for workflow state).
+        List all the tasks conditions status (except for workflow state).
         """
-        matched, not_matched = self.task.start_conditions_status()
-        return matched
-
-    def get_conditions_todo(self):
-        """
-        List all the tasks with conditions that are not yet matched (except for workflow state).
-        """
-        matched, not_matched = self.task.start_conditions_status()
-        return not_matched
+        return self.task.start_conditions_status()
 
     def get_state_status(self):
         """
         """
         return self.task.starting_states_status()
+
+
+class TaskStartSimpleStatusView(TaskStartStatusView):
+    """
+    Same as the above but without subtasks status.
+    """
+
+    def get_subtasks_status(self):
+        """
+        Do not display subtasks.
+        """
+        return [], [], []
 
 
 class TaskEndStatusView(TaskCompletionView):
@@ -58,21 +102,25 @@ class TaskEndStatusView(TaskCompletionView):
     Display if the ending state is matched or not.
     """
 
-    def get_done_conditions(self):
+    def get_conditions_status(self):
         """
-        List all the tasks with conditions that are not yet matched (except for workflow state).
+        List all the tasks conditions status (except for workflow state).
         """
-        matched, not_matched = self.task.end_conditions_status()
-        return matched
-
-    def get_conditions_todo(self):
-        """
-        List all the tasks with conditions that are not yet matched (except for workflow state).
-        """
-        matched, not_matched = self.task.end_conditions_status()
-        return not_matched
+        return self.task.end_conditions_status()
 
     def get_state_status(self):
         """
         """
         return self.task.ending_states_status()
+
+
+class TaskEndSimpleStatusView(TaskEndStatusView):
+    """
+    Same as the above but without subtasks status.
+    """
+
+    def get_subtasks_status(self):
+        """
+        Do not display subtasks.
+        """
+        return [], [], []

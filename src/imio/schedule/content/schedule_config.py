@@ -38,6 +38,12 @@ class ScheduleConfig(Container):
 
     implements(IScheduleConfig)
 
+    def level(self):
+        """
+        Return depth contenance level.
+        """
+        return 0
+
     def query_task_configs(self, query={}):
         """
         Query the TaskConfig of this ScheduleConfig.
@@ -57,24 +63,13 @@ class ScheduleConfig(Container):
 
         return config_brains
 
-    def query_maintask_configs(self):
-        """
-        Query main TaskConfig (tasks config that are not
-        sub-tasks) of this ScheduleConfig.
-        """
-        config_path = '/'.join(self.getPhysicalPath())
-        additional_query = {'path': {'query': config_path, 'depth': 1}}
-
-        config_brains = self.query_task_configs(additional_query)
-
-        return config_brains
-
     def get_all_task_configs(self):
         """
         Return all the TaskConfig of this ScheduleConfig.
         """
         config_brains = self.query_task_configs()
-        task_configs = [brain.getObject() for brain in config_brains]
+        with api.env.adopt_roles(['Manager']):
+            task_configs = [brain.getObject() for brain in config_brains]
 
         return task_configs
 

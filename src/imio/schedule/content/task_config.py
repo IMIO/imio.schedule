@@ -1,37 +1,123 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
-from plone.dexterity.content import Container
-from plone.dexterity.content import Item
-from plone.supermodel import model
-
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
 from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
+from imio.schedule.content.subform_context_choice import SubFormContextChoice
+from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
-from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IEndCondition
 from imio.schedule.interfaces import IStartCondition
-from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import TaskAlreadyExists
+from imio.schedule.interfaces import ICalculationDelay
+
+from plone import api
+from plone.dexterity.content import Container
+from plone.supermodel import model
 
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
+from zope.component.interface import getInterface
+from zope.interface import alsoProvides
+from zope.interface import Interface
 from zope.interface import implements
+
+
+class ICreationConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IStartConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.start_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IEndConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.end_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IRecurrenceConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
 
 
 class ITaskConfig(model.Schema):
     """
     TaskConfig dexterity schema.
     """
+
+    model.fieldset(
+        'general',
+        label=_(u"General informations"),
+        fields=[
+            'enabled', 'start_date',
+            'warning_delay', 'default_assigned_group',
+            'default_assigned_user', 'marker_interfaces'
+        ]
+    )
+
     enabled = schema.Bool(
         title=_(u'Enabled'),
         default=True,
+        required=False,
+    )
+
+    start_date = schema.Choice(
+        title=_(u'Start date'),
+        description=_(u'Select the start date used to compute the due date.'),
+        vocabulary='schedule.start_date',
+        required=True,
+    )
+
+    warning_delay = schema.Int(
+        title=_(u'Warning delay'),
         required=False,
     )
 
@@ -49,32 +135,63 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    creation_state = schema.Choice(
+    marker_interfaces = schema.Set(
+        title=_(u'Marker interfaces'),
+        description=_(u'Custom marker interfaces for this task.'),
+        value_type=schema.Choice(source='schedule.task_marker_interfaces'),
+        required=False,
+    )
+
+    model.fieldset(
+        'creation',
+        label=_(u"Creation"),
+        fields=['creation_state', 'creation_conditions']
+    )
+
+    creation_state = schema.Set(
         title=_(u'Task container creation state'),
         description=_(u'Select the state of the container where the task is automatically created.'),
-        vocabulary='schedule.container_state',
+        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
     creation_conditions = schema.List(
         title=_(u'Creation conditions'),
         description=_(u'Select creation conditions of the task'),
-        value_type=schema.Choice(source='schedule.creation_conditions'),
-        required=True,
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=ICreationConditionSchema,
+        ),
+        required=False,
     )
 
-    starting_states = schema.Choice(
+    model.fieldset(
+        'start',
+        label=_(u"Start"),
+        fields=['starting_states', 'start_conditions']
+    )
+
+    starting_states = schema.Set(
         title=_(u'Task container start states'),
         description=_(u'Select the state of the container where the task is automatically started.'),
-        vocabulary='schedule.container_state',
+        value_type=schema.Choice(source='schedule.container_state'),
         required=False,
     )
 
     start_conditions = schema.List(
         title=_(u'Start conditions'),
         description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='schedule.start_conditions'),
-        required=True,
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IStartConditionSchema,
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        'ending',
+        label=_(u"Ending"),
+        fields=['ending_states', 'end_conditions']
     )
 
     ending_states = schema.Set(
@@ -87,25 +204,59 @@ class ITaskConfig(model.Schema):
     end_conditions = schema.List(
         title=_(u'End conditions'),
         description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='schedule.end_conditions'),
-        required=True,
-    )
-
-    start_date = schema.Choice(
-        title=_(u'Start date'),
-        description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='schedule.start_date',
-        required=True,
-    )
-
-    additional_delay = schema.Int(
-        title=_(u'Additional delay'),
-        description=_(u'This delay is added to the due date of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IEndConditionSchema,
+        ),
         required=False,
     )
 
-    warning_delay = schema.Int(
-        title=_(u'Warning delay'),
+    model.fieldset(
+        'delay',
+        label=_(u'Calculation delay'),
+        fields=['calculation_delay'],
+    )
+
+    calculation_delay = schema.List(
+        title=_(u'Calculation delay method'),
+        value_type=schema.Choice(
+            title=_(u'Calculation delay'),
+            vocabulary='schedule.calculation_delay',
+            default='schedule.calculation_default_delay',
+        ),
+        required=True,
+    )
+
+    model.fieldset(
+        'recurrence',
+        label=_(u'Recurrence'),
+        fields=[
+            'activate_recurrency',
+            'recurrence_states',
+            'recurrence_conditions',
+        ],
+    )
+
+    activate_recurrency = schema.Bool(
+        title=_(u'Activate recurrency'),
+        required=False,
+        default=False,
+    )
+
+    recurrence_states = schema.Set(
+        title=_(u'Task container recurrence states'),
+        description=_(u'Select the state of the container where the task should be recurred'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    recurrence_conditions = schema.List(
+        title=_(u'Recurrence condition'),
+        description=_(u'Select recurrence conditions of the task.'),
+        value_type=schema.Object(
+            title=_('Conditions'),
+            schema=IRecurrenceConditionSchema,
+        ),
         required=False,
     )
 
@@ -121,11 +272,18 @@ class BaseTaskConfig(object):
         Return the content type of task to create.
         """
 
+    def level(self):
+        """
+        Return depth contenance level.
+        """
+        level = self.aq_parent.level() + 1
+        return level
+
     def is_main_taskconfig(self):
         """
         Tells wheter this task config is a sub task or not.
         """
-        return self.getParentNode() is self.get_schedule_config()
+        return self.level() == 1
 
     def get_schedule_config(self):
         """
@@ -284,15 +442,29 @@ class BaseTaskConfig(object):
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """
         """
-        for condition_name in conditions or []:
+        value = True
+        for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
-                name=condition_name,
+                name=condition_object.condition,
             )
-            if not value:
+            operator = condition_object.operator
+
+            # in these cases, its useless to evaluate further because:
+            # TRUE or (... ) <=> TRUE
+            if operator == 'OR' and value is True:
+                return True
+            # FALSE and (... ) <=> FALSE
+            elif operator == 'AND' and value is False:
                 return False
-        return True
+            # else, just continue to loop to evaluate the rest of the expression because:
+            # FALSE or (... ) <=> (... )
+            # TRUE and (... ) <=> (... )
+            # so only the remaining '(... )' expression is relevant
+
+        # return the last value
+        return value
 
     def evaluate_one_condition(self, to_adapt, interface, name):
         """
@@ -302,7 +474,7 @@ class BaseTaskConfig(object):
             interface=interface,
             name=name
         )
-        value = condition.evaluate()
+        value = condition.evaluate() and True or False
         return value
 
     def get_conditions_status(self, conditions, to_adapt, interface):
@@ -317,20 +489,20 @@ class BaseTaskConfig(object):
         """
         matched = []
         not_matched = []
-        for condition_name in conditions or []:
+        for condition_object in conditions or []:
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
-                name=condition_name,
+                name=condition_object.condition,
             )
             if value:
-                matched.append((condition_name, value))
+                matched.append((condition_object.condition, value))
             else:
-                not_matched.append((condition_name, value))
+                not_matched.append((condition_object.condition, value))
 
         return matched, not_matched
 
-    def should_create_task(self, task_container):
+    def should_create_task(self, task_container, parent_container=None):
         """
         Evaluate:
          - If the task container is on the state selected on 'starting_states'
@@ -343,7 +515,7 @@ class BaseTaskConfig(object):
             return False
 
         # does the Task already exists?
-        if self.task_already_exists(task_container):
+        if self.task_already_exists(parent_container or task_container):
             return False
 
         # task container state match creation_state value?
@@ -359,8 +531,11 @@ class BaseTaskConfig(object):
     def match_creation_state(self, task_container):
         """
         """
+        if not self.creation_state:
+            return True
+
         container_state = api.content.get_state(task_container)
-        return container_state == self.creation_state
+        return container_state in (self.creation_state or [])
 
     def match_creation_conditions(self, task_container):
         """
@@ -396,6 +571,9 @@ class BaseTaskConfig(object):
     def match_starting_states(self, task_container):
         """
         """
+        if not self.starting_states:
+            return True
+
         container_state = api.content.get_state(task_container)
         return container_state in (self.starting_states or [])
 
@@ -421,11 +599,15 @@ class BaseTaskConfig(object):
     def should_end_task(self, task_container, task):
         """
         Evaluate:
+         - If the task has an assigned user
          - If the task container is on the state selected on 'ending_states'
          - All the existence conditions of a task.
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically close a task.
         """
+
+        if not task.assigned_user:
+            return False
 
         # task container state match any ending_states value?
         if not self.match_ending_states(task_container):
@@ -439,6 +621,9 @@ class BaseTaskConfig(object):
     def match_ending_states(self, task_container):
         """
         """
+        if not self.ending_states:
+            return True
+
         container_state = api.content.get_state(task_container)
         return container_state in (self.ending_states or [])
 
@@ -460,6 +645,35 @@ class BaseTaskConfig(object):
             to_adapt=(task_container, task),
             interface=IEndCondition,
         )
+
+    def should_recurred(self, task_container):
+        """
+        Evaluate if the a new task should be created for the task container
+        depending on the recurrence condition
+        """
+        if getattr(self, 'activate_recurrency', False) is False:
+            return False
+
+        if self.match_recurrence_states(task_container) is False:
+            return False
+
+        if not getattr(self, 'recurrence_conditions', None):
+            return True
+
+        return self.evaluate_conditions(
+            conditions=self.recurrence_conditions,
+            to_adapt=(task_container, self),
+            interface=ICreationCondition,
+        )
+
+    def match_recurrence_states(self, task_container):
+        """
+        """
+        if not self.recurrence_states:
+            return True
+
+        container_state = api.content.get_state(task_container)
+        return container_state in (self.recurrence_states or [])
 
     def create_task(self, task_container):
         """
@@ -496,27 +710,25 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
-        date_adapter = getMultiAdapter(
-            (task_container, task),
-            interface=IStartDate,
-            name=self.start_date
-        )
-        start_date = date_adapter.start_date()
-        if not start_date:
-            return None
-
-        additional_delay = self.additional_delay or 0
-        due_date = start_date + additional_delay
-        due_date = due_date.asdatetime().date()
+        adapters = getattr(self, 'calculation_delay', [])
+        # Backward compatibility
+        if not adapters:
+            adapters = ['schedule.calculation_default_delay']
+        due_date = None
+        for adapter in adapters:
+            calculator = getMultiAdapter(
+                (task_container, task),
+                interface=ICalculationDelay,
+                name=adapter,
+            )
+            due_date = calculator.due_date
 
         return due_date
 
-    def _create_task_instance(self, creation_place):
+    def _create_task_instance(self, creation_place, task_id):
         """
         Helper method to use to implement 'create_task'.
         """
-        task_id = 'TASK_{}'.format(self.id)
-
         if task_id in creation_place.objectIds():
             raise TaskAlreadyExists(task_id)
 
@@ -531,10 +743,43 @@ class BaseTaskConfig(object):
             schedule_config_UID=self.get_schedule_config().UID(),
             task_config_UID=self.UID(),
         )
+
+        marker_interfaces = [getInterface('', i) for i in self.marker_interfaces or []]
+        alsoProvides(task, *marker_interfaces)
+
         return task
 
+    @property
+    def default_task_id(self):
+        return 'TASK_{0}'.format(self.id)
 
-class TaskConfig(Item, BaseTaskConfig):
+    def create_recurring_task(self, task_container, creation_place=None):
+        """
+        Create a recurring task
+        """
+        creation_place = creation_place or task_container
+        object_ids = creation_place.objectIds()
+        related_ids = [i for i in object_ids
+                       if i.startswith(self.default_task_id)]
+        if len(related_ids) > 0:
+            object_id = related_ids[-1]
+            if api.content.get_state(creation_place[object_id]) != 'closed':
+                return
+        if self.default_task_id in object_ids:
+            task_id = '{0}-{1}'.format(
+                self.default_task_id,
+                len(related_ids),
+            )
+        else:
+            task_id = self.default_task_id
+        return self.create_task(
+            task_container,
+            creation_place=creation_place,
+            task_id=task_id,
+        )
+
+
+class TaskConfig(Container, BaseTaskConfig):
     """
     TaskConfig dexterity class.
     """
@@ -547,61 +792,87 @@ class TaskConfig(Item, BaseTaskConfig):
         """
         return 'AutomatedTask'
 
-    def create_task(self, task_container, creation_place=None):
+    def create_task(self, task_container, creation_place=None, task_id=None):
         """
         Just create the task and return it.
         """
         creation_place = creation_place or task_container
-        task = self._create_task_instance(creation_place)
+        task_id = task_id or self.default_task_id
+        task = self._create_task_instance(creation_place, task_id)
 
-        task.due_date = self.compute_due_date(task_container, task)
         task.assigned_group = self.group_to_assign(task_container, task)
         task.assigned_user = self.user_to_assign(task_container, task)
+        task.due_date = self.compute_due_date(task_container, task)
         task.reindexObject()
-        # task.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
 
         return task
+
+
+class IMacroCreationConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IMacroStartConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_start_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IMacroEndConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_end_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+
+class IMacroRecurrenceConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_creation_conditions',
+        # vocabulary='schedule.recurrence_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
 
 
 class IMacroTaskConfig(ITaskConfig):
     """
     TaskConfig dexterity schema.
     """
-
-    creation_conditions = schema.List(
-        title=_(u'Creation conditions'),
-        description=_(u'Select creation conditions of the task'),
-        value_type=schema.Choice(source='schedule.macrotask_creation_conditions'),
-        required=True,
-    )
-
-    starting_states = schema.Choice(
-        title=_(u'Task container start states'),
-        description=_(u'Select the state of the container where the task is automatically started.'),
-        vocabulary='schedule.container_state',
-        required=False,
-    )
-
-    start_conditions = schema.List(
-        title=_(u'Start conditions'),
-        description=_(u'Select start conditions of the task'),
-        value_type=schema.Choice(source='schedule.macrotask_start_conditions'),
-        required=True,
-    )
-
-    ending_states = schema.Set(
-        title=_(u'Task container end states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
-        required=False,
-    )
-
-    end_conditions = schema.List(
-        title=_(u'End conditions'),
-        description=_(u'Select end conditions of the task.'),
-        value_type=schema.Choice(source='schedule.macrotask_end_conditions'),
-        required=True,
-    )
 
     start_date = schema.Choice(
         title=_(u'Start date'),
@@ -610,14 +881,43 @@ class IMacroTaskConfig(ITaskConfig):
         required=True,
     )
 
-    additional_delay = schema.Int(
-        title=_(u'Additional delay'),
-        description=_(u'This delay is added to the due date of the task.'),
+    creation_conditions = schema.List(
+        title=_(u'Creation conditions'),
+        description=_(u'Select creation conditions of the task'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroCreationConditionSchema,
+        ),
         required=False,
     )
 
-    warning_delay = schema.Int(
-        title=_(u'Warning delay'),
+    start_conditions = schema.List(
+        title=_(u'Start conditions'),
+        description=_(u'Select start conditions of the task'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroStartConditionSchema,
+        ),
+        required=False,
+    )
+
+    end_conditions = schema.List(
+        title=_(u'End conditions'),
+        description=_(u'Select end conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroEndConditionSchema,
+        ),
+        required=False,
+    )
+
+    recurrence_conditions = schema.List(
+        title=_(u'Recurrence condition'),
+        description=_(u'Select recurrence conditions of the task.'),
+        value_type=schema.Object(
+            title=_('Conditions'),
+            schema=IMacroRecurrenceConditionSchema,
+        ),
         required=False,
     )
 
@@ -639,23 +939,37 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         Return all the subtasks configs of this macro task.
         """
-        return self.objectValues()
+        catalog = api.portal.get_tool('portal_catalog')
+        config_path = '/'.join(self.getPhysicalPath())
 
-    def create_task(self, task_container):
+        query = {
+            'object_provides': ITaskConfig.__identifier__,
+            'path': {'query': config_path, 'depth': 1},
+            'sort_on': 'getObjPositionInParent',
+        }
+
+        config_brains = catalog(**query)
+        subtask_configs = [brain.getObject() for brain in config_brains]
+
+        return subtask_configs
+
+    def create_task(self, task_container, creation_place=None, task_id=None):
         """
         Create the macrotask and subtasks.
         """
-        macrotask = self._create_task_instance(task_container)
+        creation_place = creation_place or task_container
+        task_id = task_id or self.default_task_id
+        macrotask = self._create_task_instance(creation_place, task_id)
 
         for config in self.get_subtask_configs():
             if config.should_create_task(task_container):
                 config.create_task(task_container, creation_place=macrotask)
 
-        # compute due date only after all substasks are created
-        macrotask.due_date = self.compute_due_date(task_container, macrotask)
+        # compute some fields only after all substasks are created
         macrotask.assigned_group = self.group_to_assign(task_container, macrotask)
         macrotask.assigned_user = self.user_to_assign(task_container, macrotask)
-        macrotask.reindexObject(['schedule_config_UID', 'task_config_UID', 'due_date', 'assigned_group', 'assigned_user'])
+        macrotask.due_date = self.compute_due_date(task_container, macrotask)
+        macrotask.reindexObject()
 
         return macrotask
 
@@ -663,6 +977,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         See 'should_end_task' in BaseTaskConfig
         Evaluate:
+         - If the task has an assigned user
          - If the task container is on the state selected on 'ending_states'
          - All the existence conditions of a task with 'task' and 'kwargs'.
            Returns True only if ALL the conditions are matched.

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# from imio.schedule.testing import IMIO_SCHEDULE_ACCEPTANCE_TESTING  # noqa
+from imio.schedule.testing import SCHEDULE_TEST_ROBOT  # noqa
 from plone.app.testing import ROBOT_TEST_LEVEL
-# from plone.testing import layered
+from plone.testing import layered
 
 import os
 import robotsuite
@@ -16,13 +16,13 @@ def test_suite():
         os.path.join('robot', doc) for doc in os.listdir(robot_dir)
         if doc.endswith('.robot') and doc.startswith('test_')
     ]
-    for robot_test in []:  # robot_tests:
+    for robot_test in robot_tests:
         robottestsuite = robotsuite.RobotTestSuite(robot_test)
         robottestsuite.level = ROBOT_TEST_LEVEL
         suite.addTests([
-            # layered(
-            #    robottestsuite,
-            #    layer=IMIO_SCHEDULE_ACCEPTANCE_TESTING
-            # ),
+            layered(
+                robottestsuite,
+                layer=SCHEDULE_TEST_ROBOT
+            ),
         ])
     return suite

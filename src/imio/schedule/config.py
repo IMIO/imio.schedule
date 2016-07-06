@@ -15,7 +15,7 @@ states_by_status = {
         'in_progress',
         'realized'
     ],
-    DONE:  [
+    DONE: [
         'closed'
     ],
 }

@@ -2,6 +2,7 @@
 """Module where all interfaces, events and exceptions live."""
 
 from zope.interface import Interface
+from zope.interface.interfaces import IInterface
 
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
@@ -105,6 +106,24 @@ class IToTaskConfig(Interface):
     """
 
 
+class IScheduleView(Interface):
+    """
+    Marker interface to provides on folderish with the schedule faceted view.
+    """
+
+
+class IScheduleCollection(Interface):
+    """
+    Marker interface for collections associated to schedule/task config.
+    """
+
+
+class ITaskMarkerInterface(IInterface):
+    """
+    Marker interface for for AutomatedTask custom marker interfaces vocabulary.
+    """
+
+
 class ScheduleConfigNotFound(Exception):
     """
     Raised when a ScheduleConfig is not found.
@@ -121,3 +140,26 @@ class TaskAlreadyExists(Exception):
     """
     Raised when a Task already exists.
     """
+
+
+class IRecurrenceCondition(ITaskLogic):
+    """
+    Base interface for the TaskConfig recurrence conditions
+    """
+
+
+class ICalculationDelay(ITaskLogic):
+    """
+    Base interface for the TaskConfig calculation delay methods
+    """
+
+
+class IToIcon(Interface):
+    """
+    Adapts an object into an icon.
+    """
+
+    def get_icon_url(self):
+        """
+        Return the icon url.
+        """

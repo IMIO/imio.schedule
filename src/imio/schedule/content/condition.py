@@ -143,3 +143,16 @@ class StartIfAllSubtasksStarted(MacroTaskStartCondition):
     def evaluate(self):
         """
         """
+
+
+class RecurrencyCondition(Condition):
+
+    def __init__(self, task_container, task_config):
+        self.task_container = task_container
+        self.task_config = task_config
+
+
+class NoRecurencyCondition(RecurrencyCondition):
+
+    def evaluate(self):
+        return False

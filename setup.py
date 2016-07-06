@@ -43,15 +43,17 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'collective.task',
+        'collective.faceted.task',
         'collective.z3cform.datagridfield',
         'imio.dashboard',
         'plone.api',
         'plone.app.dexterity',
+        'Products.cron4plone',
         'setuptools',
     ],
     extras_require={
         'test': [
+            'Mock',
             'plone.app.testing',
             'plone.app.robotframework[debug]',
         ],

@@ -36,31 +36,17 @@ Test Teardown  Close all browsers
 
 Scenario: As a member I want to be able to log into the website
   [Documentation]  Example of a BDD-style (Behavior-driven development) test.
-  Given a login form
-   When I enter valid credentials
-   Then I am logged in
+  Log in as admin
 
 
 *** Keywords *****************************************************************
 
-# --- Given ------------------------------------------------------------------
+Suite Setup
+    Open test browser
+    Log in as admin
 
-a login form
-  Go To  ${PLONE_URL}/login_form
-  Wait until page contains  Login Name
-  Wait until page contains  Password
-
-
-# --- WHEN -------------------------------------------------------------------
-
-I enter valid credentials
-  Input Text  __ac_name  admin
-  Input Text  __ac_password  secret
-  Click Button  Log in
-
-
-# --- THEN -------------------------------------------------------------------
-
-I am logged in
-  Wait until page contains  You are now logged in
-  Page should contain  You are now logged in
+Log in as admin
+    Go to  ${PLONE_URL}/login
+    Input text  id=__ac_name  test-user
+    Input password  id=__ac_password  secret
+    Click Button  submit

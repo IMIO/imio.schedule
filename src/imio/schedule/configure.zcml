@@ -16,6 +16,7 @@
   <include package=".content" />
   <include package=".dashboard" />
   <include package=".events" />
+  <include package=".collectionwidget" />
 
   <include file="indexes.zcml" />
 

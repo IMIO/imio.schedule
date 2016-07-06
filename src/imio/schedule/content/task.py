@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from collective.task import _ as CTMF
 from collective.task.behaviors import ITask
+from collective.task.behaviors import get_parent_assigned_group
+from collective.task.behaviors import get_users_vocabulary
+from collective.task.field import LocalRoleMasterSelectField
 
 from plone import api
+from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from imio.schedule.config import DONE
 from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
@@ -17,6 +23,23 @@ class IAutomatedTask(ITask):
     """
     AutomatedTask dexterity schema.
     """
+
+    directives.order_before(assigned_group='assigned_user')
+    directives.order_before(assigned_group='ITask.assigned_user')
+    assigned_group = LocalRoleMasterSelectField(
+        title=CTMF(u"Assigned group"),
+        required=True,
+        vocabulary="collective.task.AssignedGroups",
+        slave_fields=(
+            {'name': 'ITask.assigned_user',
+             'slaveID': '#form-widgets-ITask-assigned_user',
+             'action': 'vocabulary',
+             'vocab_method': get_users_vocabulary,
+             'control_param': 'group',
+             },
+        ),
+        defaultFactory=get_parent_assigned_group
+    )
 
 
 class BaseAutomatedTask(object):
@@ -114,6 +137,24 @@ class BaseAutomatedTask(object):
     def get_state(self):
         return api.content.get_state(self)
 
+    def get_subtasks(self):
+        """
+        A normal task has no sub tasks.
+        """
+        return []
+
+    @property
+    def end_date(self):
+        """
+        """
+        if self.get_status() == DONE:
+            wf_history = self.workflow_history['task_workflow'][::-1]
+            for action in wf_history:
+                if status_by_state[action['review_state']] is DONE:
+                    end_date = action['time']
+                    return end_date.asdatetime()
+        return None
+
 
 class AutomatedTask(Item, BaseAutomatedTask):
     """
@@ -122,11 +163,17 @@ class AutomatedTask(Item, BaseAutomatedTask):
     implements(IAutomatedTask)
 
 
+class IAutomatedMacroTask(IAutomatedTask):
+    """
+    AutomatedTask dexterity schema.
+    """
+
+
 class AutomatedMacroTask(Container, BaseAutomatedTask):
     """
     """
 
-    implements(IAutomatedTask)
+    implements(IAutomatedMacroTask)
 
     def get_subtasks(self):
         """
@@ -134,3 +181,19 @@ class AutomatedMacroTask(Container, BaseAutomatedTask):
         """
         sub_tasks = [obj for obj in self.objectValues() if ITask.providedBy(obj)]
         return sub_tasks
+
+    def get_last_subtasks(self):
+        """
+        Return each last different sub task of this macro task.
+        """
+        subtask_type = set()
+        sub_tasks = []
+
+        for obj in reversed(self.objectValues()):
+            if ITask.providedBy(obj):
+                subtask = obj
+                if subtask.task_config_UID not in subtask_type:
+                    subtask_type.add(subtask.task_config_UID)
+                    sub_tasks.append(subtask)
+
+        return reversed(sub_tasks)

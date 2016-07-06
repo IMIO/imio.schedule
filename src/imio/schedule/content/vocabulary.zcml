@@ -38,6 +38,13 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig 'marker_interfaces' field Vocabulary -->
+    <utility
+        factory=".vocabulary.TaskMarkerInterfacesVocabulary"
+        name="schedule.task_marker_interfaces"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'creation_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.CreationConditionVocabularyFactory"
@@ -63,6 +70,13 @@
     <utility
         factory=".vocabulary.StartDateVocabularyFactory"
         name="schedule.start_date"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'recurrence_condition' field Vocabulary -->
+    <utility
+        factory=".vocabulary.RecurrenceConditionVocabularyFactory"
+        name="schedule.recurrence_conditions"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
@@ -93,5 +107,26 @@
         name="schedule.macrotask_start_date"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
+
+    <!-- TaskConfig logical operator vocabulary -->
+    <utility
+        factory=".vocabulary.LogicalOperatorVocabularyFactory"
+        name="schedule.logical_operator"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
+    <!-- TaskConfig calculation delay vocabulary -->
+    <utility
+        factory=".vocabulary.CalculationDelayVocabularyFactory"
+        name="schedule.calculation_delay"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
+    <!-- Task owner vocabulary -->
+    <utility
+        component=".vocabulary.TaskOwnerVocabulary"
+        name="schedule.task_owner"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
 
 </configure>

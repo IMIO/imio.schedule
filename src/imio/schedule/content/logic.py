@@ -4,6 +4,8 @@ from DateTime import DateTime
 
 from plone import api
 
+from imio.schedule.config import STARTED
+from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IMacroTaskStartDate
@@ -35,7 +37,7 @@ class TaskLogic(object):
 
     implements(ITaskLogic)
 
-    def __init__(self, task_container, task=None):
+    def __init__(self, task_container, task):
         self.task_container = task_container
         self.task = task
         self.task_config = task.get_task_config()
@@ -71,6 +73,21 @@ class MacroTaskStartDate(StartDate):
         """
 
 
+class TaskStartingDate(StartDate):
+    """
+    Return the date when the task started.
+    """
+
+    def start_date(self):
+        """
+        Return the date when the task started.
+        """
+        history = self.task.workflow_history.values()[0]
+        for state_history in history:
+            if status_by_state[state_history.get('review_state')] is STARTED:
+                return state_history['time']
+
+
 class SubtaskHighestDueDate(MacroTaskStartDate):
     """
     Return the highest due date of the subtasks.
@@ -84,7 +101,7 @@ class SubtaskHighestDueDate(MacroTaskStartDate):
         if not subtasks:
             return None
         due_dates = [DateTime(str(t.due_date)) for t in subtasks if t.due_date]
-        return max(due_dates)
+        return due_dates and max(due_dates) or None
 
 
 class AssignTaskUser(TaskLogic):

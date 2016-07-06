@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
-
-from Products.CMFPlone import PloneMessageFactory
-
 from imio.schedule import _
+from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
@@ -13,18 +10,29 @@ from imio.schedule.interfaces import IMacroTaskCreationCondition
 from imio.schedule.interfaces import IMacroTaskEndCondition
 from imio.schedule.interfaces import IMacroTaskStartCondition
 from imio.schedule.interfaces import IMacroTaskStartDate
+from imio.schedule.interfaces import IRecurrenceCondition
 from imio.schedule.interfaces import IScheduledContentTypeVocabulary
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
+from imio.schedule.interfaces import ITaskMarkerInterface
 from imio.schedule.utils import interface_to_tuple
+from imio.schedule.utils import dict_list_2_vocabulary
 
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
+from plone import api
+
+from plone.principalsource.source import PrincipalSource
+
+from Products.CMFPlone import PloneMessageFactory
+from Products.CMFPlone.i18nl10n import utranslate
+
 from zope.component import getAdapter
 from zope.component import getGlobalSiteManager
 from zope.i18n import translate
 from zope.interface import implements
+from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class BaseVocabularyFactory(object):
@@ -233,6 +241,36 @@ class ContainerStateVocabularyFactory(object):
         return vocabulary
 
 
+class TaskMarkerInterfacesVocabulary(object):
+    """
+    Return available custom Task Marker Interface.
+    """
+
+    def __call__(self, context):
+        gsm = getGlobalSiteManager()
+        interfaces = gsm.getUtilitiesFor(ITaskMarkerInterface)
+        items = []
+
+        for interface_name, marker_interface in interfaces:
+            items.append(
+                SimpleTerm(
+                    interface_name,
+                    marker_interface.__doc__,
+                    utranslate(
+                        msgid=marker_interface.__doc__,
+                        domain='imio.schedule',
+                        context=context,
+                        default=marker_interface.__doc__
+                    )
+                )
+            )
+
+        #sort elements by title
+        items.sort(lambda a, b: cmp(a.title, b.title))
+
+        return SimpleVocabulary(items)
+
+
 class TaskLogicVocabularyFactory(object):
     """
     Base class for vocabulary factories listing adapters providing
@@ -302,6 +340,22 @@ class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
     provides_interface = IStartDate
 
 
+class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'recurrence_conditions' field.
+    Return recurrence conditions for a task config.
+    """
+    provides_interface = IRecurrenceCondition
+
+
+class CalculationDelayVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'calculation_delay' field.
+    Return calculation delay methods for a task config.
+    """
+    provides_interface = ICalculationDelay
+
+
 class MacroTaskCreationConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
     Vocabulary factory for 'creation_conditions' field.
@@ -336,3 +390,36 @@ class MacroTaskStartDateVocabularyFactory(TaskLogicVocabularyFactory):
     """
 
     provides_interface = IMacroTaskStartDate
+
+
+class LogicalOperatorVocabularyFactory(BaseVocabularyFactory):
+
+    def __call__(self, context):
+        return dict_list_2_vocabulary([
+            {'AND': _(u'and')},
+            {'OR': _(u'or')},
+        ])
+
+
+class TaskOwnerSource(PrincipalSource):
+
+    def __init__(self, context):
+        super(TaskOwnerSource, self).__init__(context)
+
+    def _search(self, id=None, exact_match=True):
+        users = api.user.get_users(self.context.assigned_group)
+        if id is not None:
+            return [{'id': u.id} for u in users if u.id == id]
+        return [{'id': u.id} for u in users]
+
+
+class TaskOwnerSourceBinder(object):
+    """Bind the principal source with either users or groups
+    """
+    implements(IContextSourceBinder)
+
+    def __call__(self, context):
+        return TaskOwnerSource(context)
+
+
+TaskOwnerVocabulary = TaskOwnerSourceBinder()

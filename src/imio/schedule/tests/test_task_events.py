@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
+from mock import Mock
 
+from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
+from imio.schedule.testing import MacroTaskScheduleFunctionalTestCase
 
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
@@ -13,6 +16,14 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
     """
     Test task creation with different changes of TaskContainer.
     """
+
+    def setUp(self):
+        super(TestTaskCreation, self).setUp()
+        self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+
+    def tearDown(self):
+        CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
+        super(TestTaskCreation, self).tearDown()
 
     def test_task_creation_on_container_modification(self):
         """
@@ -104,7 +115,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         """
         msg = 'default du date should have been today + 10 days'
         due_date = self.task.due_date
-        expected_date = self.task_container.creation_date + 10
+        expected_date = self.task_container.creation_date
         expected_date = expected_date.asdatetime().date()
         self.assertEquals(due_date, expected_date, msg)
 
@@ -189,13 +200,12 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         When modifying a contentype scheduled with a ScheduleConfig
         Task due date should be updated.
         """
-        task_config = self.task_config
         task_container = self.task_container
         task = self.task
         old_due_date = task.due_date
 
         # set an additional delay of 42 days on the task config
-        task_config.additional_delay = 42
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=42)
         msg = "The task due date should not have changed"
         self.assertEquals(task.due_date, old_due_date)
 
@@ -210,13 +220,12 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         When modifying a contentype scheduled with a ScheduleConfig
         Task due date should be updated and reindexed.
         """
-        task_config = self.task_config
         task_container = self.task_container
         task = self.task
         old_due_date = task.due_date
 
         # set an additional delay of 42 days on the task config
-        task_config.additional_delay = 42
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=42)
         msg = "The task due date should not have changed"
         self.assertEquals(task.due_date, old_due_date)
 
@@ -230,6 +239,38 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         msg = 'new due date should have been reindexed'
         task_brain = catalog(due_date=task.due_date, UID=task.UID())
         self.assertTrue(task_brain, msg)
+
+
+class TestMacroTaskUpdate(MacroTaskScheduleFunctionalTestCase):
+    """
+    Test task update with different changes of TaskContainer.
+    """
+
+    def tearDown(self):
+        api.content.transition(obj=self.macro_task, to_state='created')
+
+    def test_update_recurrence_handler(self):
+        """
+        When modifying a contenttype the recurrence should be evaluated
+        """
+        transitions = ['do_to_assign', 'do_realized', 'do_closed']
+        self.macrotask_config.activate_recurrency = True
+        self.macrotask_config.recurrence_conditions = self.macrotask_config.creation_conditions
+        self.macrotask_config.recurrence_states = ('private', )
+
+        self.subtask_config.activate_recurrency = True
+        self.subtask_config.recurrence_conditions = self.subtask_config.creation_conditions
+        self.subtask_config.recurrence_states = ('private', )
+
+        for transition in transitions:
+            api.content.transition(obj=self.macro_task, transition=transition)
+        notify(ObjectModifiedEvent(self.task_container))
+
+        self.assertTrue('TASK_test_macrotaskconfig-1' in self.task_container)
+        macro_task = self.task_container['TASK_test_macrotaskconfig-1']
+        self.assertTrue('TASK_test_subtaskconfig' in macro_task)
+        for transition in transitions:
+            api.content.transition(obj=macro_task, transition=transition)
 
 
 class TestTaskEnding(ExampleScheduleFunctionalTestCase):

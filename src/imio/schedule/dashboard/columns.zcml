@@ -23,16 +23,16 @@
 
   <!-- display adapters -->
   <adapter
-     for="imio.schedule.dashboard.columns.StatusColum
-          imio.schedule.content.task.AutomatedTask
+     for="imio.schedule.dashboard.interfaces.IStatusColumn
+          imio.schedule.content.task.IAutomatedTask
           zope.publisher.interfaces.browser.IBrowserRequest"
      factory=".columns.TaskStatusDisplay"
      provides="imio.schedule.dashboard.interfaces.IDisplayTaskStatus"
   />
 
   <adapter
-     for="imio.schedule.dashboard.columns.StatusColum
-          imio.schedule.content.task.AutomatedMacroTask
+     for="imio.schedule.dashboard.interfaces.IStatusColumn
+          imio.schedule.content.task.IAutomatedMacroTask
           zope.publisher.interfaces.browser.IBrowserRequest"
      factory=".columns.MacroTaskStatusDisplay"
      provides="imio.schedule.dashboard.interfaces.IDisplayTaskStatus"
