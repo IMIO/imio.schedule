@@ -63,18 +63,6 @@ class ScheduleConfig(Container):
 
         return config_brains
 
-    def query_maintask_configs(self):
-        """
-        Query main TaskConfig (tasks config that are not
-        sub-tasks) of this ScheduleConfig.
-        """
-        config_path = '/'.join(self.getPhysicalPath())
-        additional_query = {'path': {'query': config_path, 'depth': 1}}
-
-        config_brains = self.query_task_configs(additional_query)
-
-        return config_brains
-
     def get_all_task_configs(self):
         """
         Return all the TaskConfig of this ScheduleConfig.
