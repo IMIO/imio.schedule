@@ -721,10 +721,7 @@ class BaseTaskConfig(object):
                 interface=ICalculationDelay,
                 name=adapter,
             )
-            if due_date is None:
-                due_date = calculator.due_date
-            else:
-                due_date = calculator.compute_due_date(due_date)
+            due_date = calculator.due_date
 
         return due_date
 

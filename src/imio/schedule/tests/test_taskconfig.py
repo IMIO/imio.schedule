@@ -436,6 +436,11 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         create = task_config.should_create_task(empty_task_container)
         self.assertTrue(create, msg)
 
+        # no creation states given means any state allow task creation
+        task_config.creation_state = None
+        create = task_config.should_create_task(empty_task_container)
+        self.assertTrue(create, msg)
+
         # disable the task config => task should not be created
         task_config.enabled = False
         msg = "Task should not be created because the creation condition is not matched"
@@ -478,6 +483,11 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         api.content.transition(obj=task_container, transition='submit')
         msg = "Task should be started"
         start = task_config.should_start_task(task_container, task)
+        self.assertTrue(start, msg)
+
+        # no starting creation states given means any state allow task start
+        task_config.starting_states = None
+        start = task_config.should_start_task(task_container)
         self.assertTrue(start, msg)
 
         # set the task_config field 'start_conditions' with a negative condition
@@ -545,6 +555,11 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         end = task_config.should_end_task(task_container, task)
         self.assertTrue(end, msg)
 
+        # no ending creation states given means any state allow task end
+        task_config.ending_states = None
+        end = task_config.should_end_task(task_container)
+        self.assertTrue(end, msg)
+
         # set the task_config field 'end_conditions' with a negative condition
         # => task should not end
         task_config.end_conditions = [type('object', (object, ), {
@@ -590,6 +605,11 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         created_task = task_config.create_task(task_container)
 
         self.assertTrue(isinstance(created_task, AutomatedTask))
+
+        # should raise TaskAlreadyExists when trying to use same task id
+        from imio.schedule.interfaces import TaskAlreadyExists
+        kwargs = {'task_container': task_container, 'task_id': created_task.id}
+        self.assertRaises(TaskAlreadyExists, task_config.create_task, **kwargs)
 
     def test_start_task(self):
         """
