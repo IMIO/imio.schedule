@@ -23,7 +23,7 @@ class TestTaskLogicIntegration(ExampleScheduleIntegrationTestCase):
         logic_name = 'schedule.start_date.task_starting_date'
 
         duedate_adapter = queryMultiAdapter(
-            (self.task_container, self.macro_task),
+            (self.task_container, self.task),
             IStartDate,
             name=logic_name
         )
@@ -34,17 +34,20 @@ class TestTaskLogicIntegration(ExampleScheduleIntegrationTestCase):
         Check if the SubtaskHighestDueDate adapter return the highest
         due date amongst all the subtasks of a AutomatedMacroTask.
         """
+        task_config = self.task_config
+        task = self.task
         logic_name = 'schedule.start_date.task_starting_date'
 
         duedate_adapter = getMultiAdapter(
-            (self.task_container, self.macro_task),
+            (self.task_container, task),
             IStartDate,
             name=logic_name
         )
 
-        highest_due_date = duedate_adapter.start_date()
-        expected_date = DateTime(str(self.sub_task.due_date))
-        self.assertEquals(highest_due_date, expected_date)
+        task_config.start_task(task)
+        due_date = duedate_adapter.start_date()
+        expected_date = task.workflow_history.values()[0][-1]['time']
+        self.assertEquals(due_date, expected_date)
 
 
 class TestMacroTaskLogicIntegration(MacroTaskScheduleIntegrationTestCase):
