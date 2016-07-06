@@ -487,7 +487,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # no starting creation states given means any state allow task start
         task_config.starting_states = None
-        start = task_config.should_start_task(task_container)
+        start = task_config.should_start_task(task_container, task)
         self.assertTrue(start, msg)
 
         # set the task_config field 'start_conditions' with a negative condition
@@ -557,7 +557,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # no ending creation states given means any state allow task end
         task_config.ending_states = None
-        end = task_config.should_end_task(task_container)
+        end = task_config.should_end_task(task_container, task)
         self.assertTrue(end, msg)
 
         # set the task_config field 'end_conditions' with a negative condition
