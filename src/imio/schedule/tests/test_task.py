@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from imio.schedule.config import CREATION
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
@@ -162,6 +165,30 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         task = self.task
         self.assertEquals(task.get_state(), api.content.get_state(task))
 
+    def test_get_subtasks(self):
+        """
+        Should return an empty list since a basic task has no subtasks.
+        """
+        task = self.task
+        self.assertEquals(task.get_subtasks(), [])
+
+    def test_end_date(self):
+        """
+        Should return the date of the ending of the task.
+        """
+        task = self.task
+        task_config = self.task_config
+
+        self.assertEquals(task.end_date, None)
+
+        task_config.start_task(task)
+        self.assertEquals(task.end_date, None)
+
+        task_config.end_task(task)
+        end_date = task.end_date
+        expected_date = datetime.now(end_date.tzinfo)
+        self.assertTrue(relativedelta(expected_date, end_date).seconds < 1)
+
 
 class TestAutomatedMacroTask(unittest.TestCase):
     """
@@ -223,6 +250,14 @@ class TestAutomatedMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):
     def test_get_subtasks(self):
         """
         Should return the subtasks of this macro task.
+        """
+        subtasks = self.macro_task.get_subtasks()
+        self.assertEquals(len(subtasks), 1)
+        self.assertEquals(subtasks[0], self.sub_task)
+
+    def test_get_last_subtasks(self):
+        """
+        Should return the unique subtasks of this macro task.
         """
         subtasks = self.macro_task.get_subtasks()
         self.assertEquals(len(subtasks), 1)

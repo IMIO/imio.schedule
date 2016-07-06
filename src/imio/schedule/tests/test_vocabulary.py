@@ -197,6 +197,13 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         msg = 'Condition title was not translated'
         self.assertEquals(translation, u'Date de création du dossier', msg)
 
+    def test_task_owner_vocabulary_factory_registration(self):
+        """
+        Content types voc factory should be registered as a named utility.
+        """
+        factory_name = 'schedule.task_owner'
+        self.assertTrue(queryUtility(IVocabularyFactory, factory_name))
+
 
 class TestMacroTaskVocabularies(MacroTaskScheduleIntegrationTestCase):
     """
