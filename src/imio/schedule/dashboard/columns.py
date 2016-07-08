@@ -30,11 +30,11 @@ class AssignedUserColumn(BaseColumn):
     """ display licence address in SearchResultTable """
 
     def renderCell(self, item):
-        user = item.assigned_user
+        user_id = item.assigned_user
         group = item.assigned_group
 
-        user = api.user.get(user)
-        username = user.getProperty('fullname').decode('utf-8')
+        user = api.user.get(user_id)
+        username = user and user.getProperty('fullname').decode('utf-8') or user_id
         assigned = username
         if group:
             assigned = u'{user} ({group})'.format(
