@@ -16,7 +16,7 @@ from zope.interface import implements
 
 
 class DueDateColumn(BaseColumn):
-    """ TitleColumn for imio.dashboard listings."""
+    """ Due date column for schedule listings."""
 
     def renderCell(self, item):
         due_date = item.due_date
@@ -24,6 +24,23 @@ class DueDateColumn(BaseColumn):
             return u'\u221E'
 
         return due_date.strftime('%d/%m/%Y')
+
+
+class AssignedUserColumn(BaseColumn):
+    """ display licence address in SearchResultTable """
+
+    def renderCell(self, item):
+        user = item.assigned_user
+        group = item.assigned_group
+
+        assigned = user
+        if group:
+            assigned = '{user} ({group})'.format(
+                user=api.user.get(user).getProperty('fullname'),
+                group=group
+            )
+
+        return assigned
 
 
 class StatusColum(BaseColumn):
