@@ -33,10 +33,12 @@ class AssignedUserColumn(BaseColumn):
         user = item.assigned_user
         group = item.assigned_group
 
-        assigned = user
+        user = api.user.get(user)
+        username = user.getProperty('fullname').decode('utf-8')
+        assigned = username
         if group:
-            assigned = '{user} ({group})'.format(
-                user=api.user.get(user).getProperty('fullname'),
+            assigned = u'{user} ({group})'.format(
+                user=username,
                 group=group
             )
 
