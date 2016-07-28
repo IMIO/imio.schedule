@@ -184,7 +184,7 @@ class AutomatedMacroTask(Container, BaseAutomatedTask):
 
     def get_last_subtasks(self):
         """
-        Return each last different sub task of this macro task.
+        Return each last unique sub task of this macro task.
         """
         subtask_type = set()
         sub_tasks = []

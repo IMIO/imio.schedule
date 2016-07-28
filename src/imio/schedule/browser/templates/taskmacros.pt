@@ -1,10 +1,10 @@
 <div metal:define-macro="conditions_status_macro" i18n:domain="imio.schedule">
-    <div tal:repeat="status conditions_status">
-        <span tal:attributes="class python: status[1] and 'schedule_closed' or 'schedule_to_do'">
+    <div tal:repeat="task_condition task_conditions">
+        <span tal:attributes="class python: status and 'schedule_closed' or 'schedule_to_do'">
         &nbsp&nbsp&nbsp
         </span>
         &nbsp
-        <span i18n:translate="" tal:content="python: status[0]" />
+        <span i18n:translate="" tal:content="structure task_condition" />
     </div>
 </div>
 
@@ -31,14 +31,38 @@
     </tal:vars>
 </div>
 
+<div metal:define-macro="subtasks_todo_status_macro" i18n:domain="imio.schedule">
+    <div>Subtasks:</div>
+    <table>
+        <tr>
+            <th i18n:translate=""></th>
+            <th i18n:translate="" tal:content="python: view.subtask_todo_title_label">Title</th>
+            <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
+        </tr>
+        <tr tal:repeat="subtask subtasks">
+            <td>
+                <span tal:attributes="class python: 'schedule_%s' % view.get_state(subtask)">
+                    &nbsp&nbsp&nbsp
+                </span>
+            </td>
+            <td>
+                <span tal:content="python: subtask.Title()" />
+            </td>
+            <td tal:define="due_date python: view.display_date(subtask.due_date)">
+                <span tal:content="due_date" />
+             </td>
+        </tr>
+    </table>
+</div>
+
 <div metal:define-macro="subtasks_status_macro" i18n:domain="imio.schedule">
     <div>Subtasks:</div>
     <table>
         <tr>
             <th i18n:translate=""></th>
-            <th i18n:translate="">Title</th>
-            <th i18n:translate="">Due date</th>
-            <th i18n:translate="">End date</th>
+            <th i18n:translate="" tal:content="python: view.subtask_title_label">Title</th>
+            <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
+            <th i18n:translate="" tal:content="python: view.end_date_label">End date</th>
         </tr>
         <tr tal:repeat="subtask subtasks">
             <td>

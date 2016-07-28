@@ -25,11 +25,12 @@
                    subtasks_created python: all_subtasks_status[0];
                    subtasks_todo python: all_subtasks_status[1];
                    subtasks_done python: all_subtasks_status[2]">
-        <tal:display define="conditions_status conditions_todo;
+        <tal:display define="task_conditions conditions_todo;
+                             status python: False;
                              subtasks python: subtasks_created + subtasks_todo"
-                    condition="python: conditions_status or state_todo or subtasks">
+                    condition="python: task_conditions or state_todo or subtasks">
             <th i18n:translate="" colspan="2">To do</th>
-            <tr tal:condition="conditions_status">
+            <tr tal:condition="task_conditions">
                 <td>
                     <div metal:use-macro="here/@@taskmacros/conditions_status_macro" />
                 </td>
@@ -41,15 +42,16 @@
             </tr>
             <tr tal:condition="subtasks">
                 <td>
-                    <div metal:use-macro="here/@@taskmacros/subtasks_status_macro" />
+                    <div metal:use-macro="here/@@taskmacros/subtasks_todo_status_macro" />
                 </td>
             </tr>
         </tal:display>
-        <tal:display define="conditions_status conditions_done;
+        <tal:display define="task_conditions conditions_done;
+                             status python: True;
                              subtasks subtasks_done"
-             condition="python: conditions_status or state_done or subtasks">
+             condition="python: task_conditions or state_done or subtasks">
             <th i18n:translate="" colspan="2">Done</th>
-            <tr tal:condition="conditions_status">
+            <tr tal:condition="task_conditions">
                 <td>
                     <div metal:use-macro="here/@@taskmacros/conditions_status_macro" />
                 </td>

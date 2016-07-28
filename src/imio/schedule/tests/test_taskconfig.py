@@ -525,7 +525,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_start_condition', True)])
+        self.assertTrue(matched_conditions == ['schedule.test_start_condition'])
         self.assertTrue(unmatched_conditions == [])
 
         task_config.start_conditions = [type('condition', (object, ), {
@@ -534,7 +534,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         })()]
         matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == [('schedule.negative_start_condition', False)])
+        self.assertTrue(unmatched_conditions == ['schedule.negative_start_condition'])
 
     def test_should_end_task(self):
         """
@@ -584,7 +584,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == [('schedule.test_end_condition', True)])
+        self.assertTrue(matched_conditions == ['schedule.test_end_condition'])
         self.assertTrue(unmatched_conditions == [])
 
         task_config.end_conditions = [type('condition', (object, ), {
@@ -593,7 +593,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         })()]
         matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == [('schedule.negative_end_condition', False)])
+        self.assertTrue(unmatched_conditions == ['schedule.negative_end_condition'])
 
     def test_create_task(self):
         """

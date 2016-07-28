@@ -15,6 +15,12 @@ class TaskCompletionView(BrowserView):
     Display the status of each start/end condition of the task.
     Display if the starting/ending state is matched or not.
     """
+
+    subtask_title_label = 'Title'
+    subtask_todo_title_label = 'Title'
+    due_date_label = 'Due date'
+    end_date_label = 'End date'
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -32,9 +38,9 @@ class TaskCompletionView(BrowserView):
     def get_subtasks_status(self):
         """
         """
-        done = []
         created = []
         started = []
+        done = []
         for subtask in self.task.get_last_subtasks():
             status = status_by_state[self.get_state(subtask)]
             if status is DONE:
