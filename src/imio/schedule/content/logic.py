@@ -134,6 +134,21 @@ class AssignCurrentUser(AssignTaskUser):
         return user_id
 
 
+class AssignOwnerOfLastSimilarTask(AssignTaskUser):
+    """
+    Return the current connected user to assign it as default assigned
+    user of a new AutomatedTask.
+    """
+
+    def user_id(self):
+        """
+        Return the id of the current user.
+        """
+        user = api.user.get_current()
+        user_id = user.getUserName()
+        return user_id
+
+
 class AssignTaskGroup(TaskLogic):
     """
     Base class for adapters adapting a TaskContainer to return a group to

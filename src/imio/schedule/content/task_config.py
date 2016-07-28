@@ -483,9 +483,6 @@ class BaseTaskConfig(object):
         and task container.
         The first list is all the matched conditions, the second is
         all the unmatched conditions.
-        eg:
-        [(condition_name_1, True), (condition_name_2, True)]
-        [(condition_name_3, False)]
         """
         matched = []
         not_matched = []
@@ -496,9 +493,9 @@ class BaseTaskConfig(object):
                 name=condition_object.condition,
             )
             if value:
-                matched.append((condition_object.condition, value))
+                matched.append(condition_object.condition)
             else:
-                not_matched.append((condition_object.condition, value))
+                not_matched.append(condition_object.condition)
 
         return matched, not_matched
 
