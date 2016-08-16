@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-05-11 15:17+0000\n"
+"POT-Creation-Date: 2016-08-01 12:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,19 +23,19 @@ msgstr ""
 msgid " to one of the following states"
 msgstr ""
 
-#: ../content/task_config.py:103
-msgid "Additional delay"
+#: ../content/task_config.py:241
+msgid "Activate recurrency"
 msgstr ""
 
 #: ../events/dashboard_collection.py:16
 msgid "All"
 msgstr ""
 
-#: ../content/task_config.py:40
+#: ../content/task_config.py:125
 msgid "Assigned group"
 msgstr ""
 
-#: ../content/task_config.py:47
+#: ../content/task_config.py:132
 msgid "Assigned user"
 msgstr ""
 
@@ -47,30 +47,65 @@ msgstr ""
 msgid "AutomatedTask"
 msgstr ""
 
-#: ../content/task_config.py:61
+#: ../content/task_config.py:216
+msgid "Calculation delay"
+msgstr ""
+
+#: ../content/task_config.py:221
+msgid "Calculation delay method"
+msgstr ""
+
+#: ../browser/templates/task_change_owner.pt:15
+msgid "Change the task owner"
+msgstr ""
+
+#: ../content/task_config.py:34
+msgid "Condition"
+msgstr ""
+
+#: ../content/task_config.py:162
+msgid "Conditions"
+msgstr ""
+
+#: ../browser/task_owner.py:28
+msgid "Confirm"
+msgstr ""
+
+#: ../content/task_config.py:147
+msgid "Creation"
+msgstr ""
+
+#: ../content/task_config.py:159
 msgid "Creation conditions"
 msgstr ""
 
-#: ../browser/templates/task_completion.pt:31
+#: ../content/task_config.py:140
+msgid "Custom marker interfaces for this task."
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:53
 msgid "Done"
 msgstr ""
 
-#: ../browser/templates/taskmacros.pt:40
-#: ../dashboard/columns.py:113
+#: ../dashboard/columns.py:151
 msgid "Due date"
 msgstr ""
 
 #: ../content/schedule_config.py:21
-#: ../content/task_config.py:34
+#: ../content/task_config.py:107
 msgid "Enabled"
 msgstr ""
 
-#: ../content/task_config.py:89
+#: ../content/task_config.py:205
 msgid "End conditions"
 msgstr ""
 
-#: ../browser/templates/taskmacros.pt:41
-msgid "End date"
+#: ../content/task_config.py:193
+msgid "Ending"
+msgstr ""
+
+#: ../content/task_config.py:98
+msgid "General informations"
 msgstr ""
 
 #: ../configure.zcml:30
@@ -83,6 +118,30 @@ msgstr ""
 
 #: ../profiles/default/types/MacroTaskConfig.xml
 msgid "MacroTaskConfig"
+msgstr ""
+
+#: ../content/task_config.py:139
+msgid "Marker interfaces"
+msgstr ""
+
+#: ../browser/task_owner.py:18
+msgid "New owner"
+msgstr ""
+
+#: ../content/task_config.py:40
+msgid "Operator"
+msgstr ""
+
+#: ../browser/task_owner.py:38
+msgid "Owner changed"
+msgstr ""
+
+#: ../content/task_config.py:232
+msgid "Recurrence"
+msgstr ""
+
+#: ../content/task_config.py:254
+msgid "Recurrence condition"
 msgstr ""
 
 #: ../profiles/default/types/AutomatedMacroTask.xml
@@ -105,23 +164,27 @@ msgstr ""
 msgid "Scheduled content type"
 msgstr ""
 
-#: ../content/task_config.py:62
+#: ../content/task_config.py:160
 msgid "Select creation conditions of the task"
 msgstr ""
 
-#: ../content/task_config.py:41
+#: ../content/task_config.py:126
 msgid "Select default group assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:48
+#: ../content/task_config.py:133
 msgid "Select default user assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:90
+#: ../content/task_config.py:206
 msgid "Select end conditions of the task."
 msgstr ""
 
-#: ../content/task_config.py:76
+#: ../content/task_config.py:255
+msgid "Select recurrence conditions of the task."
+msgstr ""
+
+#: ../content/task_config.py:183
 msgid "Select start conditions of the task"
 msgstr ""
 
@@ -129,30 +192,38 @@ msgstr ""
 msgid "Select the content type to apply schedule."
 msgstr ""
 
-#: ../content/task_config.py:97
+#: ../content/task_config.py:114
 msgid "Select the start date used to compute the due date."
 msgstr ""
 
-#: ../content/task_config.py:55
+#: ../content/task_config.py:153
 msgid "Select the state of the container where the task is automatically created."
 msgstr ""
 
-#: ../content/task_config.py:69
+#: ../content/task_config.py:176
 msgid "Select the state of the container where the task is automatically started."
 msgstr ""
 
-#: ../content/task_config.py:83
+#: ../content/task_config.py:248
+msgid "Select the state of the container where the task should be recurred"
+msgstr ""
+
+#: ../content/task_config.py:199
 msgid "Select the states of the container where the task is automatically closed."
 msgstr ""
 
 msgid "Should pass from actual state "
 msgstr ""
 
-#: ../content/task_config.py:75
+#: ../content/task_config.py:170
+msgid "Start"
+msgstr ""
+
+#: ../content/task_config.py:182
 msgid "Start conditions"
 msgstr ""
 
-#: ../content/task_config.py:96
+#: ../content/task_config.py:113
 msgid "Start date"
 msgstr ""
 
@@ -166,7 +237,7 @@ msgstr ""
 msgid "Steps to ease tests of imio.schedule"
 msgstr ""
 
-#: ../dashboard/columns.py:112
+#: ../dashboard/columns.py:150
 msgid "Subtask"
 msgstr ""
 
@@ -174,15 +245,19 @@ msgstr ""
 msgid "Task configuration."
 msgstr ""
 
-#: ../content/task_config.py:54
+#: ../content/task_config.py:152
 msgid "Task container creation state"
 msgstr ""
 
-#: ../content/task_config.py:82
+#: ../content/task_config.py:198
 msgid "Task container end states"
 msgstr ""
 
-#: ../content/task_config.py:68
+#: ../content/task_config.py:247
+msgid "Task container recurrence states"
+msgstr ""
+
+#: ../content/task_config.py:175
 msgid "Task container start states"
 msgstr ""
 
@@ -190,20 +265,16 @@ msgstr ""
 msgid "TaskConfig"
 msgstr ""
 
-#: ../content/task_config.py:104
-msgid "This delay is added to the due date of the task."
-msgstr ""
-
-#: ../browser/templates/taskmacros.pt:39
-msgid "Title"
-msgstr ""
-
-#: ../browser/templates/task_completion.pt:51
+#: ../browser/templates/task_completion.pt:32
 msgid "To do"
 msgstr ""
 
-#: ../content/task_config.py:109
+#: ../content/task_config.py:120
 msgid "Warning delay"
+msgstr ""
+
+#: ../content/vocabulary.py:399
+msgid "and"
 msgstr ""
 
 #: ../dashboard/vocabulary.py:23
@@ -216,6 +287,10 @@ msgstr ""
 
 #: ../testing.zcml:16
 msgid "imio.schedule tests"
+msgstr ""
+
+#: ../content/vocabulary.py:400
+msgid "or"
 msgstr ""
 
 msgid "schedule.assign_current_user"

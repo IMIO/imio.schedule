@@ -17,5 +17,16 @@ class IDisplayTaskStatus(Interface):
         """
 
 
+class ISimpleDisplayTaskStatus(Interface):
+    """
+    Adapts a task instance into a z3c table cell
+    displaying the task status.
+    """
+
+    def render(self):
+        """
+        """
+
+
 class IStatusColumn(IColumn):
     """ Marker interface for Task Status columns."""

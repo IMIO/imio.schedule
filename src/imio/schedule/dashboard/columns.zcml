@@ -30,6 +30,15 @@
      name="status"
   />
 
+  <adapter
+     for="zope.interface.Interface
+          zope.publisher.interfaces.browser.IBrowserRequest
+          collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
+     factory=".columns.SimpleStatusColumn"
+     provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
+     name="simple_status"
+  />
+
   <!-- display adapters -->
   <adapter
      for="imio.schedule.dashboard.interfaces.IStatusColumn
@@ -45,6 +54,14 @@
           zope.publisher.interfaces.browser.IBrowserRequest"
      factory=".columns.MacroTaskStatusDisplay"
      provides="imio.schedule.dashboard.interfaces.IDisplayTaskStatus"
+  />
+
+  <adapter
+     for="imio.schedule.dashboard.interfaces.IStatusColumn
+          imio.schedule.content.task.IAutomatedTask
+          zope.publisher.interfaces.browser.IBrowserRequest"
+     factory=".columns.TaskStatusDisplay"
+     provides="imio.schedule.dashboard.interfaces.ISimpleDisplayTaskStatus"
   />
 
 </configure>

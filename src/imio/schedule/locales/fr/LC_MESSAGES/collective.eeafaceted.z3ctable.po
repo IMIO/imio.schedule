@@ -20,5 +20,8 @@ msgstr "Assigné à"
 msgid "header_due_date"
 msgstr "Échéance"
 
+msgid "header_simple_status"
+msgstr "Statut"
+
 msgid "header_status"
 msgstr "Statut"
