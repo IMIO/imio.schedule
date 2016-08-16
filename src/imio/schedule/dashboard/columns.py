@@ -6,11 +6,15 @@ from plone import api
 
 from imio.schedule import _
 from imio.schedule.config import CREATION
+from imio.schedule.config import DONE
 from imio.schedule.config import STARTED
 from imio.schedule.content.task import IAutomatedMacroTask
 from imio.schedule.dashboard.interfaces import IDisplayTaskStatus
+from imio.schedule.dashboard.interfaces import ISimpleDisplayTaskStatus
 from imio.schedule.dashboard.interfaces import IStatusColumn
+from imio.schedule.interfaces import IToIcon
 
+from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import implements
 
@@ -37,9 +41,16 @@ class AssignedUserColumn(BaseColumn):
         username = user and user.getProperty('fullname').decode('utf-8') or username
         assigned = username
         if groupname:
+            to_icon = queryAdapter(item, IToIcon)
             group = api.group.get(groupname)
-            groupname = group and group.getProperty('title').decode('utf-8') or groupname
-            assigned = u'{user} ({group})'.format(
+            if to_icon:
+                icon_url = to_icon.get_icon_url()
+                groupname = '<img src="{}">'.format(icon_url)
+            else:
+                groupname = group and group.getProperty('title').decode('utf-8') or groupname
+                groupname = '({})'.format(groupname)
+
+            assigned = u'{user} {group}'.format(
                 user=username,
                 group=groupname
             )
@@ -54,6 +65,7 @@ class StatusColum(BaseColumn):
     implements(IStatusColumn)
 
     sort_index = -1
+    display_status_interface = IDisplayTaskStatus
 
     def renderHeadCell(self):
         """Override rendering of head of the cell to include jQuery
@@ -75,11 +87,18 @@ class StatusColum(BaseColumn):
 
         adapter = queryMultiAdapter(
             (self, task, api.portal.getRequest()),
-            IDisplayTaskStatus
+            self.display_status_interface
         )
         if adapter:
             status = adapter.render()
         return status
+
+
+class SimpleStatusColumn(StatusColum):
+    """
+    Used for task listing on a single task container.
+    """
+    display_status_interface = ISimpleDisplayTaskStatus
 
 
 class TaskStatusDisplay(object):
@@ -96,14 +115,16 @@ class TaskStatusDisplay(object):
 
     def render(self):
         task = self.task
-        return self.display_task_status(task)
+        return self.display_task_status(task, with_subtasks=IAutomatedMacroTask.providedBy(task))
 
     def display_task_status(self, task, with_subtasks=False):
         """
         By default just put a code colour of the state of the task.
         """
         css_class = 'schedule_{}'.format(api.content.get_state(task))
-        status = u'<span class="{css_class}">&nbsp&nbsp&nbsp</span>'.format(
+        css_level = 'term-level-{}'.format(self.task.level())
+        status = u'<span class="{css_level}"><span class="{css_class}">&nbsp&nbsp&nbsp</span></span>'.format(
+            css_level=css_level,
             css_class=css_class,
         )
         if task.get_status() in [CREATION, STARTED]:
@@ -123,29 +144,31 @@ class TaskStatusDisplay(object):
 class MacroTaskStatusDisplay(TaskStatusDisplay):
     """
     Adapts a macro task and return some html table cell
-    displaying the status of all its subtasks.
+    displaying the status of all subtasks that need to be done.
     """
 
     def render(self):
         """
         """
-        subtasks = self.task.get_last_subtasks()
-        if not subtasks:
+        all_subtasks = self.task.get_last_subtasks()
+        subtasks_to_do = [task for task in all_subtasks if task.get_status() != DONE]
+        if not subtasks_to_do:
             return self.display_task_status(self.task)
 
         rows = [
             u'<tr><th class="subtask_status_icon">{icon}</th>\
             <th i18n:translate="">{subtask}</th>\
             <th i18n:translate="">{due_date}</th></tr>'.format(
-            icon=self.display_task_status(self.task),
+            icon=self.display_task_status(self.task, with_subtasks=bool(subtasks_to_do)),
             subtask=_('Subtask'),
             due_date=_('Due date'),
         ),
         ]
-        for task in subtasks:
+        for task in subtasks_to_do:
             title = task.Title()
+            display_subtasks = IAutomatedMacroTask.providedBy(task)
             status_icon = u'<td class="subtask_status_icon">{status}</td>'.format(
-                status=self.display_task_status(task, with_subtasks=IAutomatedMacroTask.providedBy(task)),
+                status=self.display_task_status(task, with_subtasks=display_subtasks),
             )
             status_title = u'<td class="subtask_status_title">{title}</td>'.format(
                 title=title.decode('utf-8'),

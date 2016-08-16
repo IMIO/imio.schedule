@@ -1,10 +1,15 @@
 
-td.td_cell_due_date {
+td.td_cell_due_date,
+td.td_cell_CreationDate {
     text-align: center;
 }
 
 td.td_cell_status {
     text-align: left;
+}
+
+td.td_cell_assigned_user_column {
+    text-align: center;
 }
 
 span.schedule_created {
@@ -31,23 +36,23 @@ p.warning {
     color: red;
 }
 
-a.term-level-1 {
+.term-level-1 {
     padding-left: 1em
 }
 
-a.term-level-2 {
+.term-level-2 {
     padding-left: 2em
 }
 
-a.term-level-3 {
+.term-level-3 {
     padding-left: 3em
 }
 
-a.term-level-4 {
+.term-level-4 {
     padding-left: 4em
 }
 
-a.term-level-5 {
+.term-level-5 {
     padding-left: 5em
 }
 
@@ -55,4 +60,8 @@ a.term-level-5 {
 .portaltype-macrotaskconfig #content #content-core .enableFormTabbing {
     border: 0!important;
     margin-top: 0;
+}
+
+.th_header_simple_status {
+    max-width: 1em;
 }

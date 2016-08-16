@@ -60,6 +60,18 @@ class BaseAutomatedTask(object):
 
         return container
 
+    def level(self):
+        """
+        Return the task depth contenance level.
+        """
+        container = self
+        level = -1
+        while IAutomatedTask.providedBy(container):
+            container = container.getParentNode()
+            level = level + 1
+
+        return level
+
     def get_schedule_config(self):
         """
         Return associated schedule config.
@@ -90,7 +102,7 @@ class BaseAutomatedTask(object):
         """
         Return the status of the task
         """
-        return status_by_state[api.content.get_state(self)]
+        return status_by_state[self.get_state()]
 
     def start_conditions_status(self):
         """
