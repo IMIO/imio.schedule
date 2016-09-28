@@ -507,6 +507,11 @@ class BaseTaskConfig(object):
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically create a task.
         """
+        # schedule config should be enabled
+        schedule_config = self.get_schedule_config()
+        if not schedule_config.enabled:
+            return False
+
         # config should be enabled
         if not self.enabled:
             return False
@@ -648,6 +653,11 @@ class BaseTaskConfig(object):
         Evaluate if the a new task should be created for the task container
         depending on the recurrence condition
         """
+        # schedule config should be enabled
+        schedule_config = self.get_schedule_config()
+        if not schedule_config.enabled:
+            return False
+
         if getattr(self, 'activate_recurrency', False) is False:
             return False
 
