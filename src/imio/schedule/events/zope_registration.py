@@ -42,7 +42,7 @@ def subscribe_task_configs_for_content_type(task_config, event):
         @property
         def task_config(self):
             catalog = api.portal.get_tool('portal_catalog')
-            brains = catalog(UID=self.task_config_UID)
+            brains = catalog.unrestrictedSearchResults(UID=self.task_config_UID)
             if brains:
                 task_config = brains[0].getObject()
                 return task_config
