@@ -14,6 +14,7 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
 
+from imio.schedule.events import zope_registration
 from imio.schedule.events.zope_registration import unsubscribe_task_configs_for_content_type
 
 import transaction
@@ -176,6 +177,7 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
         api.content.delete(self.task_container)
         api.content.delete(self.empty_task_container)
         api.content.delete(self.portal.config)
+        zope_registration._registered_sites = set([])
 
         transaction.commit()
 
@@ -271,5 +273,5 @@ SCHEDULE_TEST_ROBOT = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE
     ),
-    name="URBAN_ROBOT"
+    name="SCHEDULE_ROBOT"
 )
