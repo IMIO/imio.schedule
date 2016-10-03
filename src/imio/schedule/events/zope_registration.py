@@ -232,7 +232,7 @@ def register_at_instance_startup(site, event):
         - tasks vocabulary of each ScheduleConfig
     when zope instance is started.
     """
-    if site not in _registered_sites:
+    if site.id not in _registered_sites:
 
         # register task configs subscribers and task configs criterion
         catalog = api.portal.get_tool('portal_catalog')
@@ -250,4 +250,4 @@ def register_at_instance_startup(site, event):
         for schedule_config in all_schedule_configs:
             register_schedule_collection_criterion(schedule_config, event)
 
-        _registered_sites.add(site)
+        _registered_sites.add(site.id)
