@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-05-11 15:17+0000\n"
+"POT-Creation-Date: 2016-11-07 08:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,11 @@ msgstr " est l'un des états suivants"
 msgid " to one of the following states"
 msgstr " vers l'un des états suivants"
 
-#: ../content/task_config.py:103
+#: ../content/task_config.py:249
+msgid "Activate recurrency"
+msgstr "Tache récurente"
+
+#: ../content/task_config.py:233
 msgid "Additional delay"
 msgstr "Délai supplémentaire"
 
@@ -28,11 +32,11 @@ msgstr "Délai supplémentaire"
 msgid "All"
 msgstr "Tous"
 
-#: ../content/task_config.py:40
+#: ../content/task_config.py:127
 msgid "Assigned group"
 msgstr ""
 
-#: ../content/task_config.py:47
+#: ../content/task_config.py:134
 msgid "Assigned user"
 msgstr "Responsable de la tâche"
 
@@ -44,31 +48,66 @@ msgstr "Macro-tâche configurable"
 msgid "AutomatedTask"
 msgstr "Tâche configurable"
 
-#: ../content/task_config.py:61
+#: ../content/task_config.py:218
+msgid "Calculation delay"
+msgstr "Calcul du délai"
+
+#: ../content/task_config.py:223
+msgid "Calculation delay method"
+msgstr "Calcul du délai"
+
+#: ../browser/templates/task_change_owner.pt:15
+msgid "Change the task owner"
+msgstr "Réassigner"
+
+#: ../content/task_config.py:36
+msgid "Condition"
+msgstr ""
+
+#: ../content/task_config.py:164
+msgid "Conditions"
+msgstr ""
+
+#: ../browser/task_owner.py:28
+msgid "Confirm"
+msgstr ""
+
+#: ../content/task_config.py:149
+msgid "Creation"
+msgstr ""
+
+#: ../content/task_config.py:161
 msgid "Creation conditions"
 msgstr "Conditions de création de la tâche"
 
-#: ../browser/templates/task_completion.pt:31
+#: ../content/task_config.py:142
+msgid "Custom marker interfaces for this task."
+msgstr ""
+
+#: ../browser/templates/task_completion.pt:53
 msgid "Done"
 msgstr "Fait"
 
-#: ../browser/templates/taskmacros.pt:40
-#: ../dashboard/columns.py:113
+#: ../dashboard/columns.py:164
 msgid "Due date"
 msgstr "Échéance"
 
 #: ../content/schedule_config.py:21
-#: ../content/task_config.py:34
+#: ../content/task_config.py:109
 msgid "Enabled"
 msgstr "Activé"
 
-#: ../content/task_config.py:89
+#: ../content/task_config.py:207
 msgid "End conditions"
 msgstr "Conditions de clôture"
 
-#: ../browser/templates/taskmacros.pt:41
-msgid "End date"
-msgstr "Fait le"
+#: ../content/task_config.py:195
+msgid "Ending"
+msgstr ""
+
+#: ../content/task_config.py:100
+msgid "General informations"
+msgstr ""
 
 #: ../configure.zcml:30
 msgid "Installs the imio.schedule add-on."
@@ -81,6 +120,30 @@ msgstr "Configuration de macro-tâches"
 #: ../profiles/default/types/MacroTaskConfig.xml
 msgid "MacroTaskConfig"
 msgstr "Configuration de macro-tâches"
+
+#: ../content/task_config.py:141
+msgid "Marker interfaces"
+msgstr ""
+
+#: ../browser/task_owner.py:18
+msgid "New owner"
+msgstr ""
+
+#: ../content/task_config.py:42
+msgid "Operator"
+msgstr ""
+
+#: ../browser/task_owner.py:38
+msgid "Owner changed"
+msgstr ""
+
+#: ../content/task_config.py:240
+msgid "Recurrence"
+msgstr ""
+
+#: ../content/task_config.py:262
+msgid "Recurrence condition"
+msgstr ""
 
 #: ../profiles/default/types/AutomatedMacroTask.xml
 msgid "Schedulable Macrotask"
@@ -102,23 +165,27 @@ msgstr "Configuration d'échéances"
 msgid "Scheduled content type"
 msgstr "Type de contenu associé"
 
-#: ../content/task_config.py:62
+#: ../content/task_config.py:162
 msgid "Select creation conditions of the task"
 msgstr "Sélectionnez les conditions de création de la tâche"
 
-#: ../content/task_config.py:41
+#: ../content/task_config.py:128
 msgid "Select default group assigned to this task."
 msgstr ""
 
-#: ../content/task_config.py:48
+#: ../content/task_config.py:135
 msgid "Select default user assigned to this task."
 msgstr "Choisissez l'utisateur qui sera assigné par défaut à cette tâche"
 
-#: ../content/task_config.py:90
+#: ../content/task_config.py:208
 msgid "Select end conditions of the task."
 msgstr "Sélectionnez les conditions de clôture de la tâche"
 
-#: ../content/task_config.py:76
+#: ../content/task_config.py:263
+msgid "Select recurrence conditions of the task."
+msgstr ""
+
+#: ../content/task_config.py:185
 msgid "Select start conditions of the task"
 msgstr "Sélectionnez les conditions de démarrage de la tâche"
 
@@ -126,30 +193,38 @@ msgstr "Sélectionnez les conditions de démarrage de la tâche"
 msgid "Select the content type to apply schedule."
 msgstr "Sélectionnez le type de contenu de l'échéancier"
 
-#: ../content/task_config.py:97
+#: ../content/task_config.py:116
 msgid "Select the start date used to compute the due date."
 msgstr "Sélectionnez la date de départ pour la calcul de l'échéance"
 
-#: ../content/task_config.py:55
+#: ../content/task_config.py:155
 msgid "Select the state of the container where the task is automatically created."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement créée"
 
-#: ../content/task_config.py:69
+#: ../content/task_config.py:178
 msgid "Select the state of the container where the task is automatically started."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement démarrée"
 
-#: ../content/task_config.py:83
+#: ../content/task_config.py:256
+msgid "Select the state of the container where the task should be recurred"
+msgstr ""
+
+#: ../content/task_config.py:201
 msgid "Select the states of the container where the task is automatically closed."
 msgstr "Sélectionnez les états du récipient pour lequel la tâche est automatiquement clôturée"
 
 msgid "Should pass from actual state "
 msgstr "Changer l'état actuel "
 
-#: ../content/task_config.py:75
+#: ../content/task_config.py:172
+msgid "Start"
+msgstr ""
+
+#: ../content/task_config.py:184
 msgid "Start conditions"
 msgstr "Conditions de démarrage"
 
-#: ../content/task_config.py:96
+#: ../content/task_config.py:115
 msgid "Start date"
 msgstr "Date de départ"
 
@@ -163,7 +238,7 @@ msgstr "L'état"
 msgid "Steps to ease tests of imio.schedule"
 msgstr ""
 
-#: ../dashboard/columns.py:112
+#: ../dashboard/columns.py:163
 msgid "Subtask"
 msgstr "Sous-tâche"
 
@@ -171,15 +246,19 @@ msgstr "Sous-tâche"
 msgid "Task configuration."
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:54
+#: ../content/task_config.py:154
 msgid "Task container creation state"
 msgstr "État de création de la tâche"
 
-#: ../content/task_config.py:82
+#: ../content/task_config.py:200
 msgid "Task container end states"
 msgstr "État(s) de clôture de la tâche"
 
-#: ../content/task_config.py:68
+#: ../content/task_config.py:255
+msgid "Task container recurrence states"
+msgstr ""
+
+#: ../content/task_config.py:177
 msgid "Task container start states"
 msgstr "État(s) de démarrage de la tâche"
 
@@ -187,21 +266,21 @@ msgstr "État(s) de démarrage de la tâche"
 msgid "TaskConfig"
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:104
+#: ../content/task_config.py:234
 msgid "This delay is added to the due date of the task."
 msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 
-#: ../browser/templates/taskmacros.pt:39
-msgid "Title"
-msgstr "Titre"
-
-#: ../browser/templates/task_completion.pt:51
+#: ../browser/templates/task_completion.pt:32
 msgid "To do"
 msgstr "À faire"
 
-#: ../content/task_config.py:109
+#: ../content/task_config.py:122
 msgid "Warning delay"
 msgstr "Délai d'alerte"
+
+#: ../content/vocabulary.py:399
+msgid "and"
+msgstr ""
 
 #: ../dashboard/vocabulary.py:23
 msgid "collective.task"
@@ -213,6 +292,10 @@ msgstr ""
 
 #: ../testing.zcml:16
 msgid "imio.schedule tests"
+msgstr ""
+
+#: ../content/vocabulary.py:400
+msgid "or"
 msgstr ""
 
 msgid "schedule.assign_current_user"

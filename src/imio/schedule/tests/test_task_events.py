@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from plone import api
-from mock import Mock
+from dateutil.relativedelta import relativedelta
 
 from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.testing import ExampleScheduleFunctionalTestCase
 from imio.schedule.testing import MacroTaskScheduleFunctionalTestCase
+
+from mock import Mock
+
+from plone import api
 
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
@@ -116,7 +119,8 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         msg = 'default du date should have been today + 10 days'
         due_date = self.task.due_date
         expected_date = self.task_container.creation_date
-        expected_date = expected_date.asdatetime().date()
+        delay = relativedelta(days=self.task_config.additional_delay)
+        expected_date = expected_date.asdatetime().date() + delay
         self.assertEquals(due_date, expected_date, msg)
 
     def test_schedule_config_UID_is_set_on_created_task(self):

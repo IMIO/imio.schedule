@@ -214,6 +214,42 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_date' is not editable"
         self.assertTrue('Date de départ' in contents, msg)
 
+    def test_calculation_delay_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'additional_delay'))
+
+    def test_calculation_delay_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'calculation_delay' is not displayed"
+        self.assertTrue('id="form-widgets-calculation_delay"' in contents, msg)
+        msg = "field 'calculation_delay' is not translated"
+        self.assertTrue('Calcul du délai' in contents, msg)
+
+    def test_calculation_delay_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'calculation_delay' is not editable"
+        self.assertTrue('Calcul du délai' in contents, msg)
+
+    def test_additional_delay_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'additional_delay'))
+
+    def test_additional_delay_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'additional_delay' is not displayed"
+        self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
+        msg = "field 'additional_delay' is not translated"
+        self.assertTrue('Délai supplémentaire' in contents, msg)
+
+    def test_additional_delay_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'additional_delay' is not editable"
+        self.assertTrue('Délai supplémentaire' in contents, msg)
+
 
 class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
     """
@@ -644,14 +680,18 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
     def test_compute_due_date(self):
         """
         Due date should be the date computed by the adapter of
-        start_date field + the value in additional_delay.
+        start_date field + the value in additional_delay (10)
+        + the compurted delay (15).
         """
         task_config = self.task_config
         task_container = self.task_container
         task = self.task
 
-        CalculationDefaultDelay.calculate_delay = Mock(return_value=10)
-        expected_date = task_container.creation_date + 10
+        additional_delay = self.task_config.additional_delay
+        computed_delay = 15
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=computed_delay)
+
+        expected_date = task_container.creation_date + computed_delay + additional_delay
         expected_date = expected_date.asdatetime().date()
 
         due_date = task_config.compute_due_date(task_container, task)

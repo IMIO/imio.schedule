@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from dateutil.relativedelta import relativedelta
+
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
@@ -214,7 +216,7 @@ class ITaskConfig(model.Schema):
     model.fieldset(
         'delay',
         label=_(u'Calculation delay'),
-        fields=['calculation_delay'],
+        fields=['calculation_delay', 'additional_delay'],
     )
 
     calculation_delay = schema.List(
@@ -225,6 +227,12 @@ class ITaskConfig(model.Schema):
             default='schedule.calculation_default_delay',
         ),
         required=True,
+    )
+
+    additional_delay = schema.Int(
+        title=_(u'Additional delay'),
+        description=_(u'This delay is added to the due date of the task.'),
+        required=False,
     )
 
     model.fieldset(
@@ -729,6 +737,10 @@ class BaseTaskConfig(object):
                 name=adapter,
             )
             due_date = calculator.due_date
+
+        additional_delay = self.additional_delay or 0
+        if additional_delay:
+            due_date = due_date + relativedelta(days=+additional_delay)
 
         return due_date
 
