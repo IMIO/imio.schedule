@@ -401,6 +401,34 @@ class LogicalOperatorVocabularyFactory(BaseVocabularyFactory):
         ])
 
 
+class WeekDaysRoundingVocabulary(object):
+    """
+    """
+
+    def __call__(self, context):
+        raw_terms = [
+            ('0', '0', _('None')),
+            ('1', '1', _('Next Monday')),
+            ('2', '2', _('Next Tuesday')),
+            ('3', '3', _('Next Wednesday')),
+            ('4', '4', _('Next Thursday')),
+            ('5', '5', _('Next Friday')),
+            ('6', '6', _('Next Saturday')),
+            ('7', '7', _('Next Sunday')),
+            ('-1', '-1', _('Previous Monday')),
+            ('-2', '-2', _('Previous Tuesday')),
+            ('-3', '-3', _('Previous Wednesday')),
+            ('-4', '-4', _('Previous Thursday')),
+            ('-5', '-5', _('Previous Friday')),
+            ('-6', '-6', _('Previous Saturday')),
+            ('-7', '-7', _('Previous Sunday')),
+        ]
+        voc_terms = [SimpleTerm(*term) for term in raw_terms]
+        vocabulary = SimpleVocabulary(voc_terms)
+
+        return vocabulary
+
+
 class TaskOwnerSource(PrincipalSource):
 
     def __init__(self, context):

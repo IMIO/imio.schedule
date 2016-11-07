@@ -19,6 +19,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.schema.vocabulary import SimpleVocabulary
 
+import datetime
 import importlib
 
 
@@ -118,3 +119,12 @@ def dict_list_2_vocabulary(dict_list):
             terms.append(SimpleVocabulary.createTerm(
                 key, str(key), item[key]))
     return SimpleVocabulary(terms)
+
+
+def round_to_weekday(date, weekday):
+    direction = weekday / abs(weekday)  # -1 => past, 1 => future
+    weekday = abs(weekday) - 1
+    days_delta = weekday - date.weekday()
+    if days_delta * direction < 0:
+        days_delta += 7 * direction
+    return date + datetime.timedelta(days_delta)

@@ -129,4 +129,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         />
 
+    <!-- Rounding week days vocabulary -->
+    <utility
+        factory=".vocabulary.WeekDaysRoundingVocabulary"
+        name="schedule.vocabulary.week_days_rounding"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        />
+
 </configure>
