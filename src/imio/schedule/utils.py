@@ -122,7 +122,7 @@ def dict_list_2_vocabulary(dict_list):
 
 
 def round_to_weekday(date, weekday):
-    direction = weekday / abs(weekday)  # -1 => past, 1 => future
+    direction = weekday / abs(weekday)  # -1 => past, +1 => future
     weekday = abs(weekday) - 1
     days_delta = weekday - date.weekday()
     if days_delta * direction < 0:
