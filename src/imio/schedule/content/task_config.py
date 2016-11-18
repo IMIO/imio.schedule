@@ -100,8 +100,7 @@ class ITaskConfig(model.Schema):
         'general',
         label=_(u"General informations"),
         fields=[
-            'enabled', 'start_date',
-            'warning_delay', 'default_assigned_group',
+            'enabled', 'default_assigned_group',
             'default_assigned_user', 'marker_interfaces'
         ]
     )
@@ -109,18 +108,6 @@ class ITaskConfig(model.Schema):
     enabled = schema.Bool(
         title=_(u'Enabled'),
         default=True,
-        required=False,
-    )
-
-    start_date = schema.Choice(
-        title=_(u'Start date'),
-        description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='schedule.start_date',
-        required=True,
-    )
-
-    warning_delay = schema.Int(
-        title=_(u'Warning delay'),
         required=False,
     )
 
@@ -217,7 +204,22 @@ class ITaskConfig(model.Schema):
     model.fieldset(
         'delay',
         label=_(u'Calculation delay'),
-        fields=['calculation_delay', 'additional_delay', 'round_to_day'],
+        fields=[
+            'start_date', 'warning_delay',
+            'calculation_delay', 'additional_delay', 'round_to_day'
+        ],
+    )
+
+    start_date = schema.Choice(
+        title=_(u'Start date'),
+        description=_(u'Select the start date used to compute the due date.'),
+        vocabulary='schedule.start_date',
+        required=True,
+    )
+
+    warning_delay = schema.Int(
+        title=_(u'Warning delay'),
+        required=False,
     )
 
     calculation_delay = schema.List(
