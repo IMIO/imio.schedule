@@ -50,7 +50,7 @@ class StartDate(TaskLogic):
 
     implements(IStartDate)
 
-    def due_date(self):
+    def start_date(self):
         """
         To override.
         Compute a due date from task_container

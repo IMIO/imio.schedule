@@ -17,6 +17,14 @@
         for="zope.interface.Interface
              imio.schedule.content.task.IAutomatedTask"
         provides="imio.schedule.interfaces.IStartDate"
+        factory=".logic.StartDate"
+        name="schedule.start_date.infinite"
+    />
+
+    <adapter
+        for="zope.interface.Interface
+             imio.schedule.content.task.IAutomatedTask"
+        provides="imio.schedule.interfaces.IStartDate"
         factory=".logic.TaskStartingDate"
         name="schedule.start_date.task_starting_date"
     />
