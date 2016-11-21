@@ -506,7 +506,7 @@ class BaseTaskConfig(object):
         matched = []
         not_matched = []
         for condition_object in conditions or []:
-            if not condition_object.display_status:
+            if not getattr(condition_object, 'display_status', True):
                 continue
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
