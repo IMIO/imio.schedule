@@ -45,6 +45,11 @@ class ICreationConditionSchema(Interface):
         default='AND',
     )
 
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
 
 class IStartConditionSchema(Interface):
 
@@ -58,6 +63,11 @@ class IStartConditionSchema(Interface):
         title=_(u'Operator'),
         vocabulary='schedule.logical_operator',
         default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
     )
 
 
@@ -75,6 +85,11 @@ class IEndConditionSchema(Interface):
         default='AND',
     )
 
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
 
 class IRecurrenceConditionSchema(Interface):
 
@@ -88,6 +103,11 @@ class IRecurrenceConditionSchema(Interface):
         title=_(u'Operator'),
         vocabulary='schedule.logical_operator',
         default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
     )
 
 
@@ -858,6 +878,11 @@ class IMacroCreationConditionSchema(Interface):
         default='AND',
     )
 
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
 
 class IMacroStartConditionSchema(Interface):
 
@@ -871,6 +896,11 @@ class IMacroStartConditionSchema(Interface):
         title=_(u'Operator'),
         vocabulary='schedule.logical_operator',
         default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
     )
 
 
@@ -888,6 +918,11 @@ class IMacroEndConditionSchema(Interface):
         default='AND',
     )
 
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
 
 class IMacroRecurrenceConditionSchema(Interface):
 
@@ -902,6 +937,11 @@ class IMacroRecurrenceConditionSchema(Interface):
         title=_(u'Operator'),
         vocabulary='schedule.logical_operator',
         default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
     )
 
 

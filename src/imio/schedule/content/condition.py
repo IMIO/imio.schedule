@@ -19,7 +19,6 @@ class Condition(TaskLogic):
     """
 
     implements(ICondition)
-    display_status = True
 
 
 class CreationCondition(CreationTaskLogic):
