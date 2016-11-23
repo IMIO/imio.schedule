@@ -65,7 +65,7 @@ def tuple_to_interface(interface_tuple):
 
 def interface_to_tuple(interface):
     """
-    Turn an Interface class into a tuple:
+    Turn an Interface class into a tuple of strings:
     ('interface.module.path', 'Interface')
     """
     return (interface.__module__, interface.__name__)

@@ -98,7 +98,7 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
 
     def test_get_scheduled_portal_type(self):
         """
-        Sould return the portal_type of the content type selected on the field
+        Should return the portal_type of the content type selected on the field
         'scheduled_contenttype'.
         """
         portal_type = self.schedule_config.get_scheduled_portal_type()
@@ -108,7 +108,7 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
 
     def test_get_scheduled_interface(self):
         """
-        Sould return the Interface (or a class) of the content type selected
+        Should return the Interface (or a class) of the content type selected
         on the field 'scheduled_contenttype'.
         """
         from Products.ATContentTypes.interfaces import IATFolder
