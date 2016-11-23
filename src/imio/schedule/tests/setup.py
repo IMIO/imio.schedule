@@ -3,6 +3,7 @@
 from plone import api
 
 from Products.ATContentTypes.interfaces import IATFolder
+from Products.ATContentTypes.interfaces import IATFile
 
 from imio.schedule.utils import interface_to_tuple
 from imio.schedule.content.object_factories import CreationConditionObject
@@ -80,6 +81,7 @@ def add_schedule_config(context):
             type='ScheduleConfig',
             id=schedule_cfg_id,
             title='Empty ScheduleConfig',
+            scheduled_contenttype=('Folder', interface_to_tuple(IATFile)),
         )
 
     # create schedule config

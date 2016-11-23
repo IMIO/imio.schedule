@@ -17,7 +17,10 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         """
         from imio.schedule.utils import get_all_schedule_configs
 
-        self.assertEquals([self.schedule_config], get_all_schedule_configs())
+        self.assertEquals(
+            [self.empty_schedule_config, self.schedule_config],
+            get_all_schedule_configs()
+        )
 
     def test_get_task_configs(self):
         """

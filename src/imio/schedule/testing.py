@@ -148,6 +148,7 @@ class ExampleScheduleTestBase(BrowserTest):
 
         # only keep simple tasks
         self.schedule_config = self.portal.config.test_scheduleconfig
+        self.empty_schedule_config = self.portal.config.empty_scheduleconfig
         self.task_config = self.schedule_config.test_taskconfig
         self.empty_task_container = self.portal.test_empty_taskcontainer
         self.task_container = self.portal.test_taskcontainer
