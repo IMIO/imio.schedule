@@ -79,20 +79,16 @@ def set_schedule_view(folder, faceted_config_path, schedule_configs, default_col
     if type(schedule_configs) not in [list, tuple]:
         schedule_configs = [schedule_configs]
 
+    _set_faceted_view(folder, faceted_config_path, schedule_configs, default_collection)
+    _set_collection_portlet(folder)
+
+
+def _set_faceted_view(folder, faceted_config_path, schedule_configs, default_collection):
+    """
+    """
     annotations = IAnnotations(folder)
     key = 'imio.schedule.schedule_configs'
     annotations[key] = [cfg.UID() for cfg in schedule_configs]
-
-    # block parent portlets
-    manager = getUtility(IPortletManager, name='plone.leftcolumn')
-    blacklist = getMultiAdapter((folder, manager), ILocalPortletAssignmentManager)
-    blacklist.setBlacklistStatus(CONTEXT_CATEGORY, True)
-
-    # assign collection portlet
-    manager = getUtility(IPortletManager, name='plone.leftcolumn', context=folder)
-    mapping = getMultiAdapter((folder, manager), IPortletAssignmentMapping)
-    if 'schedules' not in mapping.keys():
-        mapping['schedules'] = Assignment('schedules')
 
     subtyper = folder.restrictedTraverse('@@faceted_subtyper')
     if not subtyper.is_faceted:
@@ -105,6 +101,21 @@ def set_schedule_view(folder, faceted_config_path, schedule_configs, default_col
 
     default_collection = default_collection or schedule_configs[0].dashboard_collection
     _updateDefaultCollectionFor(folder, default_collection.UID())
+
+
+def _set_collection_portlet(folder):
+    """
+    """
+    # block parent portlets
+    manager = getUtility(IPortletManager, name='plone.leftcolumn')
+    blacklist = getMultiAdapter((folder, manager), ILocalPortletAssignmentManager)
+    blacklist.setBlacklistStatus(CONTEXT_CATEGORY, True)
+
+    # assign collection portlet
+    manager = getUtility(IPortletManager, name='plone.leftcolumn', context=folder)
+    mapping = getMultiAdapter((folder, manager), IPortletAssignmentMapping)
+    if 'schedules' not in mapping.keys():
+        mapping['schedules'] = Assignment('schedules')
 
 
 def dict_list_2_vocabulary(dict_list):
