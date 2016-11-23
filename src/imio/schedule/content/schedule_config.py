@@ -87,3 +87,9 @@ class ScheduleConfig(Container):
         interface_class = tuple_to_interface(interface_tuple)
 
         return interface_class
+
+    def is_empty(self):
+        """
+        Tells if the schedule config has no task configs.
+        """
+        return len(self.objectIds()) <= 1

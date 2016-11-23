@@ -72,6 +72,16 @@ def add_schedule_config(context):
         )
     cfg_folder = getattr(site, folder_id)
 
+    # create empty schedule config
+    schedule_cfg_id = 'empty_scheduleconfig'
+    if schedule_cfg_id not in cfg_folder.objectIds():
+        api.content.create(
+            container=cfg_folder,
+            type='ScheduleConfig',
+            id=schedule_cfg_id,
+            title='Empty ScheduleConfig',
+        )
+
     # create schedule config
     schedule_cfg_id = 'test_scheduleconfig'
     if schedule_cfg_id not in cfg_folder.objectIds():

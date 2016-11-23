@@ -117,3 +117,10 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         expected_interface = IATFolder
         msg = 'expected {} but got {}'.format(expected_interface, type_interface)
         self.assertTrue(type_interface == expected_interface, msg)
+
+    def test_is_empty(self):
+        """
+        Should return True if the schedule_config has no TaskConfig.
+        """
+        self.assertTrue(not self.schedule_config.is_empty())
+        self.assertTrue(self.empty_schedule_config.is_empty())
