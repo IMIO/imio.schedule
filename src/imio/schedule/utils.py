@@ -37,14 +37,14 @@ def get_all_schedule_configs():
     return configs
 
 
-def get_task_configs(task_container, ascending=False):
+def get_task_configs(task_container, descending=False):
     """
     Return all the task configs to check for the given context
     providing ITaskContainer.
     """
     config_adapters = getAdapters((task_container,), IToTaskConfig)
     task_configs = [adapter.task_config for name, adapter in config_adapters]
-    ordering = ascending and 1 or -1
+    ordering = descending and 1 or -1
     task_configs = sorted(task_configs, key=lambda cfg: ordering * cfg.level())
 
     return task_configs
@@ -83,7 +83,7 @@ def set_schedule_view(folder, faceted_config_path, schedule_configs, default_col
     _set_collection_portlet(folder)
 
 
-def _set_faceted_view(folder, faceted_config_path, schedule_configs, default_collection):
+def _set_faceted_view(folder, faceted_config_path, schedule_configs, default_collection=None):
     """
     """
     annotations = IAnnotations(folder)
