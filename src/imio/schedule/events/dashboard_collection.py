@@ -53,3 +53,14 @@ def create(schedule_container, event):
         # mark the collection with an interface to to customize the render
         # term view of collection widget
         alsoProvides(collection, IScheduleCollection)
+
+
+def update_title(schedule_container, event):
+    """
+    Dashboard Collection title should always be the title of the parent task.
+    """
+    collection = getattr(schedule_container, 'dashboard_collection', None)
+    if collection:
+        title = IScheduleConfig.providedBy(schedule_container) and _('All') or schedule_container.Title()
+        collection.title = title
+        collection.reindexObject(idxs=('Title', 'sortable_title'))

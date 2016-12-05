@@ -52,6 +52,10 @@
                    zope.lifecycleevent.IObjectAddedEvent"
               handler=".dashboard_collection.create"/>
 
+  <subscriber for="imio.schedule.content.task_config.ITaskConfig
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".dashboard_collection.update_title"/>
+
   <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"
               handler=".create_task.create_new_tasks"/>
