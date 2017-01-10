@@ -95,7 +95,7 @@ class IRecurrenceConditionSchema(Interface):
 
     condition = SubFormContextChoice(
         title=_(u'Condition'),
-        vocabulary='schedule.creation_conditions',
+        vocabulary='schedule.recurrence_conditions',
         required=True,
     )
 
