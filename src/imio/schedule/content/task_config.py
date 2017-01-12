@@ -95,7 +95,7 @@ class IRecurrenceConditionSchema(Interface):
 
     condition = SubFormContextChoice(
         title=_(u'Condition'),
-        vocabulary='schedule.recurrence_conditions',
+        vocabulary='schedule.creation_conditions',
         required=True,
     )
 
@@ -929,7 +929,6 @@ class IMacroRecurrenceConditionSchema(Interface):
     condition = SubFormContextChoice(
         title=_(u'Condition'),
         vocabulary='schedule.macrotask_creation_conditions',
-        # vocabulary='schedule.recurrence_conditions',
         required=True,
     )
 
