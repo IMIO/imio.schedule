@@ -5,22 +5,23 @@ from imio.schedule.testing import ExampleScheduleFunctionalTestCase
 from plone import api
 
 
-class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):
+class TestDashboardCollectionFunctional(ExampleScheduleFunctionalTestCase):
     """
-    Test TaskConfig methods.
     """
 
-    def test_end_task(self):
+    def test_update_title(self):
         """
-        Default implementation is to put the task on the state 'closed'.
+        DashboardCollection title should always be the same as the parent task.
         """
         task_config = self.task_config
-        task = self.task
+        collection = self.task_config.dashboard_collection
+        self.assertEquals(task_config.title, dashboard_collection.title)
 
-        task_state = api.content.get_state(task)
-        self.assertNotEquals(task_state, 'closed')
+        task_config.title = 'my new title'
+        notify(ObjectModifiedEvent(task_config))
+        self.assertEquals(task_config.title, dashboard_collection.title)
 
-        task_config.end_task(task)
-        task_state = api.content.get_state(task)
-        msg = "Task should be on state 'closed'"
-        self.assertEquals(task_state, 'closed', msg)
+        msg = 'collection title should be reindexed when updated'
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(portal_type='DashboardCollection', title=task_config.title)
+        self.assertEquals(len(brains), 1, msg)
