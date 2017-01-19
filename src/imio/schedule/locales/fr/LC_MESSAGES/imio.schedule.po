@@ -313,7 +313,7 @@ msgid "Subtask"
 msgstr "Sous-tâche"
 
 msgid "Subtasks dependencies"
-msgstr "En attente de sous-tâches"
+msgstr "Réalisation distribuée"
 
 #: ../profiles/default/types/TaskConfig.xml
 msgid "Task configuration."
