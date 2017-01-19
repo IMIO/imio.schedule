@@ -17,6 +17,12 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.schedule\n"
 
+msgid "Assigned to"
+msgstr ""
+
+msgid "Doable alone"
+msgstr ""
+
 msgid " is one of the following states"
 msgstr ""
 
@@ -60,4 +66,7 @@ msgid "State"
 msgstr ""
 
 msgid "Started tasks"
+msgstr ""
+
+msgid "Subtasks dependencies"
 msgstr ""

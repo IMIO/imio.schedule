@@ -271,6 +271,21 @@ class TaskMarkerInterfacesVocabulary(object):
         return SimpleVocabulary(items)
 
 
+class BooleanVocabulary(object):
+    """
+    Return True/False vocabulary.
+    """
+
+    def __call__(self, context):
+        request = api.portal.get().REQUEST
+        items = [
+            SimpleTerm('True', 'True', translate('Doable alone', 'imio.schedule', context=request)),
+            SimpleTerm('False', 'False', translate('Subtasks dependencies', 'imio.schedule', context=request)),
+        ]
+
+        return SimpleVocabulary(items)
+
+
 class TaskLogicVocabularyFactory(object):
     """
     Base class for vocabulary factories listing adapters providing

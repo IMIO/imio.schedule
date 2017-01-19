@@ -35,6 +35,7 @@ class TaskChangeOwnerForm(Form):
             return
         self.context.assigned_user = data.get('new_owner')
         self.context.reindexObject()
+        self.context.reindex_parent_tasks(idxs=['is_solvable_task'])
         self.status = _(u'Owner changed')
 
 

@@ -737,6 +737,7 @@ class BaseTaskConfig(object):
                 api.content.transition(obj=task, transition='do_to_assign')
             if api.content.get_state(task) == 'to_assign' and task.assigned_user:
                 api.content.transition(obj=task, transition='do_to_do')
+        task.reindex_parent_tasks(idxs=['is_solvable_task'])
 
     def end_task(self, task):
         """
@@ -751,6 +752,7 @@ class BaseTaskConfig(object):
         if api.content.get_state(task) == 'realized':
             with api.env.adopt_roles(['Reviewer']):
                 api.content.transition(obj=task, transition='do_closed')
+        task.reindex_parent_tasks(idxs=['is_solvable_task'])
 
     def compute_due_date(self, task_container, task):
         """
@@ -860,6 +862,7 @@ class TaskConfig(Container, BaseTaskConfig):
         task.assigned_user = self.user_to_assign(task_container, task)
         task.due_date = self.compute_due_date(task_container, task)
         task.reindexObject()
+        task.reindex_parent_tasks(idxs=['is_solvable_task'])
 
         return task
 

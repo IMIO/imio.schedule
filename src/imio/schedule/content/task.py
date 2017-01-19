@@ -11,7 +11,9 @@ from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 
+from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
+from imio.schedule.config import STARTED
 from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
@@ -166,6 +168,31 @@ class BaseAutomatedTask(object):
                     end_date = action['time']
                     return end_date.asdatetime()
         return None
+
+    def reindex_parent_tasks(self, idxs=[]):
+        """
+        Reindex 'idxs' indexes of all the parent tasks of this task.
+        """
+        # reindex parent tasks
+        parent_task = self.getParentNode()
+        while IAutomatedTask.providedBy(parent_task):
+            parent_task.reindexObject(idxs)
+            parent_task = parent_task.getParentNode()
+
+    @property
+    def is_solvable(self):
+        """
+        Return True if this task and its OPEN (sub-)subtasks have the same assigned_user.
+        """
+        subtasks = self.get_subtasks()
+        while subtasks:
+            subtask = subtasks.pop()
+            if subtask.get_status() in [CREATION, STARTED]:
+                if subtask.assigned_user != self.assigned_user:
+                    return False
+                subtasks.extend(subtask.get_subtasks())
+
+        return True
 
 
 class AutomatedTask(Item, BaseAutomatedTask):

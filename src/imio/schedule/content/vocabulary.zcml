@@ -45,6 +45,12 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <utility
+        factory=".vocabulary.BooleanVocabulary"
+        name="schedule.boolen_vocabulary"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'creation_conditions' field Vocabulary -->
     <utility
         factory=".vocabulary.CreationConditionVocabularyFactory"

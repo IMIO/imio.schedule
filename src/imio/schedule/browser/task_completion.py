@@ -20,6 +20,7 @@ class TaskCompletionView(BrowserView):
     subtask_todo_title_label = 'Title'
     due_date_label = 'Due date'
     end_date_label = 'End date'
+    assigned_user_label = 'Assigned to'
 
     def __init__(self, context, request):
         self.context = context
@@ -57,6 +58,14 @@ class TaskCompletionView(BrowserView):
         Return the context workflow state.
         """
         return api.content.get_state(context)
+
+    def display_user_name(self, user_id):
+        """
+        Return the full name of the given user id.
+        """
+        user = api.user.get(user_id)
+        user_name = user.getProperty('fullname')
+        return user_name
 
     def display_date(self, date):
         """

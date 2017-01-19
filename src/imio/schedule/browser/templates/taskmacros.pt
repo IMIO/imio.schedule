@@ -36,7 +36,8 @@
     <table>
         <tr>
             <th i18n:translate=""></th>
-            <th i18n:translate="" tal:content="python: view.subtask_todo_title_label">Title</th>
+            <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_todo_title_label">Title</th>
+            <th i18n:translate="" tal:content="python: view.assigned_user_label">Assigned to</th>
             <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
         </tr>
         <tr tal:repeat="subtask subtasks">
@@ -47,6 +48,9 @@
             </td>
             <td>
                 <span tal:content="python: subtask.Title()" />
+            </td>
+            <td>
+                <span tal:content="python: view.display_user_name(subtask.assigned_user)" />
             </td>
             <td tal:define="due_date python: view.display_date(subtask.due_date)">
                 <span tal:content="due_date" />
@@ -60,7 +64,8 @@
     <table>
         <tr>
             <th i18n:translate=""></th>
-            <th i18n:translate="" tal:content="python: view.subtask_title_label">Title</th>
+            <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_title_label">Title</th>
+            <th i18n:translate="" tal:content="python: view.assigned_user_label">Assigned to</th>
             <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
             <th i18n:translate="" tal:content="python: view.end_date_label">End date</th>
         </tr>
@@ -72,6 +77,9 @@
             </td>
             <td>
                 <span tal:content="python: subtask.Title()" />
+            </td>
+            <td>
+                <span tal:content="python: view.display_user_name(subtask.assigned_user)" />
             </td>
             <td tal:define="due_date python: view.display_date(subtask.due_date)">
                 <span tal:content="due_date" />

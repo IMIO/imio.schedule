@@ -11,4 +11,9 @@
   </index>
   <column value="task_config_UID"/>
 
+  <index name="is_solvable_task" meta_type="FieldIndex">
+    <indexed_attr value="is_solvable_task"/>
+  </index>
+  <column value="is_solvable_task"/>
+
 </object>

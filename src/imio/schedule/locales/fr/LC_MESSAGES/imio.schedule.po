@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-11-07 08:24+0000\n"
+"POT-Creation-Date: 2017-01-19 08:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,11 +20,11 @@ msgstr " est l'un des états suivants"
 msgid " to one of the following states"
 msgstr " vers l'un des états suivants"
 
-#: ../content/task_config.py:249
+#: ../content/task_config.py:280
 msgid "Activate recurrency"
 msgstr "Tache récurente"
 
-#: ../content/task_config.py:233
+#: ../content/task_config.py:256
 msgid "Additional delay"
 msgstr "Délai supplémentaire"
 
@@ -32,11 +32,14 @@ msgstr "Délai supplémentaire"
 msgid "All"
 msgstr "Tous"
 
-#: ../content/task_config.py:127
+#: ../content/task_config.py:135
 msgid "Assigned group"
-msgstr ""
+msgstr "Groupe responsable de la tâche"
 
-#: ../content/task_config.py:134
+msgid "Assigned to"
+msgstr "Assigné à"
+
+#: ../content/task_config.py:142
 msgid "Assigned user"
 msgstr "Responsable de la tâche"
 
@@ -48,11 +51,11 @@ msgstr "Macro-tâche configurable"
 msgid "AutomatedTask"
 msgstr "Tâche configurable"
 
-#: ../content/task_config.py:218
+#: ../content/task_config.py:226
 msgid "Calculation delay"
 msgstr "Calcul du délai"
 
-#: ../content/task_config.py:223
+#: ../content/task_config.py:246
 msgid "Calculation delay method"
 msgstr "Calcul du délai"
 
@@ -60,29 +63,32 @@ msgstr "Calcul du délai"
 msgid "Change the task owner"
 msgstr "Réassigner"
 
-#: ../content/task_config.py:36
+#: ../content/task_config.py:37
 msgid "Condition"
-msgstr ""
+msgstr "Condition"
 
-#: ../content/task_config.py:164
+#: ../content/task_config.py:172
 msgid "Conditions"
-msgstr ""
+msgstr "Conditions"
 
 #: ../browser/task_owner.py:28
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmer"
 
-#: ../content/task_config.py:149
+#: ../content/task_config.py:157
 msgid "Creation"
-msgstr ""
+msgstr "Création"
 
-#: ../content/task_config.py:161
+#: ../content/task_config.py:169
 msgid "Creation conditions"
 msgstr "Conditions de création de la tâche"
 
-#: ../content/task_config.py:142
+#: ../content/task_config.py:150
 msgid "Custom marker interfaces for this task."
-msgstr ""
+msgstr "Interfaces marqueurs"
+
+msgid "Doable alone"
+msgstr "Réalisable seul"
 
 #: ../browser/templates/task_completion.pt:53
 msgid "Done"
@@ -93,21 +99,21 @@ msgid "Due date"
 msgstr "Échéance"
 
 #: ../content/schedule_config.py:21
-#: ../content/task_config.py:109
+#: ../content/task_config.py:129
 msgid "Enabled"
 msgstr "Activé"
 
-#: ../content/task_config.py:207
+#: ../content/task_config.py:215
 msgid "End conditions"
 msgstr "Conditions de clôture"
 
-#: ../content/task_config.py:195
+#: ../content/task_config.py:203
 msgid "Ending"
-msgstr ""
+msgstr "Fin"
 
-#: ../content/task_config.py:100
+#: ../content/task_config.py:121
 msgid "General informations"
-msgstr ""
+msgstr "Paramètres"
 
 #: ../configure.zcml:30
 msgid "Installs the imio.schedule add-on."
@@ -121,29 +127,93 @@ msgstr "Configuration de macro-tâches"
 msgid "MacroTaskConfig"
 msgstr "Configuration de macro-tâches"
 
-#: ../content/task_config.py:141
+#: ../content/task_config.py:149
 msgid "Marker interfaces"
-msgstr ""
+msgstr "Interfaces marqueurs"
 
 #: ../browser/task_owner.py:18
 msgid "New owner"
+msgstr "Nouveau propriétaire"
+
+#: ../content/vocabulary.py:430
+msgid "Next Friday"
+msgstr "Vendredi suivant"
+
+#: ../content/vocabulary.py:426
+msgid "Next Monday"
+msgstr "Lundi suivant"
+
+#: ../content/vocabulary.py:431
+msgid "Next Saturday"
+msgstr "Samedi suivant"
+
+#: ../content/vocabulary.py:432
+msgid "Next Sunday"
+msgstr "Dimanche suivant"
+
+#: ../content/vocabulary.py:429
+msgid "Next Thursday"
+msgstr "Jeudi suivant"
+
+#: ../content/vocabulary.py:427
+msgid "Next Tuesday"
+msgstr "Mardi suivant"
+
+#: ../content/vocabulary.py:428
+msgid "Next Wednesday"
+msgstr "Mercredi suivant"
+
+#: ../content/vocabulary.py:425
+msgid "None"
 msgstr ""
 
-#: ../content/task_config.py:42
+#: ../content/task_config.py:43
 msgid "Operator"
-msgstr ""
+msgstr "Opérateur"
 
-#: ../browser/task_owner.py:38
+#: ../browser/task_owner.py:39
 msgid "Owner changed"
-msgstr ""
+msgstr "Propriétaire réassigné"
 
-#: ../content/task_config.py:240
+#: ../content/vocabulary.py:437
+msgid "Previous Friday"
+msgstr "Vendredi précédant"
+
+#: ../content/vocabulary.py:433
+msgid "Previous Monday"
+msgstr "Lundi précédant"
+
+#: ../content/vocabulary.py:438
+msgid "Previous Saturday"
+msgstr "Samedi précédant"
+
+#: ../content/vocabulary.py:439
+msgid "Previous Sunday"
+msgstr "Dimanche précédant"
+
+#: ../content/vocabulary.py:436
+msgid "Previous Thursday"
+msgstr "Jeudi précédant"
+
+#: ../content/vocabulary.py:434
+msgid "Previous Tuesday"
+msgstr "Mardi précédant"
+
+#: ../content/vocabulary.py:435
+msgid "Previous Wednesday"
+msgstr "Mercredi précédant"
+
+#: ../content/task_config.py:271
 msgid "Recurrence"
-msgstr ""
+msgstr "Récurrence"
 
-#: ../content/task_config.py:262
+#: ../content/task_config.py:293
 msgid "Recurrence condition"
-msgstr ""
+msgstr "Conditions de récurente"
+
+#: ../content/task_config.py:263
+msgid "Round to week day"
+msgstr "Arrondir au jour de la semaine"
 
 #: ../profiles/default/types/AutomatedMacroTask.xml
 msgid "Schedulable Macrotask"
@@ -165,27 +235,27 @@ msgstr "Configuration d'échéances"
 msgid "Scheduled content type"
 msgstr "Type de contenu associé"
 
-#: ../content/task_config.py:162
+#: ../content/task_config.py:170
 msgid "Select creation conditions of the task"
 msgstr "Sélectionnez les conditions de création de la tâche"
 
-#: ../content/task_config.py:128
+#: ../content/task_config.py:136
 msgid "Select default group assigned to this task."
-msgstr ""
+msgstr "Groupe assigné par défaut à cette tâche"
 
-#: ../content/task_config.py:135
+#: ../content/task_config.py:143
 msgid "Select default user assigned to this task."
 msgstr "Choisissez l'utisateur qui sera assigné par défaut à cette tâche"
 
-#: ../content/task_config.py:208
+#: ../content/task_config.py:216
 msgid "Select end conditions of the task."
 msgstr "Sélectionnez les conditions de clôture de la tâche"
 
-#: ../content/task_config.py:263
+#: ../content/task_config.py:294
 msgid "Select recurrence conditions of the task."
-msgstr ""
+msgstr "Choisissez les conditions de récurence pour cette tâche"
 
-#: ../content/task_config.py:185
+#: ../content/task_config.py:193
 msgid "Select start conditions of the task"
 msgstr "Sélectionnez les conditions de démarrage de la tâche"
 
@@ -193,38 +263,38 @@ msgstr "Sélectionnez les conditions de démarrage de la tâche"
 msgid "Select the content type to apply schedule."
 msgstr "Sélectionnez le type de contenu de l'échéancier"
 
-#: ../content/task_config.py:116
+#: ../content/task_config.py:235
 msgid "Select the start date used to compute the due date."
 msgstr "Sélectionnez la date de départ pour la calcul de l'échéance"
 
-#: ../content/task_config.py:155
+#: ../content/task_config.py:163
 msgid "Select the state of the container where the task is automatically created."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement créée"
 
-#: ../content/task_config.py:178
+#: ../content/task_config.py:186
 msgid "Select the state of the container where the task is automatically started."
 msgstr "Sélectionnez l'état du récipient pour lequel la tâche est automatiquement démarrée"
 
-#: ../content/task_config.py:256
+#: ../content/task_config.py:287
 msgid "Select the state of the container where the task should be recurred"
-msgstr ""
+msgstr "Sélectionnez l'état pour lequel la tâche doit recommencer"
 
-#: ../content/task_config.py:201
+#: ../content/task_config.py:209
 msgid "Select the states of the container where the task is automatically closed."
 msgstr "Sélectionnez les états du récipient pour lequel la tâche est automatiquement clôturée"
 
 msgid "Should pass from actual state "
 msgstr "Changer l'état actuel "
 
-#: ../content/task_config.py:172
+#: ../content/task_config.py:180
 msgid "Start"
-msgstr ""
+msgstr "Démarrage"
 
-#: ../content/task_config.py:184
+#: ../content/task_config.py:192
 msgid "Start conditions"
 msgstr "Conditions de démarrage"
 
-#: ../content/task_config.py:115
+#: ../content/task_config.py:234
 msgid "Start date"
 msgstr "Date de départ"
 
@@ -242,23 +312,26 @@ msgstr ""
 msgid "Subtask"
 msgstr "Sous-tâche"
 
+msgid "Subtasks dependencies"
+msgstr "En attente de sous-tâches"
+
 #: ../profiles/default/types/TaskConfig.xml
 msgid "Task configuration."
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:154
+#: ../content/task_config.py:162
 msgid "Task container creation state"
 msgstr "État de création de la tâche"
 
-#: ../content/task_config.py:200
+#: ../content/task_config.py:208
 msgid "Task container end states"
 msgstr "État(s) de clôture de la tâche"
 
-#: ../content/task_config.py:255
+#: ../content/task_config.py:286
 msgid "Task container recurrence states"
-msgstr ""
+msgstr "État(s) de récurrence de la tâche"
 
-#: ../content/task_config.py:177
+#: ../content/task_config.py:185
 msgid "Task container start states"
 msgstr "État(s) de démarrage de la tâche"
 
@@ -266,7 +339,7 @@ msgstr "État(s) de démarrage de la tâche"
 msgid "TaskConfig"
 msgstr "Configuration de tâche"
 
-#: ../content/task_config.py:234
+#: ../content/task_config.py:257
 msgid "This delay is added to the due date of the task."
 msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 
@@ -274,16 +347,20 @@ msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 msgid "To do"
 msgstr "À faire"
 
-#: ../content/task_config.py:122
+#: ../content/task_config.py:241
 msgid "Warning delay"
 msgstr "Délai d'alerte"
 
-#: ../content/vocabulary.py:399
+#: ../content/vocabulary.py:414
 msgid "and"
-msgstr ""
+msgstr "et"
 
 #: ../dashboard/vocabulary.py:23
 msgid "collective.task"
+msgstr ""
+
+#: ../content/task_config.py:49
+msgid "display_status"
 msgstr ""
 
 #: ../configure.zcml:30
@@ -294,9 +371,9 @@ msgstr ""
 msgid "imio.schedule tests"
 msgstr ""
 
-#: ../content/vocabulary.py:400
+#: ../content/vocabulary.py:415
 msgid "or"
-msgstr ""
+msgstr "ou"
 
 msgid "schedule.assign_current_user"
 msgstr "Utilisateur connecté"
