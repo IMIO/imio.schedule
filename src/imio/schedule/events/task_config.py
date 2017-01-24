@@ -18,6 +18,11 @@ def update_marker_interfaces(task_config, event):
     provided on all the tasks of this task config as well.
     """
     catalog = api.portal.get_tool('portal_catalog')
+
+    vocname = ITaskConfig.get('marker_interfaces').value_type.vocabularyName
+    interfaces_voc = getUtility(IVocabularyFactory, vocname)(task_config)
+    marker_interfaces = dict([(i, getInterface('', i)) for i in interfaces_voc.by_value])
+
     task_brains = catalog(
         object_provides=IAutomatedTask.__identifier__,
         task_config_UID=task_config.UID()
@@ -26,18 +31,18 @@ def update_marker_interfaces(task_config, event):
 
     # verify if the update is needed
     do_update = False
-    if sample_task:
-        for interface_name in task_config.marker_interfaces:
-            marker_interface = getInterface('', interface_name)
-            if not marker_interface.providedBy(sample_task):
-                do_update = True
-                break
+    for interface_name, marker_interface in marker_interfaces.iteritems():
+        is_provided = marker_interface.providedBy(sample_task)
+        # new interface on the config but not present yet on the tasks => update
+        if interface_name in task_config.marker_interfaces and not is_provided:
+            do_update = True
+            break
+        # old interface on the tasks no longer present on the config => update
+        elif interface_name not in task_config.marker_interfaces and is_provided:
+            do_update = True
+            break
 
     if do_update:
-        vocname = ITaskConfig.get('marker_interfaces').value_type.vocabularyName
-        interfaces_voc = getUtility(IVocabularyFactory, vocname)(task_config)
-        marker_interfaces = dict([(i, getInterface('', i)) for i in interfaces_voc.by_value])
-
         for task_brain in task_brains:
             task = task_brain.getObject()
 
