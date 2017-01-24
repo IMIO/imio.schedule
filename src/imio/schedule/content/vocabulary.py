@@ -209,7 +209,7 @@ class AssignedUserVocabularyFactory(object):
                 SimpleTerm(user.id, user.id, user.getProperty('fullname') or user.getUserName())
             )
 
-        vocabulary = SimpleVocabulary(voc_terms)
+        vocabulary = SimpleVocabulary(sorted(voc_terms, key=lambda term: term.title.decode('utf-8')))
         return vocabulary
 
 
