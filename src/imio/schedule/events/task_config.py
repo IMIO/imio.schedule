@@ -34,11 +34,11 @@ def update_marker_interfaces(task_config, event):
     for interface_name, marker_interface in marker_interfaces.iteritems():
         is_provided = marker_interface.providedBy(sample_task)
         # new interface on the config but not present yet on the tasks => update
-        if interface_name in task_config.marker_interfaces and not is_provided:
+        if interface_name in (task_config.marker_interfaces or []) and not is_provided:
             do_update = True
             break
         # old interface on the tasks no longer present on the config => update
-        elif interface_name not in task_config.marker_interfaces and is_provided:
+        elif interface_name not in (task_config.marker_interfaces or []) and is_provided:
             do_update = True
             break
 
