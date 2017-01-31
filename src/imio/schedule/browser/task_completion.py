@@ -64,7 +64,7 @@ class TaskCompletionView(BrowserView):
         Return the full name of the given user id.
         """
         user = api.user.get(user_id)
-        user_name = user.getProperty('fullname')
+        user_name = user and user.getProperty('fullname') or user_id
         return user_name
 
     def display_date(self, date):
