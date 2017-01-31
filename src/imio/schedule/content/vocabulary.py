@@ -452,8 +452,8 @@ class TaskOwnerSource(PrincipalSource):
     def _search(self, id=None, exact_match=True):
         users = api.user.get_users(self.context.assigned_group)
         if id is not None:
-            return [{'id': u.id} for u in users if u.id == id]
-        return [{'id': u.id} for u in users]
+            return sorted([{'id': u.id} for u in users if u.id == id], key=lambda u_id: u_id['id'])
+        return sorted([{'id': u.id} for u in users], key=lambda u_id: u_id['id'])
 
 
 class TaskOwnerSourceBinder(object):
