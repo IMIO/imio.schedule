@@ -28,3 +28,5 @@ status_by_state = {
     'realized': STARTED,
     'closed': DONE
 }
+
+task_types = ['task', 'AutomatedTask', 'AutomatedMacroTask']

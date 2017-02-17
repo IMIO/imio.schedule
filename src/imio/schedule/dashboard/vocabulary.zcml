@@ -9,4 +9,11 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- Task worfklow states vocabulary -->
+    <utility
+        factory=".vocabulary.TaskPortalTypes"
+        name="schedule.TaskPortalTypes"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
 </configure>

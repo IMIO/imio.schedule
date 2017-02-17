@@ -24,6 +24,10 @@ span.schedule_closed {
     background-color: #75AD0A;
 }
 
+span.simple_task {
+    background-color: grey;
+}
+
 table.task_status_table {
     width: 100%;
 }
