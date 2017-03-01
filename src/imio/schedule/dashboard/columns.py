@@ -101,6 +101,29 @@ class SimpleStatusColumn(StatusColum):
     display_status_interface = ISimpleDisplayTaskStatus
 
 
+class SimpleTaskStatusDisplay(object):
+    """
+    Adpater, adapting a task and returning some html
+    table cell displaying its status.
+    """
+
+    implements(IDisplayTaskStatus)
+
+    def __init__(self, column, task, request):
+        self.task = task
+        self.request = request
+
+    def render(self):
+        task = self.task
+        status = u'<span class="simple_task">&nbsp&nbsp&nbsp</span>'
+        link = '<a class="link-overlay" href="{task_url}/@@view">{status}</a>'.format(
+            task_url=task.absolute_url(),
+            status=status
+        )
+        status_display = '<span id="task_status">{}</span>'.format(link)
+        return status_display
+
+
 class TaskStatusDisplay(object):
     """
     Adpater, adapting a task and returning some html
