@@ -24,7 +24,7 @@ class DueDateColumn(BaseColumn):
 
     def renderCell(self, item):
         due_date = item.due_date
-        if due_date.year == 9999:
+        if not due_date or due_date.year == 9999:
             return u'\u221E'
 
         return due_date.strftime('%d/%m/%Y')
