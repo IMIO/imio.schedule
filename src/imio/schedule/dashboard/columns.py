@@ -116,7 +116,7 @@ class SimpleTaskStatusDisplay(object):
     def render(self):
         task = self.task
         status = u'<span class="simple_task">&nbsp&nbsp&nbsp</span>'
-        link = '<a class="link-overlay" href="{task_url}/@@view">{status}</a>'.format(
+        link = '<a class="link-overlay" href="{task_url}/@@item_view">{status}</a>'.format(
             task_url=task.absolute_url(),
             status=status
         )
