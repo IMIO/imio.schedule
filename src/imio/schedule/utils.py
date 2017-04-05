@@ -54,12 +54,12 @@ def get_task_configs(task_container, descending=False):
     return task_configs
 
 
-def query_container_open_tasks(self, task_container, the_objects=False):
+def query_container_open_tasks(task_container, the_objects=False):
     """
     Return all the open tasks of a container.
     """
     states = states_by_status[CREATION] + states_by_status[STARTED]
-    tasks = self.query_task_instances(
+    tasks = query_container_tasks(
         task_container,
         the_objects,
         query={'review_state': states},

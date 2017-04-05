@@ -132,11 +132,11 @@ class UpdateRecurrenceHandler(TaskEventHandler):
 
     def handle(self):
         open_tasks_brains = query_container_open_tasks(self.container)
-        open_tasks_cfg_UIDs = [br.task_config_UID for br in open_tasks_brains]
+        open_tasks_by_cfg_UIDs = dict([(br.task_config_UID, br) for br in open_tasks_brains])
         for config in self.task_configs:
             if config.is_main_taskconfig():
-                task = config.UID() in open_tasks_cfg_UIDs
-                if not task and config.should_recurred(self.container):
+                has_open_task = config.UID() in open_tasks_by_cfg_UIDs.keys()
+                if not has_open_task and config.should_recurred(self.container):
                     try:
                         config.create_recurring_task(self.container)
                     except TaskAlreadyExists:
@@ -144,8 +144,9 @@ class UpdateRecurrenceHandler(TaskEventHandler):
             # case of a sub-task creation, the parent should have been created first
             else:
                 macro_config = config.getParentNode()
-                parent_task = macro_config.UID() in open_tasks_cfg_UIDs
-                if parent_task and config.should_recurred(self.container):
+                has_parent_task = macro_config.UID() in open_tasks_by_cfg_UIDs.keys()
+                if has_parent_task and config.should_recurred(self.container):
+                    parent_task = open_tasks_by_cfg_UIDs[macro_config.UID()].getObject()
                     if config.get_open_task(parent_task) is not None:
                         continue
                     config.create_recurring_task(
