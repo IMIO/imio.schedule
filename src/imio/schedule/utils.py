@@ -5,6 +5,9 @@ from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from imio.dashboard.browser.facetedcollectionportlet import Assignment
 from imio.dashboard.utils import _updateDefaultCollectionFor
 
+from imio.schedule.config import CREATION
+from imio.schedule.config import STARTED
+from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.interfaces import IToTaskConfig
 
@@ -49,6 +52,19 @@ def get_task_configs(task_container, descending=False):
     task_configs = sorted(task_configs, key=lambda cfg: ordering * cfg.level())
 
     return task_configs
+
+
+def query_container_open_tasks(self, task_container, the_objects=False):
+    """
+    Return all the open tasks of a container.
+    """
+    states = states_by_status[CREATION] + states_by_status[STARTED]
+    tasks = self.query_task_instances(
+        task_container,
+        the_objects,
+        query={'review_state': states},
+    )
+    return tasks
 
 
 def query_container_tasks(task_container, the_objects=False, query={}):
