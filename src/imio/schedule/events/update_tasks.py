@@ -6,6 +6,7 @@ from plone import api
 
 from imio.schedule.interfaces import TaskAlreadyExists
 from imio.schedule.utils import get_task_configs
+from imio.schedule.utils import query_container_open_tasks
 
 
 class TaskEventHandler(object):
@@ -130,9 +131,11 @@ def update_due_date(task_container, event):
 class UpdateRecurrenceHandler(TaskEventHandler):
 
     def handle(self):
+        open_tasks_brains = query_container_open_tasks(self.container)
+        open_tasks_cfg_UIDs = [br.task_config_UID for br in open_tasks_brains]
         for config in self.task_configs:
             if config.is_main_taskconfig():
-                task = config.get_open_task(self.container)
+                task = config.UID() in open_tasks_cfg_UIDs
                 if not task and config.should_recurred(self.container):
                     try:
                         config.create_recurring_task(self.container)
@@ -141,7 +144,7 @@ class UpdateRecurrenceHandler(TaskEventHandler):
             # case of a sub-task creation, the parent should have been created first
             else:
                 macro_config = config.getParentNode()
-                parent_task = macro_config.get_open_task(self.container)
+                parent_task = macro_config.UID() in open_tasks_cfg_UIDs
                 if parent_task and config.should_recurred(self.container):
                     if config.get_open_task(parent_task) is not None:
                         continue

@@ -5,6 +5,7 @@ from eea.facetednavigation.layout.interfaces import IFacetedLayout
 from imio.dashboard.browser.facetedcollectionportlet import Assignment
 from imio.dashboard.utils import _updateDefaultCollectionFor
 
+from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.interfaces import IToTaskConfig
 
 from plone import api
@@ -48,6 +49,26 @@ def get_task_configs(task_container, descending=False):
     task_configs = sorted(task_configs, key=lambda cfg: ordering * cfg.level())
 
     return task_configs
+
+
+def query_container_tasks(task_container, the_objects=False, query={}):
+    """
+    Return all the tasks of a container.
+    """
+    catalog = api.portal.get_tool('portal_catalog')
+
+    full_query = {
+        'object_provides': IAutomatedTask.__identifier__,
+        'path': {'query': '/'.join(task_container.getPhysicalPath())},
+    }
+    full_query.update(query)
+
+    task_brains = catalog.unrestrictedSearchResults(**full_query)
+
+    if the_objects:
+        return [brain.getObject() for brain in task_brains]
+
+    return task_brains
 
 
 def tuple_to_interface(interface_tuple):
