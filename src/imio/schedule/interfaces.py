@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Module where all interfaces, events and exceptions live."""
 
+from plone.supermodel import model
+from zope import schema
 from zope.interface import Interface
 from zope.interface.interfaces import IInterface
-
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+
+from imio.schedule import _
 
 
 class IImioScheduleLayer(IDefaultBrowserLayer):
@@ -163,3 +166,15 @@ class IToIcon(Interface):
         """
         Return the icon url.
         """
+
+
+class ISettings(model.Schema):
+
+    working_days = schema.List(
+        title=_(u'List of working days'),
+        value_type=schema.Choice(
+            title=_(u'Day'),
+            vocabulary='imio.schedule.working_days',
+        ),
+        required=True,
+    )

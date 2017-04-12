@@ -19,7 +19,7 @@
   <include package=".collectionwidget" />
 
   <include file="indexes.zcml" />
-
+  <include file="vocabularies.zcml" />
 
   <genericsetup:registerProfile
       name="default"
