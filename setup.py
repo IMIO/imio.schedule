@@ -50,6 +50,7 @@ setup(
         'plone.app.dexterity',
         'Products.cron4plone',
         'setuptools',
+        'workalendar',
     ],
     extras_require={
         'test': [
