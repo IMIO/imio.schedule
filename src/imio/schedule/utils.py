@@ -22,6 +22,7 @@ from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.schema.vocabulary import SimpleVocabulary
+from workalendar.europe import Belgium
 
 import datetime
 import importlib
@@ -176,3 +177,33 @@ def round_to_weekday(date, weekday):
     if days_delta * direction < 0:
         days_delta += 7 * direction
     return date + datetime.timedelta(days_delta)
+
+
+class WorkingDaysCalendar(Belgium):
+
+    def __init__(self, *args, **kwargs):
+        super(WorkingDaysCalendar, self).__init__(*args, **kwargs)
+        self.working_days = self._get_working_days()
+
+    def is_working_day(self, date, *args, **kwargs):
+        result = super(WorkingDaysCalendar, self).is_working_day(
+            date, *args, **kwargs)
+        if result is True:
+            result = date.isoweekday() in self.working_days
+        return result
+
+    def _get_working_days(self):
+        """Return the working days configured in the registry"""
+        matching = {
+            'monday': 1,
+            'tuesday': 2,
+            'wednesday': 3,
+            'thursday': 4,
+            'friday': 5,
+            'saturday': 6,
+            'sunday': 7,
+        }
+        days = api.portal.get_registry_record(
+            'imio.schedule.interfaces.ISettings.working_days'
+        ) or []
+        return [matching[d] for d in days]

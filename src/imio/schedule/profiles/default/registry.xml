@@ -20,5 +20,14 @@
         </value>
         <value key="group" i18n:translate="">Dates</value>
     </records>
+    <records interface="imio.schedule.interfaces.ISettings" purge="False">
+        <value key="working_days">
+            <element>monday</element>
+            <element>tuesday</element>
+            <element>wednesday</element>
+            <element>thursday</element>
+            <element>friday</element>
+        </value>
+    </records>
 
 </registry>

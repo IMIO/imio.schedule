@@ -17,6 +17,7 @@ from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import TaskAlreadyExists
 from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.utils import round_to_weekday
+from imio.schedule.utils import WorkingDaysCalendar
 
 from plone import api
 from plone.dexterity.content import Container
@@ -226,7 +227,8 @@ class ITaskConfig(model.Schema):
         label=_(u'Calculation delay'),
         fields=[
             'start_date', 'warning_delay',
-            'calculation_delay', 'additional_delay', 'round_to_day'
+            'calculation_delay', 'additional_delay', 'additional_delay_type',
+            'round_to_day'
         ],
     )
 
@@ -257,6 +259,13 @@ class ITaskConfig(model.Schema):
         description=_(u'This delay is added to the due date of the task.'),
         required=False,
         default=0,
+    )
+
+    additional_delay_type = schema.Choice(
+        title=_(u'Additional delay type'),
+        description=_(u'Define the calculation method for the additional delay'),
+        vocabulary='imio.schedule.additional_delay_type',
+        required=True,
     )
 
     round_to_day = schema.Choice(
@@ -774,7 +783,11 @@ class BaseTaskConfig(object):
             due_date = calculator.due_date
 
         additional_delay = self.additional_delay or 0
-        if additional_delay:
+        delay_type = getattr(self, 'additional_delay_type', 'absolute')
+        if additional_delay and delay_type == 'working_days':
+            calendar = WorkingDaysCalendar()
+            due_date = calendar.add_working_days(due_date, additional_delay)
+        elif additional_delay:
             due_date = due_date + relativedelta(days=+additional_delay)
 
         round_day = int(self.round_to_day)

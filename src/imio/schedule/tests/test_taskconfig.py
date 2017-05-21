@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_base
+from DateTime import DateTime
+from datetime import datetime
 
 from imio.schedule.config import DONE
 from imio.schedule.content.delay import CalculationDefaultDelay
@@ -681,7 +683,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         """
         Due date should be the date computed by the adapter of
         start_date field + the value in additional_delay (10)
-        + the compurted delay (15).
+        + the computed delay (15).
         """
         task_config = self.task_config
         task_container = self.task_container
@@ -696,6 +698,41 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
+
+    def test_compute_due_date_working_days(self):
+        """
+        Due date should handle the working days
+        start date (2017-03-01) + 10 additional days = 2017-03-11
+        + 4 weekend days = 2017-03-15
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task_container.creation_date = DateTime(2017, 3, 1)
+        task = self.task
+
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
+
+        task_config.additional_delay_type = 'working_days'
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, datetime(2017, 3, 15).date())
+
+    def test_compute_due_date_holidays(self):
+        """
+        Due date whould handle the holidays and working days
+        start date (2017-04-14) + 10 additional days = 2017-04-25
+        + easter day (2017-04-17) + labour day (2017-05-01) + 6 weekend days
+        = 2017-05-02
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task_container.creation_date = DateTime(2017, 4, 14)
+        task = self.task
+
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
+
+        task_config.additional_delay_type = 'working_days'
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, datetime(2017, 5, 2).date())
 
     def test_evaluate_conditions_and(self):
         """
