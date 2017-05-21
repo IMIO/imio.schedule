@@ -2,7 +2,7 @@
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from zope.component import getMultiAdapter
+from zope.component import queryMultiAdapter
 
 from imio.schedule.content.logic import TaskLogic
 from imio.schedule.interfaces import IStartDate
@@ -15,12 +15,12 @@ class BaseCalculationDelay(TaskLogic):
     @property
     def start_date(self):
         """Return the start date for the task container and the task"""
-        date_adapter = getMultiAdapter(
+        date_adapter = queryMultiAdapter(
             (self.task_container, self.task),
             interface=self.start_date_interface,
             name=self.task_config.start_date,
         )
-        start_date = date_adapter.start_date()
+        start_date = date_adapter and date_adapter.start_date()
         if not start_date:
             start_date = date(9999, 1, 1)
         if not isinstance(start_date, date):
