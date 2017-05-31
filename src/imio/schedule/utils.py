@@ -10,6 +10,7 @@ from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.interfaces import IToTaskConfig
+from imio.schedule.interfaces import ICalendarExtraHolidays
 
 from plone import api
 from plone.portlets.interfaces import IPortletManager
@@ -21,6 +22,7 @@ from zope.annotation import IAnnotations
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component import getUtilitiesFor
 from zope.schema.vocabulary import SimpleVocabulary
 from workalendar.europe import Belgium
 
@@ -190,6 +192,12 @@ class WorkingDaysCalendar(Belgium):
             date, *args, **kwargs)
         if result is True:
             result = date.isoweekday() in self.working_days
+        return result
+
+    def get_calendar_holidays(self, year):
+        result = super(WorkingDaysCalendar, self).get_calendar_holidays(year)
+        for name, utility in getUtilitiesFor(ICalendarExtraHolidays):
+            result += utility.get_holidays(year)
         return result
 
     def _get_working_days(self):

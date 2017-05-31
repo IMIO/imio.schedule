@@ -178,3 +178,13 @@ class ISettings(model.Schema):
         ),
         required=True,
     )
+
+
+class ICalendarExtraHolidays(Interface):
+    """Interface for extra holidays utility"""
+
+    def get_holidays(self, year):
+        """
+        Return a tuple with the holidays for the given year
+        format: ((<date object>, 'holiday_name'), ...)
+        """
