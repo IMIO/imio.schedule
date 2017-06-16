@@ -37,7 +37,7 @@ class AssignedUserColumn(BaseColumn):
         username = item.assigned_user
         groupname = item.assigned_group
 
-        user = api.user.get(username)
+        user = username and api.user.get(username)
         username = user and user.getProperty('fullname').decode('utf-8') or username
         assigned = username
         if groupname:

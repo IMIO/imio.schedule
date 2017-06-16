@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
 from Products.ATContentTypes.interfaces import IATFolder
+from datetime import date
 
 from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 
@@ -56,3 +56,14 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         expected_tuple = ('Products.ATContentTypes.interfaces.folder', 'IATFolder')
         interface_tuple = interface_to_tuple(IATFolder)
         self.assertEqual(interface_tuple, expected_tuple)
+
+
+def TestWorkingDaysCalendar(ExampleScheduleIntegrationTestCase):
+
+    def test_is_working_day(self):
+        from imio.schedule.utils import WorkingDaysCalendar
+        calendar = WorkingDaysCalendar()
+        # Basic holiday
+        self.assertTrue(calendar.is_working_day(date(2017, 1, 1)))
+        # Test holiday from CalendarExtraHolidays utility
+        self.assertTrue(calendar.is_working_day(date(2017, 2, 1)))

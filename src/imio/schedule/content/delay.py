@@ -2,7 +2,6 @@
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
 
 from imio.schedule.content.logic import TaskLogic
@@ -21,9 +20,7 @@ class BaseCalculationDelay(TaskLogic):
             interface=self.start_date_interface,
             name=self.task_config.start_date,
         )
-        start_date = None
-        if date_adapter:
-            start_date = date_adapter.start_date()
+        start_date = date_adapter and date_adapter.start_date()
         if not start_date:
             start_date = date(9999, 1, 1)
         if not isinstance(start_date, date):
