@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date
+
 from imio.schedule.content.logic import CreationTaskLogic
 from imio.schedule.content.logic import TaskLogic
 from imio.schedule.interfaces import ICondition
@@ -156,3 +158,27 @@ class NoRecurencyCondition(RecurrencyCondition):
 
     def evaluate(self):
         return False
+
+
+class TaskDueDateReachedCondition(EndCondition):
+    """
+    Return True if the task delay is overdue.
+    """
+
+    def evaluate(self):
+        due_date = self.task.due_date
+        today = date.today()
+        due_date_reached = today >= due_date
+        return due_date_reached
+
+
+class MacroTaskDueDateReachedCondition(MacroTaskEndCondition):
+    """
+    Return True if the task delay is overdue.
+    """
+
+    def evaluate(self):
+        due_date = self.task.due_date
+        today = date.today()
+        due_date_reached = today >= due_date
+        return due_date_reached

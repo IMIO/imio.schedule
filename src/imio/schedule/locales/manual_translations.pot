@@ -29,10 +29,16 @@ msgstr ""
 msgid "schedule.assign_current_user"
 msgstr ""
 
+msgid "schedule.end_when_due_date_reached"
+msgstr ""
+
 msgid "schedule.create_if_all_subtasks_can_be_created"
 msgstr ""
 
 msgid "schedule.create_if_subtask_can_be_created"
+msgstr ""
+
+msgid "schedule.end_when_due_date_reached"
 msgstr ""
 
 msgid "schedule.test_creation_condition"

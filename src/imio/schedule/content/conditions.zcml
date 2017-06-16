@@ -42,4 +42,20 @@
         name="schedule.no_recurrency_condition"
     />
 
+    <adapter
+        for="zope.interface.Interface
+             imio.schedule.content.task.IAutomatedTask"
+        provides="imio.schedule.interfaces.IEndCondition"
+        factory=".condition.TaskDueDateReachedCondition"
+        name="schedule.end_when_due_date_reached"
+    />
+
+    <adapter
+        for="zope.interface.Interface
+             imio.schedule.content.task.IAutomatedMacroTask"
+        provides="imio.schedule.interfaces.IEndCondition"
+        factory=".condition.MacroTaskDueDateReachedCondition"
+        name="schedule.macro_end_when_due_date_reached"
+    />
+
 </configure>
