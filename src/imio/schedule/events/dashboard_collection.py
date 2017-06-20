@@ -48,7 +48,7 @@ def create(schedule_container, event):
                 u'assigned_user_column',
                 u'status',
                 u'due_date'
-            ),
+            )
 
         kwargs = {}
         additional_queries = kwargs.pop('query', [])
