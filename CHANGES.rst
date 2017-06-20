@@ -5,13 +5,14 @@ Changelog
 1.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Register title colums for default dashboard collection of schedule config.
+  [sdelcourt]
 
 
 1.3 (2017-06-20)
 ----------------
 
-- Recreate dashboard collection 'all' if its missing/
+- Recreate dashboard collection 'all' if its missing.
   [sdelcourt]
 
 

@@ -41,6 +41,15 @@ def create(schedule_container, event):
             'b_size': 30
         }
 
+        if IScheduleConfig.providedBy(schedule_container):
+            factory_args['customViewFields'] = (
+                u'pretty_link',
+                u'sortable_title',
+                u'assigned_user_column',
+                u'status',
+                u'due_date'
+            ),
+
         kwargs = {}
         additional_queries = kwargs.pop('query', [])
         for query in additional_queries:
