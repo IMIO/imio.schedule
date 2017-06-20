@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.4 (unreleased)
+1.4 (2017-06-20)
 ----------------
 
 - Register title colums for default dashboard collection of schedule config.
