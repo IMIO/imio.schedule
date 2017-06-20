@@ -5,7 +5,8 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Recreate dashboard collection 'all' if its missing/
+  [sdelcourt]
 
 
 1.2 (2017-06-16)
