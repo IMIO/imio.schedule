@@ -24,6 +24,10 @@
                    zope.lifecycleevent.IObjectAddedEvent"
               handler=".dashboard_collection.create"/>
 
+  <subscriber for="imio.schedule.content.schedule_config.IScheduleConfig
+                   zope.lifecycleevent.IObjectModifiedEvent"
+              handler=".dashboard_collection.create"/>
+
   <subscriber for="zope.interface.Interface
                    zope.lifecycleevent.IObjectModifiedEvent"
               handler=".update_tasks.UpdateRecurrenceHandler" />
