@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.5 (unreleased)
+1.5 (2017-06-20)
 ----------------
 
 - Bugfix for dashboard collection creation.
