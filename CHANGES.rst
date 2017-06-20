@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.3 (unreleased)
+1.3 (2017-06-20)
 ----------------
 
 - Recreate dashboard collection 'all' if its missing/
