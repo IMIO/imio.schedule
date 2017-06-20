@@ -5,7 +5,8 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bugfix for dashboard collection creation.
+  [sdelcourt]
 
 
 1.4 (2017-06-20)
