@@ -678,7 +678,7 @@ class BaseTaskConfig(object):
         default_ending_states = queryAdapter(task_container, IDefaultEndingStates)
         default_ending_states = default_ending_states and default_ending_states() or []
 
-        ending_states = list(default_ending_states) + list(self.ending_states or [])
+        ending_states = self.ending_states and list(default_ending_states) + list(self.ending_states) or []
 
         if not ending_states:
             return True
