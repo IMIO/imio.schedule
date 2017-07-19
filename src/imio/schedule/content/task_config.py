@@ -10,6 +10,7 @@ from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.content.subform_context_choice import SubFormContextChoice
 from imio.schedule.interfaces import ICreationCondition
+from imio.schedule.interfaces import IDefaultEndingStates
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IEndCondition
@@ -25,6 +26,7 @@ from plone.supermodel import model
 
 from zope import schema
 from zope.component import getMultiAdapter
+from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.component.interface import getInterface
 from zope.interface import alsoProvides
@@ -673,11 +675,16 @@ class BaseTaskConfig(object):
     def match_ending_states(self, task_container):
         """
         """
-        if not self.ending_states:
+        default_ending_states = queryAdapter(task_container, IDefaultEndingStates)
+        default_ending_states = default_ending_states and default_ending_states() or []
+
+        ending_states = list(default_ending_states) + list(self.ending_states or [])
+
+        if not ending_states:
             return True
 
         container_state = api.content.get_state(task_container)
-        return container_state in (self.ending_states or [])
+        return container_state in ending_states
 
     def match_end_conditions(self, task_container, task):
         """

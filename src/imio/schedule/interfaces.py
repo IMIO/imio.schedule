@@ -29,6 +29,12 @@ class ITaskLogic(Interface):
     """
 
 
+class IDefaultEndingStates(Interface):
+    """
+    Adapts a TaskContainer into a list of default ending states.
+    """
+
+
 class IDefaultTaskGroup(ITaskLogic):
     """
     Adapts a TaskContainer into a plone group to assign to a task.
