@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.6 (unreleased)
+1.6 (2018-08-30)
 ----------------
 
 - Only display active tasks in the collection widget.
