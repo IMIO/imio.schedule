@@ -30,6 +30,7 @@ class ScheduleCollectionVocabulary(CollectionVocabulary):
                 sort_on='getObjPositionInParent'
             )
             collections_brains.extend(brains)
+        collections_brains = [b for b in collections_brains if b.getObject().aq_parent.enabled]
         return collections_brains
 
 ScheduleCollectionVocabularyFactory = ScheduleCollectionVocabulary()
