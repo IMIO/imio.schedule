@@ -5,7 +5,8 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Only display active tasks in the collection widget.
+  [sdelcourt]
 
 
 1.5 (2017-06-20)
