@@ -5,7 +5,7 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Migrate to collective.eeafaceted.dashboard.
+- Migrate to last version of imio.dashboard.
   [sdelcourt]
 
 

@@ -45,7 +45,7 @@ setup(
     install_requires=[
         'collective.faceted.task',
         'collective.z3cform.datagridfield',
-        'collective.eeafaceted.dashboard',
+        'imio.dashboard',
         'plone.api',
         'plone.app.dexterity',
         'Products.cron4plone',
