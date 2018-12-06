@@ -5,7 +5,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Migrate to collective.eeafaceted.dashboard.
+  [sdelcourt]
 
 
 1.6 (2018-08-30)
