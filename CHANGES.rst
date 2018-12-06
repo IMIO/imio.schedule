@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.7 (unreleased)
+1.7 (2018-12-06)
 ----------------
 
 - Migrate to last version of imio.dashboard.
