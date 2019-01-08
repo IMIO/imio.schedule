@@ -77,6 +77,8 @@ def unsubscribe_task_configs_for_content_type(task_config, event):
     schedule_config = task_config.get_schedule_config()
 
     previous_interfaces = getattr(schedule_config, '_scheduled_interface_', None)
+    if previous_interfaces and type(previous_interfaces[0]) not in [list, tuple]:
+        previous_interfaces = (previous_interfaces,)
     previous_interfaces = [tuple_to_interface(i) for i in previous_interfaces]
 
     for previous_interface in previous_interfaces:
