@@ -2,8 +2,8 @@
 
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 
-from collective.eeafaceted.dashboard.browser.facetedcollectionportlet import Assignment
-from collective.eeafaceted.dashboard.utils import _updateDefaultCollectionFor
+from collective.eeafaceted.collectionwidget.browser.facetedcollectionportlet import Assignment
+from collective.eeafaceted.collectionwidget.utils import _updateDefaultCollectionFor
 
 from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
