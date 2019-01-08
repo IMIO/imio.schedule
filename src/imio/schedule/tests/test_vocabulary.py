@@ -85,7 +85,7 @@ class TestVocabularies(ExampleScheduleIntegrationTestCase):
         voc_name = 'schedule.scheduled_contenttype'
         voc_factory = getUtility(IVocabularyFactory, voc_name)
         vocabulary = voc_factory(self.schedule_config)
-        expected_key = "('Folder', ('Products.ATContentTypes.interfaces.folder', 'IATFolder'))"
+        expected_key = "('Folder', (('Products.ATContentTypes.interfaces.folder', 'IATFolder'),))"
         msg = 'expected key:\n{expected}\nwas not found in voc_keys:\n{voc}'.format(
             expected=expected_key,
             voc=vocabulary.by_token.keys()

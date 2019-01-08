@@ -354,12 +354,12 @@ class BaseTaskConfig(object):
         schedule_config = self.get_schedule_config()
         return schedule_config.get_scheduled_portal_type()
 
-    def get_scheduled_interface(self):
+    def get_scheduled_interfaces(self):
         """
         Return the registration interface of the selected scheduled_contenttype.
         """
         schedule_config = self.get_schedule_config()
-        return schedule_config.get_scheduled_interface()
+        return schedule_config.get_scheduled_interfaces()
 
     def group_to_assign(self, task_container, task):
         """

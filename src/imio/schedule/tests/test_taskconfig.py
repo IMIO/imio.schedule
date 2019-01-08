@@ -308,15 +308,15 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         expected_type = 'Folder'
         self.assertEquals(portal_type, expected_type)
 
-    def test_get_scheduled_interface(self):
+    def test_get_scheduled_interfaces(self):
         """
         Should return the Interface (or a class) of the content type selected
         on the field 'scheduled_contenttype' of the parent ScheduleConfig.
         """
         from Products.ATContentTypes.interfaces import IATFolder
 
-        type_interface = self.task_config.get_scheduled_interface()
-        expected_interface = IATFolder
+        type_interface = self.task_config.get_scheduled_interfaces()
+        expected_interface = (IATFolder,)
         self.assertEquals(type_interface, expected_interface)
 
     def test_user_to_assign(self):
