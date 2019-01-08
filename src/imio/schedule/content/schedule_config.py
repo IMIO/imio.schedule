@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+ # -*-coding: utf-8 -*-
 
 from plone import api
 from plone.dexterity.content import Container
@@ -79,16 +79,14 @@ class ScheduleConfig(Container):
         """
         return self.scheduled_contenttype and self.scheduled_contenttype[0] or ''
 
-    def get_scheduled_interfaces(self):
+    def get_scheduled_interface(self):
         """
         Return the registration interface of the selected scheduled_contenttype.
         """
-        portal_type, interface_tuples = self.scheduled_contenttype
-        if type(interface_tuples[0]) not in [list, tuple]:
-            interface_tuples = (interface_tuples,)
-        interfaces = tuple([tuple_to_interface(i) for i in interface_tuples])
+        portal_type, interface_tuple = self.scheduled_contenttype
+        interface_class = tuple_to_interface(interface_tuple)
 
-        return interfaces
+        return interface_class
 
     def is_empty(self):
         """

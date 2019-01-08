@@ -106,15 +106,15 @@ class TestScheduleConfigIntegration(ExampleScheduleIntegrationTestCase):
         msg = 'expected {} but got {}'.format(expected_type, portal_type)
         self.assertTrue(portal_type == expected_type, msg)
 
-    def test_get_scheduled_interfaces(self):
+    def test_get_scheduled_interface(self):
         """
         Should return the Interface (or a class) of the content type selected
         on the field 'scheduled_contenttype'.
         """
         from Products.ATContentTypes.interfaces import IATFolder
 
-        type_interface = self.schedule_config.get_scheduled_interfaces()
-        expected_interface = (IATFolder,)
+        type_interface = self.schedule_config.get_scheduled_interface()
+        expected_interface = IATFolder
         msg = 'expected {} but got {}'.format(expected_interface, type_interface)
         self.assertTrue(type_interface == expected_interface, msg)
 

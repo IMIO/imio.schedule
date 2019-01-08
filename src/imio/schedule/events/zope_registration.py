@@ -51,20 +51,19 @@ def subscribe_task_configs_for_content_type(task_config, event):
                     'UID {}'.format(self.task_config_UID)
                 )
 
-    registration_interfaces = task_config.get_scheduled_interfaces()
+    registration_interface = task_config.get_scheduled_interface()
 
-    for registration_interface in registration_interfaces:
-        gsm.registerAdapter(
-            factory=TaskConfigSubscriber,
-            required=(registration_interface,),
-            provided=IToTaskConfig,
-            name=task_config.UID()
-        )
-        msg = "Registered IToTaskConfig adapter '{}' for {}".format(
-            task_config.Title(),
-            registration_interface
-        )
-        logger.info(msg)
+    gsm.registerAdapter(
+        factory=TaskConfigSubscriber,
+        required=(registration_interface,),
+        provided=IToTaskConfig,
+        name=task_config.UID()
+    )
+    msg = "Registered IToTaskConfig adapter '{}' for {}".format(
+        task_config.Title(),
+        registration_interface
+    )
+    logger.info(msg)
 
 
 def unsubscribe_task_configs_for_content_type(task_config, event):
@@ -76,21 +75,20 @@ def unsubscribe_task_configs_for_content_type(task_config, event):
     gsm = getGlobalSiteManager()
     schedule_config = task_config.get_schedule_config()
 
-    previous_interfaces = getattr(schedule_config, '_scheduled_interface_', None)
-    previous_interfaces = [tuple_to_interface(i) for i in previous_interfaces]
+    previous_interface = getattr(schedule_config, '_scheduled_interface_', None)
+    previous_interface = tuple_to_interface(previous_interface)
 
-    for previous_interface in previous_interfaces:
-        removed = gsm.unregisterAdapter(
-            required=(previous_interface,),
-            provided=IToTaskConfig,
-            name=task_config.UID()
+    removed = gsm.unregisterAdapter(
+        required=(previous_interface,),
+        provided=IToTaskConfig,
+        name=task_config.UID()
+    )
+    if removed:
+        msg = "Unregistered IToTaskConfig adapter '{}' for {}".format(
+            task_config.Title(),
+            previous_interface
         )
-        if removed:
-            msg = "Unregistered IToTaskConfig adapter '{}' for {}".format(
-                task_config.Title(),
-                previous_interface
-            )
-            logger.info(msg)
+        logger.info(msg)
 
 
 def update_task_configs_subscriptions(schedule_config, event):
@@ -100,17 +98,17 @@ def update_task_configs_subscriptions(schedule_config, event):
     and register them again for the new selected content type.
     """
 
-    previous_interfaces = getattr(schedule_config, '_scheduled_interface_', None)
-    new_interfaces = schedule_config.get_scheduled_interfaces()
-    new_interfaces = tuple([interface_to_tuple(i) for i in new_interfaces])
+    previous_interface = getattr(schedule_config, '_scheduled_interface_', None)
+    new_interface = schedule_config.get_scheduled_interface()
+    new_interface = interface_to_tuple(new_interface)
 
     # if there were no previous values, just save it and return
-    if not previous_interfaces:
-        setattr(schedule_config, '_scheduled_interface_', new_interfaces)
+    if not previous_interface:
+        setattr(schedule_config, '_scheduled_interface_', new_interface)
         return
 
-    # if the value did not change, do nothing
-    if previous_interfaces == new_interfaces:
+    # if the walue did not change, do nothing
+    if previous_interface == new_interface:
         return
 
     for task_config in schedule_config.get_all_task_configs():
@@ -120,7 +118,7 @@ def update_task_configs_subscriptions(schedule_config, event):
         subscribe_task_configs_for_content_type(task_config, event)
 
     # replace the _schedule_interface_ attribute with the new value
-    setattr(schedule_config, '_scheduled_interface_', new_interfaces)
+    setattr(schedule_config, '_scheduled_interface_', new_interface)
 
 
 def register_schedule_collection_criterion(schedule_config, event):
