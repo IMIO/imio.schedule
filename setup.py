@@ -56,7 +56,6 @@ setup(
         'test': [
             'Mock',
             'plone.app.testing',
-            'plone.app.robotframework[debug]',
         ],
     },
     entry_points="""

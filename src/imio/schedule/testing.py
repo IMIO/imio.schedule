@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from plone import api
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -266,13 +265,3 @@ class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
         transaction.commit()
 
         super(MacroTaskScheduleTestBase, self).tearDown()
-
-
-SCHEDULE_TEST_ROBOT = FunctionalTesting(
-    bases=(
-        MACROTASK_SCHEDULE_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE
-    ),
-    name="SCHEDULE_ROBOT"
-)
