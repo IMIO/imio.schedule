@@ -5,7 +5,8 @@ Changelog
 1.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow multiple interfaces to be registered on schedule config.
+  [sdelcourt]
 
 
 1.7 (2018-12-06)
