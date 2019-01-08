@@ -140,11 +140,13 @@ class ScheduledContentTypeVocabulary(object):
         """
         return PloneMessageFactory
 
-    def to_vocabulary_key(self, portal_type, interface):
+    def to_vocabulary_key(self, portal_type, interfaces):
         """
         Return the module path of a class.
         """
-        return (portal_type, interface_to_tuple(interface))
+        if type(interfaces) not in [list, tuple]:
+            interfaces = (interfaces,)
+        return (portal_type, tuple([interface_to_tuple(i) for i in interfaces]))
 
 
 class AssignedGroupVocabularyFactory(object):
@@ -158,17 +160,18 @@ class AssignedGroupVocabularyFactory(object):
         Return available groups for a task config.
         """
         gsm = getGlobalSiteManager()
-        scheduled_interface = context.get_scheduled_interface()
+        scheduled_interfaces = context.get_scheduled_interfaces()
 
         voc_terms = []
-        for adapter in gsm.registeredAdapters():
-            implements_IGroup = adapter.provided is IDefaultTaskGroup
-            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                issubclass(scheduled_interface, adapter.required[0])
-            if implements_IGroup and specific_enough:
-                voc_terms.append(
-                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
-                )
+        for scheduled_interface in scheduled_interfaces:
+            for adapter in gsm.registeredAdapters():
+                implements_IGroup = adapter.provided is IDefaultTaskGroup
+                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                    issubclass(scheduled_interface, adapter.required[0])
+                if implements_IGroup and specific_enough:
+                    voc_terms.append(
+                        SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                    )
 
         # enrich the vocabulary with available groups
         for group in api.group.get_groups():
@@ -191,17 +194,18 @@ class AssignedUserVocabularyFactory(object):
         Return available users for a task config.
         """
         gsm = getGlobalSiteManager()
-        scheduled_interface = context.get_scheduled_interface()
+        scheduled_interfaces = context.get_scheduled_interfaces()
 
         voc_terms = []
-        for adapter in gsm.registeredAdapters():
-            implements_IUser = adapter.provided is IDefaultTaskUser
-            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                issubclass(scheduled_interface, adapter.required[0])
-            if implements_IUser and specific_enough:
-                voc_terms.append(
-                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
-                )
+        for scheduled_interface in scheduled_interfaces:
+            for adapter in gsm.registeredAdapters():
+                implements_IUser = adapter.provided is IDefaultTaskUser
+                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                    issubclass(scheduled_interface, adapter.required[0])
+                if implements_IUser and specific_enough:
+                    voc_terms.append(
+                        SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                    )
 
         # enrich the vocabulary with available users
         for user in api.user.get_users():
@@ -265,7 +269,7 @@ class TaskMarkerInterfacesVocabulary(object):
                 )
             )
 
-        #sort elements by title
+        # sort elements by title
         items.sort(lambda a, b: cmp(a.title, b.title))
 
         return SimpleVocabulary(items)
@@ -302,18 +306,19 @@ class TaskLogicVocabularyFactory(object):
         a vocabulary.
         """
         gsm = getGlobalSiteManager()
-        scheduled_interface = context.get_scheduled_interface()
+        scheduled_interfaces = context.get_scheduled_interfaces()
 
         terms = []
-        for adapter in gsm.registeredAdapters():
-            implements_interface = issubclass(adapter.provided, ITaskLogic) and \
-                issubclass(self.provides_interface, adapter.provided)
-            specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                issubclass(scheduled_interface, adapter.required[0])
-            if implements_interface and specific_enough:
-                terms.append(
-                    SimpleTerm(adapter.name, adapter.name, _(adapter.name))
-                )
+        for scheduled_interface in scheduled_interfaces:
+            for adapter in gsm.registeredAdapters():
+                implements_interface = issubclass(adapter.provided, ITaskLogic) and \
+                    issubclass(self.provides_interface, adapter.provided)
+                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
+                    issubclass(scheduled_interface, adapter.required[0])
+                if implements_interface and specific_enough:
+                    terms.append(
+                        SimpleTerm(adapter.name, adapter.name, _(adapter.name))
+                    )
 
         vocabulary = SimpleVocabulary(terms)
         return vocabulary

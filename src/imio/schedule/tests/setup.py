@@ -81,7 +81,7 @@ def add_schedule_config(context):
             type='ScheduleConfig',
             id=schedule_cfg_id,
             title='Empty ScheduleConfig',
-            scheduled_contenttype=('Folder', interface_to_tuple(IATFile)),
+            scheduled_contenttype=('Folder', (interface_to_tuple(IATFile),)),
         )
 
     # create schedule config
@@ -92,7 +92,7 @@ def add_schedule_config(context):
             type='ScheduleConfig',
             id=schedule_cfg_id,
             title='Test ScheduleConfig',
-            scheduled_contenttype=('Folder', interface_to_tuple(IATFolder)),
+            scheduled_contenttype=('Folder', (interface_to_tuple(IATFolder),)),
         )
     schedule_config = getattr(cfg_folder, schedule_cfg_id)
 
