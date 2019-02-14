@@ -68,7 +68,7 @@ def get_container_open_tasks(task_container):
 
 def get_container_tasks(task_container, states=[]):
     """
-    Return all the open tasks of a container.
+    Return all the tasks of a container.
     """
     open_tasks = []
     to_explore = [task_container]

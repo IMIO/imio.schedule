@@ -412,8 +412,11 @@ class BaseTaskConfig(object):
         to_explore = [root_container]
         while to_explore:
             current = to_explore.pop()
-            if IAutomatedTask.providedBy(current) and current.task_config_UID == self.UID() and api.content.get_state(current) in states:
-                tasks.append(current)
+            if IAutomatedTask.providedBy(current) and current.task_config_UID == self.UID():
+                if not states:
+                    tasks.append(current)
+                elif api.content.get_state(current) in states:
+                    tasks.append(current)
             if hasattr(current, 'objectValues'):
                 to_explore.extend(current.objectValues())
         return tasks
