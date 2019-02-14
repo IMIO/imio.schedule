@@ -62,12 +62,23 @@ def get_container_open_tasks(task_container):
     Return all the open tasks of a container.
     """
     states = states_by_status[CREATION] + states_by_status[STARTED]
+    open_tasks = get_container_tasks(task_container, states)
+    return open_tasks
+
+
+def get_container_tasks(task_container, states=[]):
+    """
+    Return all the open tasks of a container.
+    """
     open_tasks = []
     to_explore = [task_container]
     while to_explore:
         current = to_explore.pop()
-        if IAutomatedTask.providedBy(current) and api.content.get_state(current) in states:
-            open_tasks.append(current)
+        if IAutomatedTask.providedBy(current):
+            if not states:
+                open_tasks.append(current)
+            elif api.content.get_state(current) in states:
+                open_tasks.append(current)
         if hasattr(current, 'objectValues'):
             to_explore.extend(current.objectValues())
     return open_tasks
