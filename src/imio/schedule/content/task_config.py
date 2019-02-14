@@ -403,7 +403,7 @@ class BaseTaskConfig(object):
         user_id = default_user or user_id
         return user_id
 
-    def get_task_instances(self, root_container, states=[], the_objects=False):
+    def get_task_instances(self, root_container, states=[]):
         """
         Catalog query to return every AutomatedTask created
         from this TaskConfig contained in 'root_container'.
