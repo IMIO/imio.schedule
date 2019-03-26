@@ -2,8 +2,8 @@
 
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 
-from collective.eeafaceted.dashboard.browser.facetedcollectionportlet import Assignment
-from collective.eeafaceted.dashboard.utils import _updateDefaultCollectionFor
+from imio.dashboard.browser.facetedcollectionportlet import Assignment
+from imio.dashboard.utils import _updateDefaultCollectionFor
 
 from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
@@ -57,37 +57,31 @@ def get_task_configs(task_container, descending=False):
     return task_configs
 
 
-def query_container_open_tasks(task_container, the_objects=False):
+def get_container_open_tasks(task_container):
     """
     Return all the open tasks of a container.
     """
     states = states_by_status[CREATION] + states_by_status[STARTED]
-    tasks = query_container_tasks(
-        task_container,
-        the_objects,
-        query={'review_state': states},
-    )
-    return tasks
+    open_tasks = get_container_tasks(task_container, states)
+    return open_tasks
 
 
-def query_container_tasks(task_container, the_objects=False, query={}):
+def get_container_tasks(task_container, states=[]):
     """
     Return all the tasks of a container.
     """
-    catalog = api.portal.get_tool('portal_catalog')
-
-    full_query = {
-        'object_provides': IAutomatedTask.__identifier__,
-        'path': {'query': '/'.join(task_container.getPhysicalPath())},
-    }
-    full_query.update(query)
-
-    task_brains = catalog.unrestrictedSearchResults(**full_query)
-
-    if the_objects:
-        return [brain.getObject() for brain in task_brains]
-
-    return task_brains
+    open_tasks = []
+    to_explore = [task_container]
+    while to_explore:
+        current = to_explore.pop()
+        if IAutomatedTask.providedBy(current):
+            if not states:
+                open_tasks.append(current)
+            elif api.content.get_state(current) in states:
+                open_tasks.append(current)
+        if hasattr(current, 'objectValues'):
+            to_explore.extend(current.objectValues())
+    return open_tasks
 
 
 def tuple_to_interface(interface_tuple):

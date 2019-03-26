@@ -332,19 +332,19 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         msg = "should have return '{}' user id".format(expected_user)
         self.assertEquals(user, expected_user, msg)
 
-    def test_query_task_instances(self):
+    def test_get_task_instances(self):
         """
         Should return AutomatedTask brains in a container created from a given TaskConfig.
         """
         task_config = self.task_config
 
         root = self.portal
-        tasks = task_config.query_task_instances(root, the_objects=True)
+        tasks = task_config.get_task_instances(root)
         msg = "Should have found at least one AutomatedTask"
         self.assertEquals(tasks, [self.task], msg)
 
         root = self.empty_task_container
-        tasks = task_config.query_task_instances(root, the_objects=True)
+        tasks = task_config.get_task_instances(root)
         msg = "Should not have found any AutomatedTask"
         self.assertEquals(tasks, [], msg)
 

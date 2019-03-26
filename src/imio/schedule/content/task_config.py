@@ -403,35 +403,31 @@ class BaseTaskConfig(object):
         user_id = default_user or user_id
         return user_id
 
-    def query_task_instances(self, root_container, states=[], the_objects=False):
+    def get_task_instances(self, root_container, states=[]):
         """
         Catalog query to return every AutomatedTask created
         from this TaskConfig contained in 'root_container'.
         """
-        catalog = api.portal.get_tool('portal_catalog')
-
-        query = {
-            'object_provides': IAutomatedTask.__identifier__,
-            'path': {'query': '/'.join(root_container.getPhysicalPath())},
-            'task_config_UID': self.UID()
-        }
-        if states:
-            query['review_state'] = states
-
-        task_brains = catalog.unrestrictedSearchResults(**query)
-
-        if the_objects:
-            return [brain.getObject() for brain in task_brains]
-
-        return task_brains
+        tasks = []
+        to_explore = [root_container]
+        while to_explore:
+            current = to_explore.pop()
+            if IAutomatedTask.providedBy(current) and current.task_config_UID == self.UID():
+                if not states:
+                    tasks.append(current)
+                elif api.content.get_state(current) in states:
+                    tasks.append(current)
+            if hasattr(current, 'objectValues'):
+                to_explore.extend(current.objectValues())
+        return tasks
 
     def get_task(self, task_container):
         """
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists.
         """
-        tasks = self.query_task_instances(task_container)
-        task_instance = tasks and tasks[0].getObject() or None
+        tasks = self.get_task_instances(task_container)
+        task_instance = tasks and tasks[0] or None
         return task_instance
 
     def get_created_task(self, task_container):
@@ -439,11 +435,11 @@ class BaseTaskConfig(object):
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is not started yet..
         """
-        tasks = self.query_task_instances(
+        tasks = self.get_task_instances(
             task_container,
             states=states_by_status[CREATION]
         )
-        task_instance = tasks and tasks[0].getObject() or None
+        task_instance = tasks and tasks[0] or None
         return task_instance
 
     def get_started_task(self, task_container):
@@ -451,11 +447,11 @@ class BaseTaskConfig(object):
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is started.
         """
-        tasks = self.query_task_instances(
+        tasks = self.get_task_instances(
             task_container,
             states=states_by_status[STARTED]
         )
-        task_instance = tasks and tasks[0].getObject() or None
+        task_instance = tasks and tasks[0] or None
         return task_instance
 
     def get_open_task(self, task_container):
@@ -464,11 +460,11 @@ class BaseTaskConfig(object):
         TaskConfig in 'task_container' if it exists and is not closed yet.
         """
         states = states_by_status[CREATION] + states_by_status[STARTED]
-        tasks = self.query_task_instances(
+        tasks = self.get_task_instances(
             task_container,
             states=states
         )
-        task_instance = tasks and tasks[0].getObject() or None
+        task_instance = tasks and tasks[0] or None
         return task_instance
 
     def get_closed_task(self, task_container):
@@ -476,18 +472,18 @@ class BaseTaskConfig(object):
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is closed.
         """
-        tasks = self.query_task_instances(
+        tasks = self.get_task_instances(
             task_container,
             states=states_by_status[DONE]
         )
-        task_instance = tasks and tasks[0].getObject() or None
+        task_instance = tasks and tasks[0] or None
         return task_instance
 
     def task_already_exists(self, task_container):
         """
         Check if the task_container already has a task from this config.
         """
-        return self.query_task_instances(task_container)
+        return self.get_task_instances(task_container)
 
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """
