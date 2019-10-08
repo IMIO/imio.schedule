@@ -102,6 +102,60 @@ def end_tasks(task_container, event):
                 config.end_task(task)
 
 
+def freeze_tasks(task_container, event):
+    """
+    Automatically freeze tasks matching freeze conditions of a given
+    task container.
+    """
+
+    # This handler can be triggered for archetypes containers by the
+    # workflow modification event but we want to create tasks only if
+    # the container really exists (more than just created in portal_factory...)
+    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+        if task_container.checkCreationFlag():
+            return
+
+    task_configs = get_task_configs(task_container)
+
+    if not task_configs:
+        return
+
+    with api.env.adopt_roles(['Manager']):
+        for config in task_configs:
+            task = config.get_open_task(task_container)
+            if task and config.should_freeze_task(task_container, task):
+                # delegate the freeze action to the config so different behaviors
+                # can be easily configured
+                config.freeze_task(task)
+
+
+def thaw_tasks(task_container, event):
+    """
+    Automatically thaw tasks matching thaw conditions of a given
+    task container.
+    """
+
+    # This handler can be triggered for archetypes containers by the
+    # workflow modification event but we want to create tasks only if
+    # the container really exists (more than just created in portal_factory...)
+    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+        if task_container.checkCreationFlag():
+            return
+
+    task_configs = get_task_configs(task_container)
+
+    if not task_configs:
+        return
+
+    with api.env.adopt_roles(['Manager']):
+        for config in task_configs:
+            task = config.get_frozen_task(task_container)
+            if task and config.should_thaw_task(task_container, task):
+                # delegate the thaw action to the config so different behaviors
+                # can be easily configured
+                config.thaw_task(task)
+
+
 def update_due_date(task_container, event):
     """
     If the task_container has been modified, compute
