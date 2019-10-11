@@ -9,9 +9,11 @@ from imio.schedule.utils import interface_to_tuple
 from imio.schedule.content.object_factories import CreationConditionObject
 from imio.schedule.content.object_factories import StartConditionObject
 from imio.schedule.content.object_factories import EndConditionObject
+from imio.schedule.content.object_factories import FreezeConditionObject
 from imio.schedule.content.object_factories import MacroCreationConditionObject
 from imio.schedule.content.object_factories import MacroStartConditionObject
 from imio.schedule.content.object_factories import MacroEndConditionObject
+from imio.schedule.content.object_factories import ThawConditionObject
 
 
 def schedule_example_install(context):
@@ -113,6 +115,16 @@ def add_schedule_config(context):
         'condition': u'schedule.test_end_condition',
         'operator': 'AND',
     }
+    freeze_conditions = FreezeConditionObject()
+    freeze_conditions.__dict__ = {
+        'condition': u'schedule.test_freeze_condition',
+        'operator': 'AND',
+    }
+    thaw_conditions = ThawConditionObject()
+    thaw_conditions.__dict__ = {
+        'condition': u'schedule.test_thaw_condition',
+        'operator': 'AND',
+    }
     macro_creation_conditions = MacroCreationConditionObject()
     macro_creation_conditions.__dict__ = creation_conditions.__dict__
     macro_start_conditions = MacroStartConditionObject()
@@ -131,6 +143,8 @@ def add_schedule_config(context):
             creation_conditions=[creation_conditions],
             start_conditions=[start_conditions],
             end_conditions=[end_conditions],
+            freeze_conditions=[freeze_conditions],
+            thaw_conditions=[thaw_conditions],
             creation_state='private',
             starting_states=('pending',),
             ending_states=('published',),

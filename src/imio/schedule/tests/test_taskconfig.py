@@ -3,18 +3,20 @@
 from Acquisition import aq_base
 from DateTime import DateTime
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from imio.schedule.config import DONE
 from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import AutomatedMacroTask
 from imio.schedule.content.task import AutomatedTask
-from imio.schedule.testing import ExampleScheduleFunctionalTestCase
 from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from imio.schedule.testing import TEST_INSTALL_INTEGRATION
 
 from mock import Mock
 from plone import api
+
+from zope.annotation import IAnnotations
 
 import unittest
 
@@ -197,6 +199,78 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         contents = self.browser.contents
         msg = "field 'ending_states' is not editable"
         self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
+
+    def test_freeze_conditions_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'freeze_conditions'))
+
+    def test_freeze_conditions_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'freeze_conditions' is not displayed"
+        self.assertTrue('id="form-widgets-freeze_conditions"' in contents, msg)
+        msg = "field 'freeze_conditions' is not translated"
+        self.assertTrue('Conditions de gel' in contents, msg)
+
+    def test_freeze_conditions_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'freeze_conditions' is not editable"
+        self.assertTrue('Conditions de gel' in contents, msg)
+
+    def test_freeze_states_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'freeze_states'))
+
+    def test_freeze_states_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'freeze_states' is not displayed"
+        self.assertTrue('id="form-widgets-freeze_states"' in contents, msg)
+        msg = "field 'freeze_states' is not translated"
+        self.assertTrue('État(s) de gel de la tâche' in contents, msg)
+
+    def test_freeze_states_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'freeze_states' is not editable"
+        self.assertTrue('État(s) de gel de la tâche' in contents, msg)
+
+    def test_thaw_conditions_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'thaw_conditions'))
+
+    def test_thaw_conditions_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'thaw_conditions' is not displayed"
+        self.assertTrue('id="form-widgets-thaw_conditions"' in contents, msg)
+        msg = "field 'thaw_conditions' is not translated"
+        self.assertTrue('Conditions de dégel' in contents, msg)
+
+    def test_thaw_conditions_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'thaw_conditions' is not editable"
+        self.assertTrue('Conditions de dégel' in contents, msg)
+
+    def test_thaw_states_attribute(self):
+        task_config = aq_base(self.task_config)
+        self.assertTrue(hasattr(task_config, 'thaw_states'))
+
+    def test_thaw_states_field_display(self):
+        self.browser.open(self.task_config.absolute_url())
+        contents = self.browser.contents
+        msg = "field 'thaw_states' is not displayed"
+        self.assertTrue('id="form-widgets-thaw_states"' in contents, msg)
+        msg = "field 'thaw_states' is not translated"
+        self.assertTrue('État(s) de dégel de la tâche' in contents, msg)
+
+    def test_thaw_states_field_edit(self):
+        self.browser.open(self.task_config.absolute_url() + '/edit')
+        contents = self.browser.contents
+        msg = "field 'thaw_states' is not editable"
+        self.assertTrue('État(s) de dégel de la tâche' in contents, msg)
 
     def test_start_date_attribute(self):
         task_config = aq_base(self.task_config)
@@ -442,6 +516,26 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         msg = "should have found the closed task"
         self.assertEquals(task_found, task, msg)
 
+    def test_get_frozen_task(self):
+        """
+        Should return the unique Task of task_container created from
+        this TaskConfig if it is in the state 'frozen'.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # so far nothing should be found
+        task_found = task_config.get_frozen_task(task_container)
+        self.assertFalse(task_found)
+
+        # freeze the task
+        task_config.freeze_task(task)
+
+        task_found = task_config.get_frozen_task(task_container)
+        msg = "should have found the frozen task"
+        self.assertEquals(task_found, task, msg)
+
     def test_task_already_exists(self):
         """
         Should tell wheter the task container already have a task from
@@ -633,6 +727,140 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertTrue(matched_conditions == [])
         self.assertTrue(unmatched_conditions == ['schedule.negative_end_condition'])
 
+    def test_should_freeze_task(self):
+        """
+        Test different cases for the 'should_freeze_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+        # prevent ending task during the freeze test
+        task_config.ending_states = []
+
+        # task container state is different from the states selected on
+        # task_config 'freeze_states' => task should not freeze
+        msg = "Task should not be frozen because the freeze state does not match container state"
+        self.assertFalse(task_config.should_freeze_task(task_container, task), msg)
+
+        # normal case
+        task_config.freeze_states = ['private']
+        msg = "Task should be frozen"
+        freeze = task_config.should_freeze_task(task_container, task)
+        self.assertTrue(freeze, msg)
+
+        # no freeze creation states given means the task should never be frozen
+        task_config.freeze_states = None
+        freeze = task_config.should_freeze_task(task_container, task)
+        self.assertFalse(freeze, msg)
+
+        # set the task_config field 'freeze_conditions' with a negative condition
+        # => task should not freeze
+        task_config.freeze_states = ['private']
+        task_config.freeze_conditions = [type('object', (object, ), {
+            'condition': 'schedule.negative_freeze_condition',
+            'operator': 'AND',
+        })()]
+        msg = "Task should not be frozen because the freeze condition is not matched"
+        freeze = task_config.should_freeze_task(task_container, task)
+        self.assertFalse(freeze, msg)
+
+        # set the task_config freeze_states field to a state different from
+        # the task_container state => task should not freeze
+        task_config.freeze_conditions = []
+        task_config.freeze_states = ('pending',)
+        msg = "Task should not be frozen because the freeze state does not match container state"
+        freeze = task_config.should_freeze_task(task_container, task)
+        self.assertFalse(freeze, msg)
+
+    def test_freeze_conditions_status(self):
+        """
+        Test different cases for the 'freeze_conditions_status' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == ['schedule.test_freeze_condition'])
+        self.assertTrue(unmatched_conditions == [])
+
+        task_config.freeze_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_freeze_condition',
+            'operator': 'AND',
+        })()]
+        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [])
+        self.assertTrue(unmatched_conditions == ['schedule.negative_freeze_condition'])
+
+    def test_should_thaw_task(self):
+        """
+        Test different cases for the 'should_thaw_task' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+        # freeze task befor thaw tests
+        task_config.freeze_task(task)
+        self.assertEquals(api.content.get_state(task), 'frozen', 'task should be frozen')
+
+        # task container state is different from the states selected on
+        # task_config 'thaw_states' => task should not thaw
+        msg = "Task should not be thawed because the thaw state does not match container state"
+        self.assertFalse(task_config.should_thaw_task(task_container, task), msg)
+
+        # normal case
+        task_config.thaw_states = ['private']
+        msg = "Task should be thawed"
+        thaw = task_config.should_thaw_task(task_container, task)
+        self.assertTrue(thaw, msg)
+
+        # no thaw creation states given means the task should never be thawed
+        task_config.thaw_states = None
+        thaw = task_config.should_thaw_task(task_container, task)
+        self.assertFalse(thaw, msg)
+
+        # set the task_config field 'thaw_conditions' with a negative condition
+        # => task should not thaw
+        task_config.thaw_states = ['private']
+        task_config.thaw_conditions = [type('object', (object, ), {
+            'condition': 'schedule.negative_thaw_condition',
+            'operator': 'AND',
+        })()]
+        msg = "Task should not be thawed because the thaw condition is not matched"
+        thaw = task_config.should_thaw_task(task_container, task)
+        self.assertFalse(thaw, msg)
+
+        # set the task_config thaw_states field to a state different from
+        # the task_container state => task should not thaw
+        task_config.thaw_conditions = []
+        task_config.thaw_states = ('pending',)
+        msg = "Task should not be thawed because the thaw state does not match container state"
+        thaw = task_config.should_thaw_task(task_container, task)
+        self.assertFalse(thaw, msg)
+
+    def test_thaw_conditions_status(self):
+        """
+        Test different cases for the 'thaw_conditions_status' method.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+        # freeze task befor thaw tests
+        task_config.freeze_task(task)
+        self.assertEquals(api.content.get_state(task), 'frozen', 'task should be frozen')
+
+        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == ['schedule.test_thaw_condition'])
+        self.assertTrue(unmatched_conditions == [])
+
+        task_config.thaw_conditions = [type('condition', (object, ), {
+            'condition': 'schedule.negative_thaw_condition',
+            'operator': 'AND',
+        })()]
+        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(task_container, task)
+        self.assertTrue(matched_conditions == [])
+        self.assertTrue(unmatched_conditions == ['schedule.negative_thaw_condition'])
+
     def test_create_task(self):
         """
         Should create a task.
@@ -678,6 +906,73 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         msg = "task should have been ended"
         self.assertEquals(api.content.get_state(task), 'closed', msg)
+
+    def test_freeze_task(self):
+        """
+        Should freeze a task.
+        """
+        task_config = self.task_config
+        task = self.task
+
+        msg = "task should not be frozen yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+        task_config.freeze_task(task)
+
+        msg = "task should have been frozen"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+    def test_thaw_task(self):
+        """
+        Should thaw a task.
+        """
+        task_config = self.task_config
+        task = self.task
+
+        msg = "task should be in created state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+        # freeze task befor thaw tests
+        task_config.freeze_task(task)
+        msg = "task should not be thawed yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+        task_config.thaw_task(task)
+
+        msg = "task should have been thawed and put back in its original state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+    def test_thaw_task_stack_freeze_periods(self):
+        """
+        Verify that a task accumulate multiple frozen periods correctly.
+        Multiple freeze periods should stack.
+        """
+        task_config = self.task_config
+        task = self.task
+
+        msg = "task should be in created state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
+        # freeze task befor thaw tests
+        task_config.freeze_task(task)
+        msg = "task should not be thawed yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+        # mock a previous freeze period of 5 days and mockput the current freeze date
+        # as 10 days earlier to simulate a new 10 days freeze period
+        annotations = IAnnotations(task)
+        freeze_infos = annotations['imio.schedule.freeze_task']
+        freeze_infos['previous_freeze_duration'] = 5
+        freeze_infos['freeze_date'] = str(datetime.now().date() + relativedelta(days=-10))
+        annotations['imio.schedule.freeze_task'] = freeze_infos
+
+        task_config.thaw_task(task)
+
+        msg = "task should have been thawed and put back in its original state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+        msg = "task freeze duration should be the sum of the two freeze periods: 5 + 10"
+        freeze_period = annotations['imio.schedule.freeze_task']['previous_freeze_duration']
+        self.assertEquals(freeze_period, 15, msg)
 
     def test_compute_due_date(self):
         """
@@ -733,6 +1028,29 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task_config.additional_delay_type = 'working_days'
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, datetime(2017, 5, 2).date())
+
+    def test_compute_due_date_with_freeze_period(self):
+        """
+        Test 'compute_due_date' method for a task who had been frozen.
+        start date (2017-04-01) + 10 additional days = 2017-04-11
+        + 10 days of frozen task
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task_container.creation_date = DateTime(2017, 4, 1)
+        task = self.task
+
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
+
+        annotations = IAnnotations(task)
+        annotations['imio.schedule.freeze_task'] = {
+            'freeze_date': None,
+            'previous_state': task.get_state(),
+            'previous_freeze_duration': 10
+        }
+
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, datetime(2017, 4, 21).date())
 
     def test_evaluate_conditions_and(self):
         """
@@ -862,27 +1180,6 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
         api.content.get_state = Mock(return_value='closed')
         self.assertTrue(self.task_config.create_recurring_task(container))
-
-
-class TestTaskConfigMethodsFunctional(ExampleScheduleFunctionalTestCase):
-    """
-    Test TaskConfig methods.
-    """
-
-    def test_end_task(self):
-        """
-        Default implementation is to put the task on the state 'closed'.
-        """
-        task_config = self.task_config
-        task = self.task
-
-        task_state = api.content.get_state(task)
-        self.assertNotEquals(task_state, 'closed')
-
-        task_config.end_task(task)
-        task_state = api.content.get_state(task)
-        msg = "Task should be on state 'closed'"
-        self.assertEquals(task_state, 'closed', msg)
 
 
 class TestMacroTaskConfig(unittest.TestCase):
@@ -1019,3 +1316,40 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         task_config.recurrence_conditions = ['foo']
         task_config.evaluate_conditions = Mock(return_value=True)
         self.assertTrue(task_config.should_recurred(None))
+
+    def test_freeze_macrotask(self):
+        macrotask_config = self.macrotask_config
+        macrotask = self.macro_task
+        subtask = self.sub_task
+
+        # normal case
+        macrotask_config.freeze_task(macrotask)
+
+        msg = "MacroTask should be frozen"
+        self.assertEquals(macrotask.get_state(), 'frozen', msg)
+
+        msg = "SubTask should be frozen"
+        self.assertEquals(subtask.get_state(), 'frozen', msg)
+
+    def test_thaw_macrotask(self):
+        macrotask_config = self.macrotask_config
+        macrotask = self.macro_task
+        subtask = self.sub_task
+
+        original_macrotask_state = macrotask.get_state()
+        original_subtask_state = subtask.get_state()
+        # freeze task before trying to thaw it
+        macrotask_config.freeze_task(macrotask)
+
+        msg = "MacroTask should be frozen"
+        self.assertEquals(macrotask.get_state(), 'frozen', msg)
+        msg = "SubTask should be frozen"
+        self.assertEquals(subtask.get_state(), 'frozen', msg)
+
+        # thaw macro task
+        macrotask_config.thaw_task(macrotask)
+
+        msg = "MacroTask should be thawed"
+        self.assertEquals(macrotask.get_state(), original_macrotask_state, msg)
+        msg = "SubTask should be thawed"
+        self.assertEquals(subtask.get_state(), original_subtask_state, msg)
