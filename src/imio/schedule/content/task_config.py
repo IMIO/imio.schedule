@@ -1425,7 +1425,7 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         Default implementation is to put the task  and all its subtasks on the
         state 'frozen'.
         """
-        subtasks_to_freeze = [tsk for tsk in task.get_subtasks() if tsk.get_status() != FROZEN]
+        subtasks_to_freeze = [tsk for tsk in task.get_subtasks() if tsk.get_status() not in [FROZEN, DONE]]
         for subtask in subtasks_to_freeze:
             subtask_config = subtask.get_task_config()
             subtask_config.freeze_task(subtask)
