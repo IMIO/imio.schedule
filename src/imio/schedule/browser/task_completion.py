@@ -18,6 +18,8 @@ class TaskCompletionView(BrowserView):
 
     subtask_title_label = 'Title'
     subtask_todo_title_label = 'Title'
+    subtask_todo_status_label = 'Status'
+    subtask_done_status_label = 'Status'
     due_date_label = 'Due date'
     end_date_label = 'End date'
     assigned_user_label = 'Assigned to'

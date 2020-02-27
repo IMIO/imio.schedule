@@ -37,6 +37,7 @@
         <tr>
             <th i18n:translate=""></th>
             <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_todo_title_label">Title</th>
+            <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_status_label">Title</th>
             <th i18n:translate="" tal:content="python: view.assigned_user_label">Assigned to</th>
             <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
         </tr>
@@ -48,6 +49,11 @@
             </td>
             <td>
                 <span tal:content="python: subtask.Title()" />
+            </td>
+            <td tal:define="all_subtask_conditions python:subtask.restrictedTraverse('simple_end_status').get_conditions_status()">
+                <tal:conditions_todo define="task_conditions python: all_subtask_conditions[1];">
+                    <div metal:use-macro="here/@@taskmacros/conditions_status_macro" />
+                </tal:conditions_todo>
             </td>
             <td>
                 <span tal:content="python: view.display_user_name(subtask.assigned_user)" />
@@ -65,6 +71,7 @@
         <tr>
             <th i18n:translate=""></th>
             <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_title_label">Title</th>
+            <th i18n:domain="plone" i18n:translate="" tal:content="python: view.subtask_status_label">Title</th>
             <th i18n:translate="" tal:content="python: view.assigned_user_label">Assigned to</th>
             <th i18n:translate="" tal:content="python: view.due_date_label">Due date</th>
             <th i18n:translate="" tal:content="python: view.end_date_label">End date</th>
@@ -77,6 +84,11 @@
             </td>
             <td>
                 <span tal:content="python: subtask.Title()" />
+            </td>
+            <td tal:define="all_subtask_conditions python:subtask.restrictedTraverse('simple_end_status').get_conditions_status()">
+                <tal:conditions_todo define="task_conditions python: all_subtask_conditions[0];">
+                    <div metal:use-macro="here/@@taskmacros/conditions_status_macro" />
+                </tal:conditions_todo>
             </td>
             <td>
                 <span tal:content="python: view.display_user_name(subtask.assigned_user)" />
