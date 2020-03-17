@@ -566,15 +566,23 @@ class BaseTaskConfig(object):
         task_instance = tasks and tasks[0] or None
         return task_instance
 
-    def get_closed_task(self, task_container):
+    def get_closed_tasks(self, task_container):
         """
-        Return the unique AutomatedTask object created from this
-        TaskConfig in 'task_container' if it exists and is closed.
+        Return all the closed automatedTask objects created from this
+        TaskConfig in 'task_container' .
         """
         tasks = self.get_task_instances(
             task_container,
             states=states_by_status[DONE]
         )
+        return tasks
+
+    def get_closed_task(self, task_container):
+        """
+        Return the unique AutomatedTask object created from this
+        TaskConfig in 'task_container' if it exists and is closed.
+        """
+        tasks = self.get_closed_tasks(task_container)
         task_instance = tasks and tasks[0] or None
         return task_instance
 

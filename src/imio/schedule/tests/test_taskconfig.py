@@ -496,6 +496,26 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         msg = "should not have found the closed task"
         self.assertFalse(task_found, msg)
 
+    def test_get_closed_tasks(self):
+        """
+        Should return all the closed Task of task_container created
+        from this TaskConfig.
+        """
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        # so far nothing should be found
+        task_found = task_config.get_closed_tasks(task_container)
+        self.assertFalse(task_found)
+
+        # close the task
+        task_config.end_task(task)
+
+        task_found = task_config.get_closed_tasks(task_container)
+        msg = "should have found the closed task"
+        self.assertEquals(task_found, [task], msg)
+
     def test_get_closed_task(self):
         """
         Should return the unique Task of task_container created from
