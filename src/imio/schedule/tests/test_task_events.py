@@ -325,3 +325,117 @@ class TestTaskEnding(ExampleScheduleFunctionalTestCase):
         # the task should have been ended
         msg = "The task should have been ended"
         self.assertEquals(api.content.get_state(task), 'closed', msg)
+
+
+class TestTaskFreezing(ExampleScheduleFunctionalTestCase):
+    """
+    Test task freezing with different changes of TaskContainer.
+    """
+
+    def test_task_freezing_on_container_modification(self):
+        """
+        When modifying a contentype scheduled with a ScheduleConfig
+        Task should froze automatically depending on freeze conditions
+        and freezing_states.
+        """
+        task_container = self.task_container
+        task = self.task
+        task_config = self.task_config
+        task_config.ending_states = ['published']
+        task_config.freeze_states = ['private']
+
+        msg = "The task should not be closed or frozen yet ! (for the sake of the test)"
+        self.assertNotEquals(task.get_state(), 'closed', msg)
+        self.assertNotEquals(task.get_state(), 'frozen', msg)
+        msg = "The task container should  be in private state"
+        self.assertEquals(api.content.get_state(task_container), 'private', msg)
+
+        # simulate modification
+        notify(ObjectModifiedEvent(task_container))
+
+        # the task should have been frozen
+        msg = "The task should have been frozen"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+    def test_task_freezing_on_container_workflow_modification(self):
+        """
+        When changing state a contentype scheduled with a ScheduleConfig
+        Task should froze automatically depending on freeze conditions
+        and freezing_states.
+        """
+        task_container = self.task_container
+        task = self.task
+        task_config = self.task_config
+        task_config.ending_states = ['private']
+        task_config.freeze_states = ['published']
+
+        msg = "The task should not be closed or frozen yet ! (for the sake of the test)"
+        self.assertNotEquals(task.get_state(), 'closed', msg)
+        self.assertNotEquals(task.get_state(), 'frozen', msg)
+
+        # do workflow change
+        api.content.transition(task_container, transition='publish')
+
+        # the task should have been frozen
+        msg = "The task should have been frozen"
+        self.assertEquals(task.get_state(), 'frozen', msg)
+
+
+class TestTaskThawing(ExampleScheduleFunctionalTestCase):
+    """
+    Test task thawing with different changes of TaskContainer.
+    """
+
+    def test_task_thawing_on_container_modification(self):
+        """
+        When modifying a contentype scheduled with a ScheduleConfig
+        Task should froze automatically depending on thaw conditions
+        and thawing_states.
+        """
+        task_container = self.task_container
+        task = self.task
+        task_config = self.task_config
+        task_config.ending_states = ['published']
+        task_config.thaw_states = ['private']
+
+        task_original_state = task.get_state()
+        msg = "The task original state should not be frozen! (for the sake of the test)"
+        self.assertNotEquals(task_original_state, 'frozen', msg)
+        msg = "The task container should  be in private state"
+        self.assertEquals(api.content.get_state(task_container), 'private', msg)
+
+        # freeze task
+        task_config.freeze_task(task)
+        self.assertEquals(task.get_state(), 'frozen', msg)
+        # simulate modification
+        notify(ObjectModifiedEvent(task_container))
+
+        # the task should have been thawed
+        msg = "The task should have been thawed"
+        self.assertEquals(api.content.get_state(task), task_original_state, msg)
+
+    def test_task_thawing_on_container_workflow_modification(self):
+        """
+        When changing state a contentype scheduled with a ScheduleConfig
+        Task should froze automatically depending on thaw conditions
+        and thawing_states.
+        """
+        task_container = self.task_container
+        task = self.task
+        task_config = self.task_config
+        task_config.freeze_states = ['private']
+        task_config.thaw_states = ['published']
+
+        task_original_state = task.get_state()
+        msg = "The task original state should not be frozen! (for the sake of the test)"
+        self.assertNotEquals(task_original_state, 'frozen', msg)
+
+        # freeze task
+        task_config.freeze_task(task)
+        self.assertEquals(task.get_state(), 'frozen', msg)
+        # do workflow change
+        api.content.transition(task_container, transition='publish')
+
+        # the task should have been thawed
+        msg = "The task should have been thawed"
+        self.assertEquals(task.get_state(), task_original_state, msg)

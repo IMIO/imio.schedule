@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
+from imio.schedule.config import FROZEN
 from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.content.subform_context_choice import SubFormContextChoice
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultEndingStates
+from imio.schedule.interfaces import IDefaultFreezeStates
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
+from imio.schedule.interfaces import IDefaultThawStates
 from imio.schedule.interfaces import IEndCondition
+from imio.schedule.interfaces import IFreezeCondition
 from imio.schedule.interfaces import IStartCondition
+from imio.schedule.interfaces import IThawCondition
 from imio.schedule.interfaces import TaskAlreadyExists
 from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.utils import round_to_weekday
@@ -25,6 +31,7 @@ from plone.dexterity.content import Container
 from plone.supermodel import model
 
 from zope import schema
+from zope.annotation import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
@@ -95,6 +102,46 @@ class IEndConditionSchema(Interface):
 
 
 class IRecurrenceConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
+
+class IFreezeConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.creation_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
+
+class IThawConditionSchema(Interface):
 
     condition = SubFormContextChoice(
         title=_(u'Condition'),
@@ -275,6 +322,58 @@ class ITaskConfig(model.Schema):
         vocabulary='schedule.vocabulary.week_days_rounding',
         default='0',
         required=True,
+    )
+
+    model.fieldset(
+        'freeze',
+        label=_(u'Freeze'),
+        fields=[
+            'freeze_states',
+            'freeze_conditions',
+        ],
+    )
+
+    freeze_states = schema.Set(
+        title=_(u'Task container freeze states'),
+        description=_(u'Select the states of the container where the task is automatically closed.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    freeze_conditions = schema.List(
+        title=_(u'Freeze conditions'),
+        description=_(u'Select freeze conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IFreezeConditionSchema,
+        ),
+        required=False,
+    )
+
+    model.fieldset(
+        'thaw',
+        label=_(u'Thaw'),
+        fields=[
+            'thaw_states',
+            'thaw_conditions',
+        ],
+    )
+
+    thaw_states = schema.Set(
+        title=_(u'Task container thaw states'),
+        description=_(u'Select the states of the container where the task is automatically closed.'),
+        value_type=schema.Choice(source='schedule.container_state'),
+        required=False,
+    )
+
+    thaw_conditions = schema.List(
+        title=_(u'Thaw conditions'),
+        description=_(u'Select thaw conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IThawConditionSchema,
+        ),
+        required=False,
     )
 
     model.fieldset(
@@ -467,14 +566,34 @@ class BaseTaskConfig(object):
         task_instance = tasks and tasks[0] or None
         return task_instance
 
+    def get_closed_tasks(self, task_container):
+        """
+        Return all the closed automatedTask objects created from this
+        TaskConfig in 'task_container' .
+        """
+        tasks = self.get_task_instances(
+            task_container,
+            states=states_by_status[DONE]
+        )
+        return tasks
+
     def get_closed_task(self, task_container):
         """
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is closed.
         """
+        tasks = self.get_closed_tasks(task_container)
+        task_instance = tasks and tasks[0] or None
+        return task_instance
+
+    def get_frozen_task(self, task_container):
+        """
+        Return the unique AutomatedTask object created from this
+        TaskConfig in 'task_container' if it exists and is frozen.
+        """
         tasks = self.get_task_instances(
             task_container,
-            states=states_by_status[DONE]
+            states=states_by_status[FROZEN]
         )
         task_instance = tasks and tasks[0] or None
         return task_instance
@@ -701,6 +820,114 @@ class BaseTaskConfig(object):
             interface=IEndCondition,
         )
 
+    def should_freeze_task(self, task_container, task):
+        """
+        Evaluate:
+         - If the task has an assigned user
+         - If the task container is on the state selected on 'freeze_states'
+         - All the existence conditions of a task.
+           Returns True only if ALL the conditions are matched.
+        This should be checked in a zope event to automatically close a task.
+        """
+
+        if not task.assigned_user:
+            return False
+
+        # task is already frozen or done
+        if task.get_status() in [FROZEN, DONE]:
+            return False
+
+        # task container state match any freeze_states value?
+        if not self.match_freeze_states(task_container):
+            return False
+
+        if not self.match_freeze_conditions(task_container, task):
+            return False
+
+        return True
+
+    def match_freeze_states(self, task_container):
+        """
+        """
+        default_freeze_states = queryAdapter(task_container, IDefaultFreezeStates)
+        default_freeze_states = default_freeze_states and default_freeze_states() or []
+        freeze_states = list(default_freeze_states) + list(self.freeze_states or []) or []
+
+        container_state = api.content.get_state(task_container)
+        return container_state in freeze_states
+
+    def match_freeze_conditions(self, task_container, task):
+        """
+        """
+        return self.evaluate_conditions(
+            conditions=self.freeze_conditions,
+            to_adapt=(task_container, task),
+            interface=IFreezeCondition,
+        )
+
+    def freeze_conditions_status(self, task_container, task):
+        """
+        Return status of each freeze condition.
+        """
+        return self.get_conditions_status(
+            conditions=self.freeze_conditions,
+            to_adapt=(task_container, task),
+            interface=IFreezeCondition,
+        )
+
+    def should_thaw_task(self, task_container, task):
+        """
+        Evaluate:
+         - If the task has an assigned user
+         - If the task container is on the state selected on 'thaw_states'
+         - All the existence conditions of a task.
+           Returns True only if ALL the conditions are matched.
+        This should be checked in a zope event to automatically close a task.
+        """
+        if task.get_status() is not FROZEN:
+            return False
+
+        if not task.assigned_user:
+            return False
+
+        # task container state match any thaw_states value?
+        if not self.match_thaw_states(task_container):
+            return False
+
+        if not self.match_thaw_conditions(task_container, task):
+            return False
+
+        return True
+
+    def match_thaw_states(self, task_container):
+        """
+        """
+        default_thaw_states = queryAdapter(task_container, IDefaultThawStates)
+        default_thaw_states = default_thaw_states and default_thaw_states() or []
+        thaw_states = list(default_thaw_states) + list(self.thaw_states or []) or []
+
+        container_state = api.content.get_state(task_container)
+        return container_state in thaw_states
+
+    def match_thaw_conditions(self, task_container, task):
+        """
+        """
+        return self.evaluate_conditions(
+            conditions=self.thaw_conditions,
+            to_adapt=(task_container, task),
+            interface=IThawCondition,
+        )
+
+    def thaw_conditions_status(self, task_container, task):
+        """
+        Return status of each thaw condition.
+        """
+        return self.get_conditions_status(
+            conditions=self.thaw_conditions,
+            to_adapt=(task_container, task),
+            interface=IThawCondition,
+        )
+
     def should_recurred(self, task_container):
         """
         Evaluate if the a new task should be created for the task container
@@ -766,6 +993,54 @@ class BaseTaskConfig(object):
                 api.content.transition(obj=task, transition='do_closed')
         task.reindex_parent_tasks(idxs=['is_solvable_task'])
 
+    def freeze_task(self, task):
+        """
+        Default implementation is to put the task on the state 'frozen'.
+        """
+        annotations = IAnnotations(task)
+        freeze_infos = annotations.get(
+            'imio.schedule.freeze_task',
+            {
+                'freeze_date': None,
+                'previous_state': task.get_state(),
+                'previous_freeze_duration': 0
+            }
+        )
+        freeze_infos['freeze_date'] = str(datetime.now().date())
+        freeze_infos['freeze_state'] = task.get_state()
+        annotations['imio.schedule.freeze_task'] = freeze_infos
+
+        portal_workflow = api.portal.get_tool('portal_workflow')
+        workflow_def = portal_workflow.getWorkflowsFor(task)[0]
+        workflow_id = workflow_def.getId()
+        workflow_state = portal_workflow.getStatusOf(workflow_id, task)
+        workflow_state['review_state'] = 'frozen'
+        portal_workflow.setStatusOf(workflow_id, task, workflow_state.copy())
+
+        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+
+    def thaw_task(self, task):
+        """
+        Default implementation is to put the task on the state 'frozen'.
+        """
+        annotations = IAnnotations(task)
+        freeze_infos = annotations['imio.schedule.freeze_task']
+        freeze_date = datetime.strptime(freeze_infos['freeze_date'], '%Y-%m-%d')
+        freeze_delta = datetime.now().date() - freeze_date.date()
+        new_freeze_duration = freeze_infos['previous_freeze_duration'] + freeze_delta.days
+        new_freeze_infos = freeze_infos.copy()
+        new_freeze_infos['previous_freeze_duration'] = new_freeze_duration
+        annotations['imio.schedule.freeze_task'] = new_freeze_infos
+
+        portal_workflow = api.portal.get_tool('portal_workflow')
+        workflow_def = portal_workflow.getWorkflowsFor(task)[0]
+        workflow_id = workflow_def.getId()
+        workflow_state = portal_workflow.getStatusOf(workflow_id, task)
+        workflow_state['review_state'] = freeze_infos['previous_state']
+        portal_workflow.setStatusOf(workflow_id, task, workflow_state.copy())
+
+        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+
     def compute_due_date(self, task_container, task):
         """
         Evaluate 'task_container' and 'task' to compute the due date of a task.
@@ -792,6 +1067,11 @@ class BaseTaskConfig(object):
             due_date = calendar.add_working_days(due_date, additional_delay)
         elif additional_delay:
             due_date = due_date + relativedelta(days=+additional_delay)
+
+        annotations = IAnnotations(task)
+        freeze_infos = annotations.get('imio.schedule.freeze_task', None)
+        if freeze_infos:
+            due_date = due_date + relativedelta(days=+freeze_infos['previous_freeze_duration'])
 
         round_day = int(self.round_to_day)
         if round_day:
@@ -943,6 +1223,46 @@ class IMacroEndConditionSchema(Interface):
     )
 
 
+class IMacroFreezeConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_freeze_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
+
+class IMacroThawConditionSchema(Interface):
+
+    condition = SubFormContextChoice(
+        title=_(u'Condition'),
+        vocabulary='schedule.macrotask_thaw_conditions',
+        required=True,
+    )
+
+    operator = schema.Choice(
+        title=_(u'Operator'),
+        vocabulary='schedule.logical_operator',
+        default='AND',
+    )
+
+    display_status = schema.Bool(
+        title=_(u'display_status'),
+        default=True,
+    )
+
+
 class IMacroRecurrenceConditionSchema(Interface):
 
     condition = SubFormContextChoice(
@@ -1001,6 +1321,26 @@ class IMacroTaskConfig(ITaskConfig):
         value_type=schema.Object(
             title=_(u'Conditions'),
             schema=IMacroEndConditionSchema,
+        ),
+        required=False,
+    )
+
+    freeze_conditions = schema.List(
+        title=_(u'Freeze conditions'),
+        description=_(u'Select freeze conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroFreezeConditionSchema,
+        ),
+        required=False,
+    )
+
+    thaw_conditions = schema.List(
+        title=_(u'Thaw conditions'),
+        description=_(u'Select thaw conditions of the task.'),
+        value_type=schema.Object(
+            title=_(u'Conditions'),
+            schema=IMacroThawConditionSchema,
         ),
         required=False,
     )
@@ -1087,3 +1427,27 @@ class MacroTaskConfig(Container, BaseTaskConfig):
             return False
 
         return True
+
+    def freeze_task(self, task):
+        """
+        Default implementation is to put the task  and all its subtasks on the
+        state 'frozen'.
+        """
+        subtasks_to_freeze = [tsk for tsk in task.get_subtasks() if tsk.get_status() not in [FROZEN, DONE]]
+        for subtask in subtasks_to_freeze:
+            subtask_config = subtask.get_task_config()
+            subtask_config.freeze_task(subtask)
+
+        super(MacroTaskConfig, self).freeze_task(task)
+
+    def thaw_task(self, task):
+        """
+        Default implementation is to resume the task and all its subtasks on their
+        previous state.
+        """
+        subtasks_to_thaw = [tsk for tsk in task.get_subtasks() if tsk.get_status() == FROZEN]
+        for subtask in subtasks_to_thaw:
+            subtask_config = subtask.get_task_config()
+            subtask_config.thaw_task(subtask)
+
+        super(MacroTaskConfig, self).thaw_task(task)

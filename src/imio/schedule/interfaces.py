@@ -35,6 +35,18 @@ class IDefaultEndingStates(Interface):
     """
 
 
+class IDefaultFreezeStates(Interface):
+    """
+    Adapts a TaskContainer into a list of default freeze states.
+    """
+
+
+class IDefaultThawStates(Interface):
+    """
+    Adapts a TaskContainer into a list of default freeze states.
+    """
+
+
 class IDefaultTaskGroup(ITaskLogic):
     """
     Adapts a TaskContainer into a plone group to assign to a task.
@@ -76,6 +88,18 @@ class IEndCondition(ICondition):
     """
 
 
+class IFreezeCondition(ICondition):
+    """
+    Freeze condition of task.
+    """
+
+
+class IThawCondition(ICondition):
+    """
+    Thaw condition of task.
+    """
+
+
 class IStartDate(ITaskLogic):
     """
     Adapts a TaskContainer into the start date used to compute
@@ -98,6 +122,18 @@ class IMacroTaskStartCondition(IStartCondition):
 class IMacroTaskEndCondition(IEndCondition):
     """
     End condition of macro task.
+    """
+
+
+class IMacroTaskFreezeCondition(IFreezeCondition):
+    """
+    Freeze condition of macro task.
+    """
+
+
+class IMacroTaskThawCondition(IThawCondition):
+    """
+    Thaw condition of macro task.
     """
 
 

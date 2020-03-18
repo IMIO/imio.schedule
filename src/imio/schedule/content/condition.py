@@ -7,10 +7,14 @@ from imio.schedule.content.logic import TaskLogic
 from imio.schedule.interfaces import ICondition
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IEndCondition
+from imio.schedule.interfaces import IFreezeCondition
 from imio.schedule.interfaces import IMacroTaskCreationCondition
 from imio.schedule.interfaces import IMacroTaskEndCondition
+from imio.schedule.interfaces import IMacroTaskFreezeCondition
 from imio.schedule.interfaces import IMacroTaskStartCondition
+from imio.schedule.interfaces import IMacroTaskThawCondition
 from imio.schedule.interfaces import IStartCondition
+from imio.schedule.interfaces import IThawCondition
 
 from zope.interface import implements
 
@@ -65,6 +69,34 @@ class EndCondition(Condition):
         """
 
 
+class FreezeCondition(Condition):
+    """
+    Freeze condition of a AutomatedTask.
+    """
+
+    implements(IFreezeCondition)
+
+    def evaluate(self):
+        """
+        To override.
+        evaluate if the condition is True or False
+        """
+
+
+class ThawCondition(Condition):
+    """
+    Thaw condition of a AutomatedTask.
+    """
+
+    implements(IThawCondition)
+
+    def evaluate(self):
+        """
+        To override.
+        evaluate if the condition is True or False
+        """
+
+
 class MacroTaskCreationCondition(CreationCondition):
     """
     Creation condition of a AutomatedMacroTask.
@@ -99,6 +131,34 @@ class MacroTaskEndCondition(Condition):
     """
 
     implements(IMacroTaskEndCondition)
+
+    def evaluate(self):
+        """
+        To override.
+        evaluate if the condition is True or False
+        """
+
+
+class MacroTaskFreezeCondition(Condition):
+    """
+    Freeze condition of a AutomatedMacroTask.
+    """
+
+    implements(IMacroTaskFreezeCondition)
+
+    def evaluate(self):
+        """
+        To override.
+        evaluate if the condition is True or False
+        """
+
+
+class MacroTaskThawCondition(Condition):
+    """
+    Thaw condition of a AutomatedMacroTask.
+    """
+
+    implements(IMacroTaskThawCondition)
 
     def evaluate(self):
         """

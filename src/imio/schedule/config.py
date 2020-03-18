@@ -4,6 +4,7 @@
 CREATION = 'schedule_task_created'
 STARTED = 'schedule_task_started'
 DONE = 'schedule_task_done'
+FROZEN = 'schedule_task_frozen'
 
 states_by_status = {
     CREATION: [
@@ -18,6 +19,9 @@ states_by_status = {
     DONE: [
         'closed'
     ],
+    FROZEN: [
+        'frozen'
+    ]
 }
 
 status_by_state = {
@@ -26,7 +30,8 @@ status_by_state = {
     'to_do': STARTED,
     'in_progress': STARTED,
     'realized': STARTED,
-    'closed': DONE
+    'closed': DONE,
+    'frozen': FROZEN
 }
 
 task_types = ['task', 'AutomatedTask', 'AutomatedMacroTask']

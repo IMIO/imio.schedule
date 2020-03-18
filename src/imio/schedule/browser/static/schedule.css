@@ -13,7 +13,7 @@ td.td_cell_assigned_user_column {
 }
 
 span.schedule_created {
-    background-color: #6AD7FC;
+    background-color: #ff9000;
 }
 
 span.schedule_to_do {
@@ -22,6 +22,10 @@ span.schedule_to_do {
 
 span.schedule_closed {
     background-color: #75AD0A;
+}
+
+span.schedule_frozen {
+    background-color: #6AD7FC;
 }
 
 span.simple_task {

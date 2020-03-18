@@ -6,12 +6,16 @@ from zope.schema.fieldproperty import FieldProperty
 
 from imio.schedule.content.task_config import ICreationConditionSchema
 from imio.schedule.content.task_config import IEndConditionSchema
+from imio.schedule.content.task_config import IFreezeConditionSchema
 from imio.schedule.content.task_config import IMacroCreationConditionSchema
 from imio.schedule.content.task_config import IMacroEndConditionSchema
+from imio.schedule.content.task_config import IMacroFreezeConditionSchema
 from imio.schedule.content.task_config import IMacroRecurrenceConditionSchema
 from imio.schedule.content.task_config import IMacroStartConditionSchema
+from imio.schedule.content.task_config import IMacroThawConditionSchema
 from imio.schedule.content.task_config import IRecurrenceConditionSchema
 from imio.schedule.content.task_config import IStartConditionSchema
+from imio.schedule.content.task_config import IThawConditionSchema
 
 
 class BaseConditionObject(object):
@@ -69,6 +73,30 @@ class EndConditionAdapter(FactoryAdapter):
     factory = EndConditionObject
 
 
+class FreezeConditionObject(BaseConditionObject):
+    implements(IFreezeConditionSchema)
+
+    condition = FieldProperty(IFreezeConditionSchema['condition'])
+    operator = FieldProperty(IFreezeConditionSchema['operator'])
+    display_status = FieldProperty(IFreezeConditionSchema['display_status'])
+
+
+class FreezeConditionAdapter(FactoryAdapter):
+    factory = FreezeConditionObject
+
+
+class ThawConditionObject(BaseConditionObject):
+    implements(IThawConditionSchema)
+
+    condition = FieldProperty(IThawConditionSchema['condition'])
+    operator = FieldProperty(IThawConditionSchema['operator'])
+    display_status = FieldProperty(IThawConditionSchema['display_status'])
+
+
+class ThawConditionAdapter(FactoryAdapter):
+    factory = ThawConditionObject
+
+
 class MacroCreationConditionObject(BaseConditionObject):
     implements(IMacroCreationConditionSchema)
 
@@ -103,6 +131,30 @@ class MacroEndConditionObject(BaseConditionObject):
 
 class MacroEndConditionAdapter(FactoryAdapter):
     factory = MacroEndConditionObject
+
+
+class MacroFreezeConditionObject(BaseConditionObject):
+    implements(IMacroFreezeConditionSchema)
+
+    condition = FieldProperty(IMacroFreezeConditionSchema['condition'])
+    operator = FieldProperty(IMacroFreezeConditionSchema['operator'])
+    display_status = FieldProperty(IMacroFreezeConditionSchema['display_status'])
+
+
+class MacroFreezeConditionAdapter(FactoryAdapter):
+    factory = MacroFreezeConditionObject
+
+
+class MacroThawConditionObject(BaseConditionObject):
+    implements(IMacroThawConditionSchema)
+
+    condition = FieldProperty(IMacroThawConditionSchema['condition'])
+    operator = FieldProperty(IMacroThawConditionSchema['operator'])
+    display_status = FieldProperty(IMacroThawConditionSchema['display_status'])
+
+
+class MacroThawConditionAdapter(FactoryAdapter):
+    factory = MacroThawConditionObject
 
 
 class RecurrenceConditionObject(BaseConditionObject):

@@ -7,6 +7,10 @@ Changelog
 
 - Allow multiple interfaces to be registered on schedule config.
   [sdelcourt]
+- Get tasks and subtasks attribute exploration rather than catalog.
+  [sdelcourt]
+- Add method 'get_closed_tasks' on TaskConfig.
+  [sdelcourt]
 
 
 1.6 (2018-08-30)

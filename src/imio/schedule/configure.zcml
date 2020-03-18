@@ -13,10 +13,11 @@
   <include package="plone.app.dexterity" />
 
   <include package=".browser" />
+  <include package=".collectionwidget" />
   <include package=".content" />
   <include package=".dashboard" />
   <include package=".events" />
-  <include package=".collectionwidget" />
+  <include package=".workflow" />
 
   <include file="indexes.zcml" />
   <include file="vocabularies.zcml" />

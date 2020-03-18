@@ -44,6 +44,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'collective.faceted.task',
+        'collective.wfadaptations',
         'collective.z3cform.datagridfield',
         'imio.dashboard',
         'plone.api',
