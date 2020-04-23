@@ -189,6 +189,56 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         expected_date = datetime.now(end_date.tzinfo)
         self.assertTrue(relativedelta(expected_date, end_date).seconds < 1)
 
+    def test_start(self):
+        """
+        Should start a task.
+        """
+        task = self.task
+        msg = "task should not be started yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+        task._start()
+        msg = "task should have been started"
+        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+
+    def test_end(self):
+        """
+        Should end a task.
+        """
+        task = self.task
+        msg = "task should not be ended yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+        task._end()
+        msg = "task should have been ended"
+        self.assertEquals(api.content.get_state(task), 'closed', msg)
+
+    def test_freeze(self):
+        """
+        Should freeze a task.
+        """
+        task = self.task
+        msg = "task should not be frozen yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+        task._freeze()
+        msg = "task should have been frozen"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+    def test_thaw(self):
+        """
+        Should thaw a task.
+        """
+        task = self.task
+        msg = "task should be in created state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+        # freeze task befor thaw tests
+        task._freeze()
+        msg = "task should not be thawed yet (for the sake of the test..)"
+        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+
+        task._thaw()
+
+        msg = "task should have been thawed and put back in its original state"
+        self.assertEquals(api.content.get_state(task), 'created', msg)
+
 
 class TestAutomatedMacroTask(unittest.TestCase):
     """

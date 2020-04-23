@@ -194,6 +194,34 @@ class BaseAutomatedTask(object):
 
         return True
 
+    def _start(self):
+        """
+        Delegate start operation to the task_config
+        """
+        task_config = self.get_task_config()
+        task_config.start_task(self)
+
+    def _end(self):
+        """
+        Delegate end operation to the task_config
+        """
+        task_config = self.get_task_config()
+        task_config.end_task(self)
+
+    def _freeze(self):
+        """
+        Delegate freeze operation to the task_config
+        """
+        task_config = self.get_task_config()
+        task_config.freeze_task(self)
+
+    def _thaw(self):
+        """
+        Delegate thaw operation to the task_config
+        """
+        task_config = self.get_task_config()
+        task_config.thaw_task(self)
+
 
 class AutomatedTask(Item, BaseAutomatedTask):
     """

@@ -66,6 +66,16 @@ def get_container_open_tasks(task_container):
     return open_tasks
 
 
+def end_all_open_tasks(task_container):
+    """
+    End all open tasks of a container without checking any condition.
+    """
+    tasks_to_end = get_container_open_tasks(task_container)
+    for task in tasks_to_end:
+        task._end()
+    return tasks_to_end
+
+
 def get_container_tasks(task_container, states=[]):
     """
     Return all the tasks of a container.
