@@ -11,6 +11,8 @@ Changelog
   [sdelcourt]
 - Add method 'get_closed_tasks' on TaskConfig.
   [sdelcourt]
+- Add util method 'end_all_open_tasks' of a container.
+  [sdelcourt]
 
 
 1.6 (2018-08-30)

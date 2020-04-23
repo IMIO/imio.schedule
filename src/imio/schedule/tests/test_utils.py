@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from Products.ATContentTypes.interfaces import IATFolder
 from datetime import date
 
 from imio.schedule.testing import ExampleScheduleIntegrationTestCase
+from imio.schedule.config import CREATION, STARTED, DONE, status_by_state
+
+from plone import api
+
+from Products.ATContentTypes.interfaces import IATFolder
 
 
 class TestUtils(ExampleScheduleIntegrationTestCase):
@@ -33,6 +37,29 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         task_configs = get_task_configs(folder)
         task_config_UIDS = [task_config.UID() for task_config in task_configs]
         self.assertEqual(set(task_config_UIDS), set(expected_UIDS))
+
+    def test_get_container_open_tasks(self):
+        """
+        Test the method get_container_open_tasks.
+        """
+        from imio.schedule.utils import get_container_open_tasks
+
+        task_state = api.content.get_state(self.task)
+        self.assertEqual(status_by_state[task_state] in [CREATION, STARTED])
+        expected = [self.task]
+        open_tasks = get_container_open_tasks(self.task_container)
+        self.assertEqual(expected, open_tasks)
+
+    def test_end_all_open_tasks(self):
+        """
+        Test the method end_all_open_tasks.
+        """
+        from imio.schedule.utils import end_all_open_tasks
+
+        open_tasks = end_all_open_tasks(self.task_container)
+        end_all_open_tasks(self.task_container)
+        for task in open_tasks:
+            self.assertEqual(status_by_state[api.content.get_state()], DONE)
 
     def test_tuple_to_interface(self):
         """
