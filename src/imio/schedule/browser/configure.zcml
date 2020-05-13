@@ -57,4 +57,12 @@
      permission="zope2.View"
      />
 
+  <browser:page
+     for="imio.schedule.content.task.IAutomatedTask"
+     name="close_task"
+     class=".close_task.CloseTaskView"
+     template="templates/close_task.pt"
+     permission="zope2.View"
+     />
+
 </configure>
