@@ -72,6 +72,20 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+    <!-- TaskConfig 'freeze_conditions' field Vocabulary -->
+    <utility
+        factory=".vocabulary.FreezeConditionVocabularyFactory"
+        name="schedule.freeze_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+    <!-- TaskConfig 'thaw_conditions' field Vocabulary -->
+    <utility
+        factory=".vocabulary.ThawConditionVocabularyFactory"
+        name="schedule.thaw_conditions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
     <!-- TaskConfig 'due_date' field Vocabulary -->
     <utility
         factory=".vocabulary.StartDateVocabularyFactory"
