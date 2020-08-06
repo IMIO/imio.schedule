@@ -82,4 +82,24 @@
     name="imio.schedule.content.task_config.IMacroRecurrenceConditionSchema"
     />
 
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.FreezeConditionAdapter"
+    name="imio.schedule.content.task_config.IFreezeConditionSchema"
+    />
+
+  <adapter
+    for="zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface
+         zope.interface.Interface"
+    provides="z3c.form.interfaces.IObjectFactory"
+    factory=".object_factories.ThawConditionAdapter"
+    name="imio.schedule.content.task_config.IThawConditionSchema"
+    />
+
 </configure>
