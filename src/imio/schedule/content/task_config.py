@@ -125,7 +125,7 @@ class IFreezeConditionSchema(Interface):
 
     condition = SubFormContextChoice(
         title=_(u'Condition'),
-        vocabulary='schedule.creation_conditions',
+        vocabulary='schedule.freeze_conditions',
         required=True,
     )
 
@@ -145,7 +145,7 @@ class IThawConditionSchema(Interface):
 
     condition = SubFormContextChoice(
         title=_(u'Condition'),
-        vocabulary='schedule.creation_conditions',
+        vocabulary='schedule.thaw_conditions',
         required=True,
     )
 

@@ -6,6 +6,7 @@ from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultTaskGroup
 from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IEndCondition
+from imio.schedule.interfaces import IFreezeCondition
 from imio.schedule.interfaces import IMacroTaskCreationCondition
 from imio.schedule.interfaces import IMacroTaskEndCondition
 from imio.schedule.interfaces import IMacroTaskStartCondition
@@ -16,6 +17,7 @@ from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IStartDate
 from imio.schedule.interfaces import ITaskLogic
 from imio.schedule.interfaces import ITaskMarkerInterface
+from imio.schedule.interfaces import IThawCondition
 from imio.schedule.utils import interface_to_tuple
 from imio.schedule.utils import dict_list_2_vocabulary
 
@@ -349,6 +351,24 @@ class EndConditionVocabularyFactory(TaskLogicVocabularyFactory):
     """
 
     provides_interface = IEndCondition
+
+
+class FreezeConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'end_conditions' field.
+    Return available end conditions of a task config.
+    """
+
+    provides_interface = IFreezeCondition
+
+
+class ThawConditionVocabularyFactory(TaskLogicVocabularyFactory):
+    """
+    Vocabulary factory for 'end_conditions' field.
+    Return available end conditions of a task config.
+    """
+
+    provides_interface = IThawCondition
 
 
 class StartDateVocabularyFactory(TaskLogicVocabularyFactory):
