@@ -1114,7 +1114,8 @@ class BaseTaskConfig(object):
         creation_place = creation_place or task_container
         object_ids = creation_place.objectIds()
         related_ids = [i for i in object_ids
-                       if i.startswith(self.default_task_id)]
+                       if i.startswith(self.default_task_id)
+                       and creation_place[i].get_task_config() == self]
         if len(related_ids) > 0:
             object_id = related_ids[-1]
             if api.content.get_state(creation_place[object_id]) != 'closed':
