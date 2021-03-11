@@ -518,6 +518,7 @@ class BaseTaskConfig(object):
                     tasks.append(current)
             if hasattr(current, 'objectValues'):
                 to_explore.extend(current.objectValues())
+        tasks = sorted(tasks, key=lambda x: x.created())
         return tasks
 
     def get_task(self, task_container):

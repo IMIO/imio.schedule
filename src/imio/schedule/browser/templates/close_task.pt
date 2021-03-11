@@ -12,7 +12,7 @@
 <metal:main_macro define-macro="main">
   <metal:body define-macro="body_macro">
     <div id="task-action">
-      <h1 i18n:translate="">Change the task owner</h1>
+      <h1 i18n:translate="">Close task</h1>
       <tal:block replace="structure view/contents"></tal:block>
     </div>
   </metal:body>

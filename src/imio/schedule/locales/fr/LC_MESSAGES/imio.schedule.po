@@ -101,7 +101,7 @@ msgstr "Jour"
 
 #: ../content/task_config.py:315
 msgid "Define the calculation method for the additional delay"
-msgstr "Choisissezz la méthode de calcul du délai aditionnel"
+msgstr "Choisissez la méthode de calcul du délai aditionnel"
 
 msgid "Doable alone"
 msgstr "Réalisable seul"
