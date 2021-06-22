@@ -206,7 +206,8 @@ class BaseAutomatedTask(object):
         Delegate end operation to the task_config
         """
         task_config = self.get_task_config()
-        task_config.end_task(self)
+        with api.env.adopt_roles(['Manager']):
+            task_config.end_task(self)
 
     def _freeze(self):
         """
