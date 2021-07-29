@@ -25,3 +25,6 @@ msgstr "Statut"
 
 msgid "header_status"
 msgstr "Statut"
+
+msgid "header_path"
+msgstr "Chemin"
