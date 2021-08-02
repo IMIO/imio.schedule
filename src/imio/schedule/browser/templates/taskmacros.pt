@@ -21,7 +21,7 @@
                 <span i18n:domain="imio.schedule" i18n:translate="" tal:replace="python: ' to one of the following states'" />:
             </tal:not_closed>
             <tal:closed condition="closed">
-                <span i18n:translate="" tal:replace="python: 'is one of the following states'" />:
+                <span i18n:domain="imio.schedule" i18n:translate="" tal:replace="python: ' is one of the following states'" />:
             </tal:closed>
             <tal:states repeat="state python: state_status[1]">
                 '<b i18n:domain="plone"  i18n:translate="" tal:content="python: state" />'
@@ -32,7 +32,7 @@
 </div>
 
 <div metal:define-macro="subtasks_todo_status_macro" i18n:domain="imio.schedule">
-    <div>Subtasks:</div>
+    <div i18n:translate="Subtasks">Subtasks:</div>
     <table>
         <tr>
             <th i18n:translate=""></th>
@@ -66,7 +66,7 @@
 </div>
 
 <div metal:define-macro="subtasks_status_macro" i18n:domain="imio.schedule">
-    <div>Subtasks:</div>
+    <div i18n:translate="Subtasks">Subtasks:</div>
     <table>
         <tr>
             <th i18n:translate=""></th>
