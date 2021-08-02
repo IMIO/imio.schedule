@@ -17,6 +17,7 @@ from imio.schedule.interfaces import IToIcon
 from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import implements
+from zope.i18n import translate
 
 
 class DueDateColumn(BaseColumn):
@@ -183,8 +184,8 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
             <th i18n:translate="">{subtask}</th>\
             <th i18n:translate="">{due_date}</th></tr>'.format(
                 icon=self.display_task_status(self.task, with_subtasks=bool(subtasks_to_do)),
-                subtask=_('Subtask'),
-                due_date=_('Due date'),
+                subtask=translate(_('Subtask'), context=self.request),
+                due_date=translate(_('Due date'), context=self.request),
             ),
         ]
         for task in subtasks_to_do:
