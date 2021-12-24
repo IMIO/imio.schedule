@@ -199,6 +199,12 @@ class ICalculationDelay(ITaskLogic):
     """
 
 
+class IFreezeDuration(Interface):
+    """
+    Base interface for freeze duration adapters.
+    """
+
+
 class IToIcon(Interface):
     """
     Adapts an object into an icon.

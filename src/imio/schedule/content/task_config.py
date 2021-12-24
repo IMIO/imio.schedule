@@ -19,6 +19,7 @@ from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IDefaultThawStates
 from imio.schedule.interfaces import IEndCondition
 from imio.schedule.interfaces import IFreezeCondition
+from imio.schedule.interfaces import IFreezeDuration
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IThawCondition
 from imio.schedule.interfaces import TaskAlreadyExists
@@ -1024,11 +1025,15 @@ class BaseTaskConfig(object):
         """
         Default implementation is to put the task on the state 'frozen'.
         """
+
         annotations = IAnnotations(task)
         freeze_infos = annotations['imio.schedule.freeze_task']
-        freeze_date = datetime.strptime(freeze_infos['freeze_date'], '%Y-%m-%d')
-        freeze_delta = datetime.now().date() - freeze_date.date()
-        new_freeze_duration = freeze_infos['previous_freeze_duration'] + freeze_delta.days
+        calculator = getMultiAdapter(
+            (task.get_container(), task),
+            interface=IFreezeDuration,
+            name='schedule.freeze_duration',
+        )
+        new_freeze_duration = calculator.freeze_duration
         new_freeze_infos = freeze_infos.copy()
         new_freeze_infos['previous_freeze_duration'] = new_freeze_duration
         annotations['imio.schedule.freeze_task'] = new_freeze_infos
