@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -1082,6 +1083,10 @@ class BaseTaskConfig(object):
         round_day = int(self.round_to_day)
         if round_day:
             due_date = round_to_weekday(due_date, round_day)
+
+        # frozen tasks have infinite due date
+        if task.get_status() in FROZEN:
+            return date(9999, 1, 1)
 
         return due_date
 
