@@ -92,13 +92,14 @@ class BaseAutomatedTask(object):
         Return associated task config.
         """
         catalog = api.portal.get_tool('portal_catalog')
-        brains = catalog(UID=self.task_config_UID)
-        if brains:
-            return brains[0].getObject()
-        else:
-            raise TaskConfigNotFound(
-                'UID {}'.format(self.task_config_UID)
-            )
+        with api.env.adopt_roles(['Manager']):
+            brains = catalog.unrestrictedSearchResults(UID=self.task_config_UID)
+            if brains:
+                return brains[0].getObject()
+            else:
+                raise TaskConfigNotFound(
+                    'UID {}'.format(self.task_config_UID)
+                )
 
     def get_status(self):
         """
