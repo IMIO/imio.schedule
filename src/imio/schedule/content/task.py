@@ -89,7 +89,7 @@ class BaseAutomatedTask(object):
                 'UID {}'.format(self.schedule_config_UID)
             )
 
-    @cache(get_key=lambda task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def get_task_config(self):
         """
         Return associated task config.
@@ -110,7 +110,7 @@ class BaseAutomatedTask(object):
         """
         return status_by_state[self.get_state()]
 
-    @cache(get_key=lambda task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def start_conditions_status(self):
         """
         See start_conditions_status of TaskConfig.
@@ -120,7 +120,7 @@ class BaseAutomatedTask(object):
         status = task_config.start_conditions_status(container, self)
         return status
 
-    @cache(get_key=lambda task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def starting_states_status(self):
         """
         """
@@ -133,7 +133,7 @@ class BaseAutomatedTask(object):
         container_state = api.content.get_state(container)
         return (container_state, starting_states)
 
-    @cache(get_key=lambda task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def end_conditions_status(self):
         """
         See end_conditions_status of TaskConfig.

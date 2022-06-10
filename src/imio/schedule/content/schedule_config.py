@@ -65,7 +65,7 @@ class ScheduleConfig(Container):
 
         return config_brains
 
-    @cache(get_key=lambda schedule_cfg: schedule_cfg.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, schedule_cfg: schedule_cfg.id, get_request='self.REQUEST')
     def get_all_task_configs(self):
         """
         Return all the TaskConfig of this ScheduleConfig.
