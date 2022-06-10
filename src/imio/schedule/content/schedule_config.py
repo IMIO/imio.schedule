@@ -8,6 +8,8 @@ from imio.schedule import _
 from imio.schedule.content.task_config import ITaskConfig
 from imio.schedule.utils import tuple_to_interface
 
+from plone.memoize.request import cache
+
 from zope import schema
 from zope.interface import implements
 
@@ -63,6 +65,7 @@ class ScheduleConfig(Container):
 
         return config_brains
 
+    @cache(get_key=lambda schedule_cfg: schedule_cfg.id, get_request='self.REQUEST')
     def get_all_task_configs(self):
         """
         Return all the TaskConfig of this ScheduleConfig.
