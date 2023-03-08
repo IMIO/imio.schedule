@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.eeafaceted.z3ctable\n"
 
-msgid "header_assigned_user_column"
+msgid "header_assigned_user"
 msgstr ""
 
 msgid "header_due_date"

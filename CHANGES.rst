@@ -5,7 +5,8 @@ Changelog
 1.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- URB-1537 - Change collection column name
+  [jchandelle]
 
 
 1.8 (2023-04-06)
@@ -13,10 +14,13 @@ Changelog
 
 - Allow multiple interfaces to be registered on schedule config.
   [sdelcourt]
+
 - Get tasks and subtasks attribute exploration rather than catalog.
   [sdelcourt]
+
 - Add method 'get_closed_tasks' on TaskConfig.
   [sdelcourt]
+
 - Add util method 'end_all_open_tasks' of a container.
   [sdelcourt]
 

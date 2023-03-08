@@ -18,7 +18,7 @@
           collective.eeafaceted.z3ctable.interfaces.IFacetedTable"
      factory=".columns.AssignedUserColumn"
      provides="collective.eeafaceted.z3ctable.interfaces.IFacetedColumn"
-     name="assigned_user_column"
+     name="assigned_user"
   />
 
   <adapter

@@ -14,7 +14,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-msgid "header_assigned_user_column"
+msgid "header_assigned_user"
 msgstr "Assigné à"
 
 msgid "header_due_date"
