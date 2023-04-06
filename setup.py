@@ -19,7 +19,7 @@ long_description = (
 
 setup(
     name='imio.schedule',
-    version='1.8',
+    version='1.9.dev0',
     description="Schedule for imio products",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
