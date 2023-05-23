@@ -128,6 +128,10 @@ def freeze_tasks(task_container, event):
                 # can be easily configured
                 config.freeze_task(task)
 
+                # update due date after the task has frozen
+                task.due_date = config.compute_due_date(task_container, task)
+                task.reindexObject(idxs=('due_date',))
+
 
 def thaw_tasks(task_container, event):
     """
@@ -154,6 +158,11 @@ def thaw_tasks(task_container, event):
                 # delegate the thaw action to the config so different behaviors
                 # can be easily configured
                 config.thaw_task(task)
+
+                # update due date after the task has thawed, because some date
+                # computation can rely on the task thawing date
+                task.due_date = config.compute_due_date(task_container, task)
+                task.reindexObject(idxs=('due_date',))
 
 
 def update_due_date(task_container, event):

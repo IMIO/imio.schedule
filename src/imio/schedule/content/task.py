@@ -18,6 +18,8 @@ from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
 
+from plone.memoize.request import cache
+
 from zope.interface import implements
 
 
@@ -87,18 +89,20 @@ class BaseAutomatedTask(object):
                 'UID {}'.format(self.schedule_config_UID)
             )
 
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def get_task_config(self):
         """
         Return associated task config.
         """
         catalog = api.portal.get_tool('portal_catalog')
-        brains = catalog(UID=self.task_config_UID)
-        if brains:
-            return brains[0].getObject()
-        else:
-            raise TaskConfigNotFound(
-                'UID {}'.format(self.task_config_UID)
-            )
+        with api.env.adopt_roles(['Manager']):
+            brains = catalog.unrestrictedSearchResults(UID=self.task_config_UID)
+            if brains:
+                return brains[0].getObject()
+            else:
+                raise TaskConfigNotFound(
+                    'UID {}'.format(self.task_config_UID)
+                )
 
     def get_status(self):
         """
@@ -106,6 +110,7 @@ class BaseAutomatedTask(object):
         """
         return status_by_state[self.get_state()]
 
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def start_conditions_status(self):
         """
         See start_conditions_status of TaskConfig.
@@ -115,6 +120,7 @@ class BaseAutomatedTask(object):
         status = task_config.start_conditions_status(container, self)
         return status
 
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def starting_states_status(self):
         """
         """
@@ -127,6 +133,7 @@ class BaseAutomatedTask(object):
         container_state = api.content.get_state(container)
         return (container_state, starting_states)
 
+    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
     def end_conditions_status(self):
         """
         See end_conditions_status of TaskConfig.
@@ -206,7 +213,8 @@ class BaseAutomatedTask(object):
         Delegate end operation to the task_config
         """
         task_config = self.get_task_config()
-        task_config.end_task(self)
+        with api.env.adopt_roles(['Manager']):
+            task_config.end_task(self)
 
     def _freeze(self):
         """

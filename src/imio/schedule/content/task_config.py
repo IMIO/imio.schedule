@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -19,6 +20,7 @@ from imio.schedule.interfaces import IDefaultTaskUser
 from imio.schedule.interfaces import IDefaultThawStates
 from imio.schedule.interfaces import IEndCondition
 from imio.schedule.interfaces import IFreezeCondition
+from imio.schedule.interfaces import IFreezeDuration
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IThawCondition
 from imio.schedule.interfaces import TaskAlreadyExists
@@ -1024,11 +1026,15 @@ class BaseTaskConfig(object):
         """
         Default implementation is to put the task on the state 'frozen'.
         """
+
         annotations = IAnnotations(task)
         freeze_infos = annotations['imio.schedule.freeze_task']
-        freeze_date = datetime.strptime(freeze_infos['freeze_date'], '%Y-%m-%d')
-        freeze_delta = datetime.now().date() - freeze_date.date()
-        new_freeze_duration = freeze_infos['previous_freeze_duration'] + freeze_delta.days
+        calculator = getMultiAdapter(
+            (task.get_container(), task),
+            interface=IFreezeDuration,
+            name='schedule.freeze_duration',
+        )
+        new_freeze_duration = calculator.freeze_duration
         new_freeze_infos = freeze_infos.copy()
         new_freeze_infos['previous_freeze_duration'] = new_freeze_duration
         annotations['imio.schedule.freeze_task'] = new_freeze_infos
@@ -1078,6 +1084,10 @@ class BaseTaskConfig(object):
         if round_day:
             due_date = round_to_weekday(due_date, round_day)
 
+        # frozen tasks have infinite due date
+        if task.get_status() in FROZEN:
+            return date(9999, 1, 1)
+
         return due_date
 
     def _create_task_instance(self, creation_place, task_id):
@@ -1115,7 +1125,8 @@ class BaseTaskConfig(object):
         creation_place = creation_place or task_container
         object_ids = creation_place.objectIds()
         related_ids = [i for i in object_ids
-                       if i.startswith(self.default_task_id)]
+                       if i.startswith(self.default_task_id)
+                       and creation_place[i].get_task_config() == self]
         if len(related_ids) > 0:
             object_id = related_ids[-1]
             if api.content.get_state(creation_place[object_id]) != 'closed':

@@ -51,7 +51,6 @@ msgstr "Assigné à"
 msgid "Assigned user"
 msgstr "Responsable de la tâche"
 
-#: ../profiles/default/types/AutomatedMacroTask.xml
 msgid "AutomatedMacroTask"
 msgstr "Macro-tâche configurable"
 
@@ -491,3 +490,7 @@ msgstr "Condition de fin TEST"
 
 msgid "schedule.test_start_condition"
 msgstr "Condition de démarrage TEST"
+
+#: ../../../browser/templates/taskmacros.pt:35
+msgid "Subtasks"
+msgstr "Sous-tâches"

@@ -37,6 +37,19 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
+def unify_vocabularies(vocabularies):
+    """Remove duplicates from a vocabulary list"""
+    dict = {}
+    unified = []
+    for vocabularie in vocabularies:
+        if vocabularie.value in dict:
+            dict[vocabularie.value] += 1
+        else:
+            dict[vocabularie.value] = 1
+            unified.append(vocabularie)
+    return unified
+
+
 class BaseVocabularyFactory(object):
     """
     Base class for vocabulary factories.
@@ -181,7 +194,7 @@ class AssignedGroupVocabularyFactory(object):
                 SimpleTerm(group.id, group.id, group.getGroupTitleOrName())
             )
 
-        vocabulary = SimpleVocabulary(voc_terms)
+        vocabulary = SimpleVocabulary(unify_vocabularies(voc_terms))
         return vocabulary
 
 
@@ -215,7 +228,7 @@ class AssignedUserVocabularyFactory(object):
                 SimpleTerm(user.id, user.id, user.getProperty('fullname') or user.getUserName())
             )
 
-        vocabulary = SimpleVocabulary(sorted(voc_terms, key=lambda term: term.title.decode('utf-8')))
+        vocabulary = SimpleVocabulary(sorted(unify_vocabularies(voc_terms), key=lambda term: term.title.decode('utf-8')))
         return vocabulary
 
 
@@ -322,7 +335,7 @@ class TaskLogicVocabularyFactory(object):
                         SimpleTerm(adapter.name, adapter.name, _(adapter.name))
                     )
 
-        vocabulary = SimpleVocabulary(terms)
+        vocabulary = SimpleVocabulary(unify_vocabularies(terms))
         return vocabulary
 
 

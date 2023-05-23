@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from zope.annotation import IAnnotations
 from zope.component import queryMultiAdapter
 
 from imio.schedule.content.logic import TaskLogic
@@ -52,3 +54,21 @@ class CalculationDefaultDelay(BaseCalculationDelay):
 
     def calculate_delay(self):
         return 0
+
+
+class DefaultFreezeDuration(object):
+    """
+    """
+
+    def __init__(self, task_container, task):
+        self.container = task_container
+        self.task = task
+
+    @property
+    def freeze_duration(self):
+        annotations = IAnnotations(self.task)
+        freeze_infos = annotations['imio.schedule.freeze_task']
+        freeze_date = datetime.strptime(freeze_infos['freeze_date'], '%Y-%m-%d')
+        freeze_delta = datetime.now().date() - freeze_date.date()
+        new_freeze_duration = freeze_infos['previous_freeze_duration'] + freeze_delta.days
+        return new_freeze_duration
