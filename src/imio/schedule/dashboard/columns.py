@@ -67,6 +67,7 @@ class StatusColum(BaseColumn):
 
     sort_index = -1
     display_status_interface = IDisplayTaskStatus
+    escape = False
 
     def renderHeadCell(self):
         """Override rendering of head of the cell to include jQuery
