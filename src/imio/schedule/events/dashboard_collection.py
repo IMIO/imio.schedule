@@ -12,6 +12,10 @@ from zope.interface import alsoProvides
 def create(schedule_container, event):
     """
     """
+    #do not automatically re-create the collection during upgrade steps
+    if 'portal_setup' in schedule_container.REQUEST.URL:
+        return
+
     collection_id = 'dashboard_collection'
     title = IScheduleConfig.providedBy(schedule_container) and _('All') or schedule_container.Title()
 
