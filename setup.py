@@ -43,6 +43,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'collective.eeafaceted.collectionwidget',
         'collective.faceted.task',
         'collective.wfadaptations',
         'collective.z3cform.datagridfield',

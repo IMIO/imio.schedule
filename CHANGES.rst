@@ -5,7 +5,8 @@ Changelog
 1.9.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Migrate to use `collective.eeafaceted.collectionwidget`
+  [mpeeters]
 
 
 1.9.0 (2023-07-03)

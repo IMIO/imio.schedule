@@ -3,7 +3,7 @@
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 
 from imio.dashboard.browser.facetedcollectionportlet import Assignment
-from imio.dashboard.utils import _updateDefaultCollectionFor
+from collective.eeafaceted.collectionwidget.utils import _updateDefaultCollectionFor
 
 from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
