@@ -26,7 +26,7 @@ class ScheduleCollectionVocabulary(CollectionVocabulary):
                 path={
                     'query': '/'.join(config.getPhysicalPath()),
                 },
-                object_provides='plone.app.collection.interfaces.ICollection',
+                object_provides='plone.app.contenttypes.interfaces.ICollection',
                 sort_on='getObjPositionInParent'
             )
             collections_brains.extend(brains)
