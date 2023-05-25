@@ -18,6 +18,7 @@
   <include package=".dashboard" />
   <include package=".events" />
   <include package=".workflow" />
+  <include package=".migration" />
 
   <include file="indexes.zcml" />
   <include file="vocabularies.zcml" />

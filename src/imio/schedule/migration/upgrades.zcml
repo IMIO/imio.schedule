@@ -3,12 +3,26 @@
     xmlns:gs="http://namespaces.zope.org/genericsetup"
     i18n_domain="imio.schedule">
 
-    <gs:upgradeStep
-        title="Upgrade urban to 1.8"
-        description="urban upgrade step"
-        source="1.7"
-        destination="1.8"
-        handler=".migrate_to_18.migrate_to_18"
-        profile="imio.schedule:default" />
+  <gs:upgradeStep
+    title="Upgrade urban to 1.8"
+    description="urban upgrade step"
+    source="1.7"
+    destination="1.8"
+    handler=".migrate_to_18.migrate_to_18"
+    profile="imio.schedule:default" />
+
+  <gs:upgradeStep
+    title="Fix marker interface on schedule collections"
+    source="*"
+    destination="2"
+    handler=".upgrades.upgrade_2_fix_schedule_collection"
+    profile="imio.schedule:default" />
+
+  <gs:upgradeStep
+    title="Set showNumberOfItems value"
+    source="2"
+    destination="3"
+    handler=".upgrades.upgrade_3_set_showNumberOfItems"
+    profile="imio.schedule:default" />
 
 </configure>
