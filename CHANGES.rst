@@ -5,7 +5,7 @@ Changelog
 1.9.1 (unreleased)
 ------------------
 
-- Migrate to use `collective.eeafaceted.collectionwidget`
+- Migrate to use `collective.eeafaceted.collectionwidget` [URB-2627]
   [mpeeters]
 
 
