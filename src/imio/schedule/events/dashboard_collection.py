@@ -32,7 +32,7 @@ def create(schedule_container, event):
                 }
             ],
             'customViewFields': (
-                u'assigned_user_column',
+                u'assigned_user',
                 u'status',
                 u'due_date'
             ),
@@ -45,7 +45,7 @@ def create(schedule_container, event):
             factory_args['customViewFields'] = (
                 u'pretty_link',
                 u'sortable_title',
-                u'assigned_user_column',
+                u'assigned_user',
                 u'status',
                 u'due_date'
             )
