@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.9.1 (unreleased)
+2.0.0 (2023-07-03)
 ------------------
 
 - Migrate to use `collective.eeafaceted.collectionwidget` [URB-2627]
