@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.9 (unreleased)
-----------------
+1.9.0 (2023-07-03)
+------------------
 
 - URB-1537 - Change collection column name
   [jchandelle]
