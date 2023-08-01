@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.0.1 (unreleased)
+2.0.1 (2023-08-01)
 ------------------
 
 - Fix order of upgrade steps [URB-2627]
