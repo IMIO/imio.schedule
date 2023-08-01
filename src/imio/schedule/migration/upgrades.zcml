@@ -13,7 +13,7 @@
 
   <gs:upgradeStep
     title="Fix marker interface on schedule collections"
-    source="*"
+    source="1.8"
     destination="2"
     handler=".upgrades.upgrade_2_fix_schedule_collection"
     profile="imio.schedule:default" />

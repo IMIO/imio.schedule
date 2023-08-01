@@ -5,7 +5,8 @@ Changelog
 2.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix order of upgrade steps [URB-2627]
+  [mpeeters]
 
 
 2.0.0 (2023-07-03)
