@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.0.2 (unreleased)
+2.0.2 (2023-09-01)
 ------------------
 
 - Add specificity to upgradestep check [URB-2868]
