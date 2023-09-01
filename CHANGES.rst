@@ -5,7 +5,8 @@ Changelog
 2.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add specificity to upgradestep check [URB-2868]
+  [jchandelle]
 
 
 2.0.1 (2023-08-01)
