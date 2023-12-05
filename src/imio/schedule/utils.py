@@ -185,6 +185,18 @@ def round_to_weekday(date, weekday):
     return date + datetime.timedelta(days_delta)
 
 
+def close_or_past_date(date, by_days=7):
+    """
+    Checks if a date is getting close (or already past)
+
+    :type date: datetime.date
+    :type by_days: int
+    """
+    today = datetime.date.today()
+    limit_date = date - datetime.timedelta(days=by_days)
+    return today >= limit_date
+
+
 class WorkingDaysCalendar(Belgium):
 
     def __init__(self, *args, **kwargs):

@@ -44,6 +44,18 @@ p.warning {
     color: red;
 }
 
+td.red_close_due_date {
+    text-decoration: underline;
+    text-decoration-color: red;
+    text-decoration-thickness: 3px;
+}
+
+td.orange_close_due_date {
+    text-decoration: underline;
+    text-decoration-color: orange;
+    text-decoration-thickness: 3px;
+}
+
 .term-level-1 {
     padding-left: 1em
 }
