@@ -4,6 +4,8 @@
 from plone.supermodel import model
 from zope import schema
 from zope.interface import Interface
+from zope.interface import Invalid
+from zope.interface import invariant
 from zope.interface.interfaces import IInterface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
@@ -226,6 +228,34 @@ class ISettings(model.Schema):
         ),
         required=True,
     )
+
+
+class IDueDateSettings(Interface):
+    """ """
+
+    color_orange_x_days_before_due_date = schema.Int(
+        title=_("Color due date in orange if it comes close to X days"),
+        description=_("Leave empty to disable"),
+        required=False,
+        default=10,
+        min=0,
+    )
+
+    color_red_x_days_before_due_date = schema.Int(
+        title=_("Color due date in red if it comes close to X days"),
+        description=_("Overrides orange color, leave empty to disable"),
+        required=False,
+        default=5,
+        min=0,
+    )
+
+    @invariant
+    def orange_is_before_red_invariant(data):
+        if data.color_orange_x_days_before_due_date is None or data.color_red_x_days_before_due_date is None:
+            return
+        if data.color_orange_x_days_before_due_date < data.color_red_x_days_before_due_date:
+            raise Invalid(
+                _(u"The orange value should be higher than the red one, as it is used as a first warning."))
 
 
 class ICalendarExtraHolidays(Interface):

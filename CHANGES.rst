@@ -5,7 +5,8 @@ Changelog
 2.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Underline close due dates [URB-2515]
+  [ndemonte]
 
 
 2.0.2 (2023-09-01)

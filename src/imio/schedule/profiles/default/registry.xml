@@ -29,4 +29,8 @@
             <element>friday</element>
         </value>
     </records>
+    <records interface="imio.schedule.interfaces.IDueDateSettings" purge="False">
+        <value key="color_orange_x_days_before_due_date">10</value>
+        <value key="color_red_x_days_before_due_date">5</value>
+    </records>
 </registry>

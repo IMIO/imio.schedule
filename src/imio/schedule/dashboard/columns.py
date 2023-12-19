@@ -26,12 +26,12 @@ def due_date_extra_classes(due_date, review_state):
 
     if review_state != 'closed' and due_date and due_date.year != 9999:
         orange_limit = api.portal.get_registry_record(
-            'Products.urban.browser.schedule_settings.ISchedule.color_orange_x_days_before_due_date',
-            None
+            'imio.schedule.interfaces.IDueDateSettings.color_orange_x_days_before_due_date',
+            default=None
         )
         red_limit = api.portal.get_registry_record(
-            'Products.urban.browser.schedule_settings.ISchedule.color_red_x_days_before_due_date',
-            None
+            'imio.schedule.interfaces.IDueDateSettings.color_red_x_days_before_due_date',
+            default=None
         )
         if red_limit is not None and close_or_past_date(due_date, by_days=red_limit):
             extra_classes += " red_close_due_date"
