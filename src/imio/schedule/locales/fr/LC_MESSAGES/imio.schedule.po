@@ -71,6 +71,14 @@ msgid "Change the task owner"
 msgstr "Réassigner"
 
 #: ../content/task_config.py:47
+
+#: ../interfaces.py:237
+msgid "Color due date in orange if it comes close to X days"
+msgstr "Souligner l'échéance en ORANGE quand elle a atteint X jours restants"
+
+#: ../interfaces.py:245
+msgid "Color due date in red if it comes close to X days"
+msgstr "Souligner l'échéance en ROUGE quand elle a atteint X jours restants"
 msgid "Condition"
 msgstr "Condition"
 
@@ -146,7 +154,11 @@ msgstr "Paramètres"
 msgid "Installs the imio.schedule add-on."
 msgstr "Installe le produit 'échéancier'"
 
-#: ../interfaces.py:216
+#: ../interfaces.py:238
+msgid "Leave empty to disable"
+msgstr "Laissez le champ vide pour désactiver le surlignage"
+
+#: ../interfaces.py:224
 msgid "List of working days"
 msgstr "Liste des jours ouvrables"
 
@@ -205,6 +217,10 @@ msgstr ""
 #: ../content/task_config.py:53
 msgid "Operator"
 msgstr "Opérateur"
+
+#: ../interfaces.py:246
+msgid "Overrides orange color, leave empty to disable"
+msgstr "Outrepasse la couleur orange; laissez le champ vide pour désactiver le surlignage"
 
 #: ../browser/task_owner.py:39
 msgid "Owner changed"
@@ -406,7 +422,11 @@ msgstr "Dégel"
 msgid "Thaw conditions"
 msgstr "Conditions de dégel de la tâche"
 
-#: ../content/task_config.py:308
+#: ../interfaces.py:258
+msgid "The orange value should be higher than the red one, as it is used as a first warning."
+msgstr "La limite pour l'orange doit être supérieure à la rouge, car l'orange est utilisé comme premier avertissement."
+
+#: ../content/task_config.py:310
 msgid "This delay is added to the due date of the task."
 msgstr "Délai (jours) supplémentaire additionné à la date d'échéance'"
 

@@ -13,11 +13,32 @@ from imio.schedule.dashboard.interfaces import IDisplayTaskStatus
 from imio.schedule.dashboard.interfaces import ISimpleDisplayTaskStatus
 from imio.schedule.dashboard.interfaces import IStatusColumn
 from imio.schedule.interfaces import IToIcon
+from imio.schedule.utils import close_or_past_date
 
 from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.interface import implements
 from zope.i18n import translate
+
+
+def due_date_extra_classes(due_date, review_state):
+    extra_classes = ""
+
+    if review_state != 'closed' and due_date and due_date.year != 9999:
+        orange_limit = api.portal.get_registry_record(
+            'imio.schedule.interfaces.IDueDateSettings.color_orange_x_days_before_due_date',
+            default=None
+        )
+        red_limit = api.portal.get_registry_record(
+            'imio.schedule.interfaces.IDueDateSettings.color_red_x_days_before_due_date',
+            default=None
+        )
+        if red_limit is not None and close_or_past_date(due_date, by_days=red_limit):
+            extra_classes += " red_close_due_date"
+        elif orange_limit is not None and close_or_past_date(due_date, by_days=orange_limit):
+            extra_classes += " orange_close_due_date"
+
+    return extra_classes
 
 
 class DueDateColumn(BaseColumn):
@@ -29,6 +50,14 @@ class DueDateColumn(BaseColumn):
             return u'\u221E'
 
         return due_date.strftime('%d/%m/%Y')
+
+    def getCSSClasses(self, item):
+        """Returns a CSS class specific to current content."""
+        cssClasses = super(DueDateColumn, self).getCSSClasses(item)
+
+        cssClasses["td"] += due_date_extra_classes(item.due_date, item.review_state)
+
+        return cssClasses
 
 
 class AssignedUserColumn(BaseColumn):
@@ -200,7 +229,11 @@ class MacroTaskStatusDisplay(TaskStatusDisplay):
             )
             date = task.due_date
             due_date = date.year == 9999 and u'\u221E' or date.strftime('%d/%m/%Y')
-            due_date = u'<td class="subtask_status_date">{}</td>'.format(due_date)
+            extra_css_classes = due_date_extra_classes(
+                task.due_date,
+                api.content.get_state(task),
+            )
+            due_date = u'<td class="subtask_status_date{}">{}</td>'.format(extra_css_classes, due_date)
             row = u'<tr>{icon}{title}{due_date}</tr>'.format(
                 icon=status_icon,
                 title=status_title,

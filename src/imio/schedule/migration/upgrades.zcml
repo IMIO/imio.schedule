@@ -25,4 +25,11 @@
     handler=".upgrades.upgrade_3_set_showNumberOfItems"
     profile="imio.schedule:default" />
 
+  <gs:upgradeStep
+    title="Add due date reminders"
+    source="3"
+    destination="4"
+    handler=".upgrades.upgrade_4_add_due_date_reminders"
+    profile="imio.schedule:default" />
+
 </configure>

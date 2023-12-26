@@ -75,6 +75,15 @@ msgid "Change the task owner"
 msgstr ""
 
 #: ../content/task_config.py:47
+#: ../interfaces.py:237
+msgid "Color due date in orange if it comes close to X days"
+msgstr ""
+
+#: ../interfaces.py:245
+msgid "Color due date in red if it comes close to X days"
+msgstr ""
+
+#: ../content/task_config.py:49
 msgid "Condition"
 msgstr ""
 
@@ -150,7 +159,11 @@ msgstr ""
 msgid "Installs the imio.schedule add-on."
 msgstr ""
 
-#: ../interfaces.py:216
+#: ../interfaces.py:238
+msgid "Leave empty to disable"
+msgstr ""
+
+#: ../interfaces.py:224
 msgid "List of working days"
 msgstr ""
 
@@ -208,6 +221,10 @@ msgstr ""
 
 #: ../content/task_config.py:53
 msgid "Operator"
+msgstr ""
+
+#: ../interfaces.py:246
+msgid "Overrides orange color, leave empty to disable"
 msgstr ""
 
 #: ../browser/task_owner.py:39
@@ -410,7 +427,11 @@ msgstr ""
 msgid "Thaw conditions"
 msgstr ""
 
-#: ../content/task_config.py:308
+#: ../interfaces.py:258
+msgid "The orange value should be higher than the red one, as it is used as a first warning."
+msgstr ""
+
+#: ../content/task_config.py:310
 msgid "This delay is added to the due date of the task."
 msgstr ""
 
