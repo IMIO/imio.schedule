@@ -38,4 +38,17 @@
 
   </genericsetup:importStep>
 
+  <adapter factory=".converter.creation_condition_converter" />
+  <adapter factory=".converter.start_condition_converter" />
+  <adapter factory=".converter.end_condition_converter" />
+  <adapter factory=".converter.freeze_condition_converter" />
+  <adapter factory=".converter.thaw_condition_converter" />
+  <adapter factory=".converter.recurrence_condition_converter" />
+  <adapter factory=".converter.macro_creation_condition_converter" />
+  <adapter factory=".converter.macro_start_condition_converter" />
+  <adapter factory=".converter.macro_end_condition_converter" />
+  <adapter factory=".converter.macro_freeze_condition_converter" />
+  <adapter factory=".converter.macro_thaw_condition_converter" />
+  <adapter factory=".converter.macro_recurrence_condition_converter" />
+
 </configure>
