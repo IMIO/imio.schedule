@@ -5,7 +5,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- URB-3005: Add converters for schedule objects
+  [mpeeters]
 
 
 2.1.0 (2023-12-26)
