@@ -5,7 +5,8 @@ Changelog
 1.8.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- URB-3005: Add converters for schedule objects
+  [mpeeters]
 
 
 1.8 (2023-04-06)
