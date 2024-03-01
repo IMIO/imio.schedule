@@ -5,6 +5,9 @@ Changelog
 1.8.1 (unreleased)
 ------------------
 
+- URB-3005: Add deserializer for condition objects
+  [jchandelle]
+
 - URB-3005: Add converters for schedule objects
   [mpeeters]
 
