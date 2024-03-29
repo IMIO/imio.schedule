@@ -5,6 +5,9 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
+- URB-3005: Add a deserializer for objects that also handle vocabulary specificities
+  [mpeeters]
+
 - URB-3005: Add converters for schedule objects
   [mpeeters]
 
