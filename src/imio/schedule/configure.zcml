@@ -51,4 +51,6 @@
   <adapter factory=".converter.macro_thaw_condition_converter" />
   <adapter factory=".converter.macro_recurrence_condition_converter" />
 
+  <adapter factory=".deserializer.ObjectDeserializer" />
+
 </configure>
