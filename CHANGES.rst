@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.1.1 (unreleased)
+2.2.0 (2024-03-30)
 ------------------
 
 - URB-3005: Add a deserializer for objects that also handle vocabulary specificities
