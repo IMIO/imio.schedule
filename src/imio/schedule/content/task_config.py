@@ -44,6 +44,7 @@ from zope.interface import implements
 from zope.interface import invariant
 
 import logging
+import os
 
 
 logger = logging.getLogger("imio.schedule")
@@ -454,6 +455,11 @@ class BaseTaskConfig(object):
     TaskConfig dexterity class.
     """
 
+    @property
+    def _debug_mode(self):
+        debug_mode = os.environ.get("SCHEDULE_DEBUG", "0")
+        return debug_mode.lower() in ("on", "1", "true")
+
     def get_task_type(self):
         """
         To override.
@@ -635,21 +641,61 @@ class BaseTaskConfig(object):
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """ """
         value = True
+        task = None
+        if self._debug_mode:
+            task = to_adapt[-1]
+            if not hasattr(task, "_log_debug"):
+                task = None
         for condition_object in conditions or []:
+            condition_name = condition_object.condition
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
                 interface=interface,
-                name=condition_object.condition,
+                name=condition_name,
             )
             operator = condition_object.operator
+            if task:
+                task._log_debug(
+                    conditions={
+                        condition_name: {
+                            "operator": condition_object.operator,
+                            "status": None
+                        }
+                    }
+                )
 
             # in these cases, its useless to evaluate further because:
             # TRUE or (... ) <=> TRUE
             if operator == "OR" and value is True:
+                if task:
+                    task._log_debug(
+                        conditions={
+                            condition_name: {
+                                "status": True
+                            }
+                        }
+                    )
                 return True
             # FALSE and (... ) <=> FALSE
             elif operator == "AND" and value is False:
+                if task:
+                    task._log_debug(
+                        conditions={
+                            condition_name: {
+                                "status": False
+                            }
+                        }
+                    )
                 return False
+
+            if task:
+                task._log_debug(
+                    conditions={
+                        condition_name: {
+                            "status": True
+                        }
+                    }
+                )
             # else, just continue to loop to evaluate the rest of the expression because:
             # FALSE or (... ) <=> (... )
             # TRUE and (... ) <=> (... )
@@ -744,8 +790,10 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically start a task.
         """
 
+        if self._debug_mode:
+            task._set_log_debug("start", type="condition")
         # task container state match starting_states value?
-        if not self.match_starting_states(task_container):
+        if not self.match_starting_states(task_container, task):
             return False
 
         # each conditions is matched?
@@ -753,25 +801,60 @@ class BaseTaskConfig(object):
             return False
 
         if not task.assigned_user:
+            if self._debug_mode:
+                task._log_debug(status=False, reason="no assigned user")
             return False
+
+        if self._debug_mode:
+            task._log_debug(status=True, reason="all conditions met")
+            task._unset_log_debug()
 
         return True
 
-    def match_starting_states(self, task_container):
+    def match_starting_states(self, task_container, task):
         """ """
         if not self.starting_states:
+            task._log_debug(
+                start_state_condition=True,
+                reason="no starting states",
+                starting_states=self.starting_states,
+            )
             return True
 
         container_state = api.content.get_state(task_container)
-        return container_state in (self.starting_states or [])
+        status = container_state in (self.starting_states or [])
+
+        task._log_debug(
+            start_state_condition=status,
+            reason=(
+                status and "state in starting states"
+                or "state not in starting states"
+            ),
+            starting_states=self.starting_states,
+        )
+
+        return status
 
     def match_start_conditions(self, task_container, task):
         """ """
-        return self.evaluate_conditions(
+        if self._debug_mode:
+            task._set_log_debug("start_conditions")
+
+        result = self.evaluate_conditions(
             conditions=self.start_conditions,
             to_adapt=(task_container, task),
             interface=IStartCondition,
         )
+        if self._debug_mode:
+            task._log_debug(
+                status=result,
+                reason=(
+                    result and "all conditions met"
+                    or "not all conditions met"
+                ),
+            )
+            task._unset_log_debug()
+        return result
 
     def start_conditions_status(self, task_container, task):
         """
@@ -1072,6 +1155,8 @@ class BaseTaskConfig(object):
         # Backward compatibility
         if not adapters:
             adapters = ["schedule.calculation_default_delay"]
+        if self._debug_mode:
+            task._set_log_debug("due_date")
         due_date = None
         for adapter in adapters:
             calculator = getMultiAdapter(
@@ -1080,6 +1165,7 @@ class BaseTaskConfig(object):
                 name=adapter,
             )
             due_date = calculator.due_date
+            task._log_debug(base_due_date=due_date)
 
         additional_delay = self.additional_delay or "0"
         additional_delay_tal = getattr(self, "additional_delay_tal", False)
@@ -1102,27 +1188,41 @@ class BaseTaskConfig(object):
         else:
             additional_delay = int(additional_delay)
         delay_type = getattr(self, "additional_delay_type", "absolute")
+        task._log_debug(
+            additional_delay=additional_delay,
+            delay_type=delay_type,
+        )
         if additional_delay and delay_type == "working_days":
             calendar = WorkingDaysCalendar()
             due_date = calendar.add_working_days(due_date, additional_delay)
         elif additional_delay:
             due_date = due_date + relativedelta(days=+additional_delay)
+        task._log_debug(with_additional_delay_date=due_date)
 
         annotations = IAnnotations(task)
         freeze_infos = annotations.get("imio.schedule.freeze_task", None)
         if freeze_infos:
+            task._log_debug(
+                freeze_infos=freeze_infos,
+                before_freeze_date=due_date,
+            )
             due_date = due_date + relativedelta(
                 days=+freeze_infos["previous_freeze_duration"]
             )
 
         round_day = int(self.round_to_day)
         if round_day:
+            task._log_debug(round_day=round_day, before_rounded_date=due_date)
             due_date = round_to_weekday(due_date, round_day)
 
         # frozen tasks have infinite due date
         if task.get_status() in FROZEN:
-            return date(9999, 1, 1)
+            task._log_debug(is_frozen=True)
+            due_date = date(9999, 1, 1)
 
+        if self._debug_mode:
+            task._log_debug(due_date=due_date)
+            task._unset_log_debug()
         return due_date
 
     def _create_task_instance(self, creation_place, task_id):

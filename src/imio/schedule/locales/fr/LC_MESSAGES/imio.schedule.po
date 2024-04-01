@@ -75,6 +75,7 @@ msgstr "Calcul du délai"
 msgid "Change the task owner"
 msgstr "Réassigner"
 
+#: ../content/task_config.py:47
 #: ../browser/templates/close_task.pt:15
 msgid "Close task"
 msgstr "Fermer la tâche"

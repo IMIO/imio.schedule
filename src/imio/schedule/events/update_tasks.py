@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from Acquisition import aq_base
-
-from plone import api
-
 from imio.schedule.interfaces import TaskAlreadyExists
-from imio.schedule.utils import get_task_configs
 from imio.schedule.utils import get_container_open_tasks
+from imio.schedule.utils import get_task_configs
+from plone import api
 
 
 class TaskEventHandler(object):
