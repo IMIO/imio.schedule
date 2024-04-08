@@ -51,6 +51,7 @@ setup(
         "imio.dashboard",
         "plone.api",
         "plone.app.dexterity",
+        "plone.restapi",
         "Products.cron4plone",
         "setuptools",
         "workalendar",

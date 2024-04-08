@@ -13,6 +13,7 @@ from plone import api
 
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
+from zope.globalrequest import setRequest
 
 
 class TestTaskCreation(ExampleScheduleFunctionalTestCase):
@@ -23,6 +24,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
     def setUp(self):
         super(TestTaskCreation, self).setUp()
         self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+        setRequest(self.portal.REQUEST)
 
     def tearDown(self):
         CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date

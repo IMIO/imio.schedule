@@ -17,6 +17,7 @@ from mock import Mock
 from plone import api
 
 from zope.annotation import IAnnotations
+from zope.globalrequest import setRequest
 
 import unittest
 
@@ -341,6 +342,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self._create_task = self.task_config.create_task
         self._api_get_state = api.content.get_state
         self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
+        setRequest(self.portal.REQUEST)
 
     def tearDown(self):
         self.task_config.evaluate_one_condition = self._evaluate_one_condition
@@ -1322,6 +1324,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         self._mt_evaluate_conditions = self.macrotask_config.evaluate_conditions
         self._st_match_recurrence_states = self.subtask_config.match_recurrence_states
         self._st_evaluate_conditions = self.subtask_config.evaluate_conditions
+        setRequest(self.portal.REQUEST)
 
     def tearDown(self):
         self.macrotask_config.match_recurrence_states = self._mt_match_recurrence_states

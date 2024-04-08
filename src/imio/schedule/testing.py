@@ -12,6 +12,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
+from zope.globalrequest import setRequest
 
 from imio.schedule.events import zope_registration
 from imio.schedule.events.zope_registration import (
@@ -51,6 +52,7 @@ NAKED_PLONE_INTEGRATION = IntegrationTesting(
 
 class ScheduleLayer(NakedPloneLayer):
     def setUpPloneSite(self, portal):
+        setRequest(portal.REQUEST)
         applyProfile(portal, "Products.CMFPlone:plone")
         applyProfile(portal, "imio.schedule:default")
 
@@ -60,6 +62,7 @@ class ScheduleLayer(NakedPloneLayer):
 
         # Commit so that the test browser sees these objects
         transaction.commit()
+        setRequest(portal.REQUEST)
 
 
 TEST_INSTALL_FIXTURE = ScheduleLayer(name="TEST_INSTALL_FIXTURE")
@@ -76,13 +79,19 @@ TEST_INSTALL_FUNCTIONAL = FunctionalTesting(
 
 class ExampleScheduleLayer(ScheduleLayer):
     def setUpPloneSite(self, portal):
+        setRequest(portal.REQUEST)
         super(ExampleScheduleLayer, self).setUpPloneSite(portal)
 
         applyProfile(portal, "imio.schedule:testing")
 
         # delete macro tasks
-        api.content.delete(portal.config.test_scheduleconfig.test_macrotaskconfig)
-        api.content.delete(portal.test_taskcontainer.TASK_test_macrotaskconfig)
+        api.content.delete(
+            portal.config.test_scheduleconfig.test_macrotaskconfig
+        )
+        api.content.delete(
+            portal.test_taskcontainer.TASK_test_macrotaskconfig
+        )
+        setRequest(portal.REQUEST)
 
 
 EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(name="EXAMPLE_SCHEDULE_FIXTURE")
@@ -128,6 +137,7 @@ class BrowserTest(BaseTest):
 class ExampleScheduleTestBase(BrowserTest):
     def setUp(self):
         super(ExampleScheduleTestBase, self).setUp()
+        setRequest(self.portal.REQUEST)
 
         # only keep simple tasks
         self.schedule_config = self.portal.config.test_scheduleconfig
@@ -141,6 +151,7 @@ class ExampleScheduleTestBase(BrowserTest):
         transaction.commit()
 
         self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)
+        setRequest(self.portal.REQUEST)
 
 
 class ExampleScheduleIntegrationTestCase(ExampleScheduleTestBase):
@@ -156,6 +167,7 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
         """
         Unregister the adapters here since the zope instance never shut downs.
         """
+        setRequest(self.portal.REQUEST)
         unsubscribe_task_configs_for_content_type(self.task_config, None)
 
         api.content.delete(self.task_container)
@@ -166,10 +178,12 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
         transaction.commit()
 
         super(ExampleScheduleTestBase, self).tearDown()
+        setRequest(self.portal.REQUEST)
 
 
 class MacrotaskScheduleLayer(ScheduleLayer):
     def setUpPloneSite(self, portal):
+        setRequest(portal.REQUEST)
         super(MacrotaskScheduleLayer, self).setUpPloneSite(portal)
 
         applyProfile(portal, "Products.CMFPlone:dependencies")
@@ -178,8 +192,13 @@ class MacrotaskScheduleLayer(ScheduleLayer):
         applyProfile(portal, "imio.schedule:testing")
 
         # delete simple tasks
-        api.content.delete(portal.config.test_scheduleconfig.test_taskconfig)
-        api.content.delete(portal.test_taskcontainer.TASK_test_taskconfig)
+        api.content.delete(
+            portal.config.test_scheduleconfig.test_taskconfig
+        )
+        api.content.delete(
+            portal.test_taskcontainer.TASK_test_taskconfig
+        )
+        setRequest(portal.REQUEST)
 
 
 MACROTASK_SCHEDULE_FIXTURE = MacrotaskScheduleLayer(name="MACROTASK_SCHEDULE_FIXTURE")
@@ -197,6 +216,7 @@ MACROTASK_SCHEDULE_FUNCTIONAL = FunctionalTesting(
 class MacroTaskScheduleTestBase(BrowserTest):
     def setUp(self):
         super(MacroTaskScheduleTestBase, self).setUp()
+        setRequest(self.portal.REQUEST)
 
         # recreate test objects
         self.portal.portal_workflow.setDefaultChain("simple_publication_workflow")
@@ -214,6 +234,7 @@ class MacroTaskScheduleTestBase(BrowserTest):
         transaction.commit()
 
         self.browser_login(TEST_USER_NAME, TEST_USER_PASSWORD)
+        setRequest(self.portal.REQUEST)
 
 
 class MacroTaskScheduleIntegrationTestCase(MacroTaskScheduleTestBase):
@@ -229,6 +250,7 @@ class MacroTaskScheduleFunctionalTestCase(MacroTaskScheduleTestBase):
         """
         Unregister the adapters here since the zope instance never shut downs.
         """
+        setRequest(self.portal.REQUEST)
         unsubscribe_task_configs_for_content_type(self.macrotask_config, None)
         unsubscribe_task_configs_for_content_type(self.subtask_config, None)
 
