@@ -45,7 +45,7 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         from imio.schedule.utils import get_container_open_tasks
 
         task_state = api.content.get_state(self.task)
-        self.assertEqual(status_by_state[task_state] in [CREATION, STARTED])
+        self.assertTrue(status_by_state[task_state] in [CREATION, STARTED])
         expected = [self.task]
         open_tasks = get_container_open_tasks(self.task_container)
         self.assertEqual(expected, open_tasks)
@@ -59,7 +59,7 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         open_tasks = end_all_open_tasks(self.task_container)
         end_all_open_tasks(self.task_container)
         for task in open_tasks:
-            self.assertEqual(status_by_state[api.content.get_state()], DONE)
+            self.assertEqual(status_by_state[api.content.get_state(obj=task)], DONE)
 
     def test_tuple_to_interface(self):
         """
