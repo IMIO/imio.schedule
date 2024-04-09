@@ -5,7 +5,8 @@ Changelog
 2.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix object deserializer
+  [jchandelle]
 
 
 2.2.0 (2024-03-30)

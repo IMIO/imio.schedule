@@ -31,7 +31,7 @@ class ObjectDeserializer(DefaultFieldDeserializer):
             name=adapter_name,
         )
         if not factory_adapter:
-            return self._default_call()
+            return self._default_call(value)
         for fieldname in self.field.schema:
             field = self.field.schema[fieldname]
             if isinstance(field, SubFormContextChoice):
