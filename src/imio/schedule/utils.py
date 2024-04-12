@@ -37,7 +37,7 @@ def get_all_schedule_configs():
     # nested import to avoid recursive imports
     from imio.schedule.content.schedule_config import IScheduleConfig
 
-    catalog = api.portal.get_tool('portal_catalog')
+    catalog = api.portal.get_tool("portal_catalog")
     brains = catalog(object_provides=IScheduleConfig.__identifier__)
     configs = [brain.getObject() for brain in brains]
 
@@ -89,7 +89,7 @@ def get_container_tasks(task_container, states=[]):
                 open_tasks.append(current)
             elif api.content.get_state(current) in states:
                 open_tasks.append(current)
-        if hasattr(current, 'objectValues'):
+        if hasattr(current, "objectValues"):
             to_explore.extend(current.objectValues())
     return open_tasks
 
@@ -115,7 +115,9 @@ def interface_to_tuple(interface):
     return (interface.__module__, interface.__name__)
 
 
-def set_schedule_view(folder, faceted_config_path, schedule_configs, default_collection=None):
+def set_schedule_view(
+    folder, faceted_config_path, schedule_configs, default_collection=None
+):
     """
     Boilerplate code to set up the schedule view on a folderish context.
     """
@@ -127,19 +129,20 @@ def set_schedule_view(folder, faceted_config_path, schedule_configs, default_col
     _set_collection_portlet(folder)
 
 
-def _set_faceted_view(folder, faceted_config_path, schedule_configs, default_collection=None):
-    """
-    """
+def _set_faceted_view(
+    folder, faceted_config_path, schedule_configs, default_collection=None
+):
+    """ """
     annotations = IAnnotations(folder)
-    key = 'imio.schedule.schedule_configs'
+    key = "imio.schedule.schedule_configs"
     annotations[key] = [cfg.UID() for cfg in schedule_configs]
 
-    subtyper = folder.restrictedTraverse('@@faceted_subtyper')
+    subtyper = folder.restrictedTraverse("@@faceted_subtyper")
     if not subtyper.is_faceted:
         subtyper.enable()
-        folder.restrictedTraverse('@@faceted_settings').toggle_left_column()
-        IFacetedLayout(folder).update_layout('faceted-table-items')
-        folder.unrestrictedTraverse('@@faceted_exportimport').import_xml(
+        folder.restrictedTraverse("@@faceted_settings").toggle_left_column()
+        IFacetedLayout(folder).update_layout("faceted-table-items")
+        folder.unrestrictedTraverse("@@faceted_exportimport").import_xml(
             import_file=open(faceted_config_path)
         )
 
@@ -148,18 +151,17 @@ def _set_faceted_view(folder, faceted_config_path, schedule_configs, default_col
 
 
 def _set_collection_portlet(folder):
-    """
-    """
+    """ """
     # block parent portlets
-    manager = getUtility(IPortletManager, name='plone.leftcolumn')
+    manager = getUtility(IPortletManager, name="plone.leftcolumn")
     blacklist = getMultiAdapter((folder, manager), ILocalPortletAssignmentManager)
     blacklist.setBlacklistStatus(CONTEXT_CATEGORY, True)
 
     # assign collection portlet
-    manager = getUtility(IPortletManager, name='plone.leftcolumn', context=folder)
+    manager = getUtility(IPortletManager, name="plone.leftcolumn", context=folder)
     mapping = getMultiAdapter((folder, manager), IPortletAssignmentMapping)
-    if 'schedules' not in mapping.keys():
-        mapping['schedules'] = Assignment('schedules')
+    if "schedules" not in mapping.keys():
+        mapping["schedules"] = Assignment("schedules")
 
 
 def dict_list_2_vocabulary(dict_list):
@@ -171,8 +173,7 @@ def dict_list_2_vocabulary(dict_list):
     terms = []
     for item in dict_list:
         for key in sorted([k for k in item]):
-            terms.append(SimpleVocabulary.createTerm(
-                key, str(key), item[key]))
+            terms.append(SimpleVocabulary.createTerm(key, str(key), item[key]))
     return SimpleVocabulary(terms)
 
 
@@ -186,14 +187,12 @@ def round_to_weekday(date, weekday):
 
 
 class WorkingDaysCalendar(Belgium):
-
     def __init__(self, *args, **kwargs):
         super(WorkingDaysCalendar, self).__init__(*args, **kwargs)
         self.working_days = self._get_working_days()
 
     def is_working_day(self, date, *args, **kwargs):
-        result = super(WorkingDaysCalendar, self).is_working_day(
-            date, *args, **kwargs)
+        result = super(WorkingDaysCalendar, self).is_working_day(date, *args, **kwargs)
         if result is True:
             result = date.isoweekday() in self.working_days
         return result
@@ -207,15 +206,18 @@ class WorkingDaysCalendar(Belgium):
     def _get_working_days(self):
         """Return the working days configured in the registry"""
         matching = {
-            'monday': 1,
-            'tuesday': 2,
-            'wednesday': 3,
-            'thursday': 4,
-            'friday': 5,
-            'saturday': 6,
-            'sunday': 7,
+            "monday": 1,
+            "tuesday": 2,
+            "wednesday": 3,
+            "thursday": 4,
+            "friday": 5,
+            "saturday": 6,
+            "sunday": 7,
         }
-        days = api.portal.get_registry_record(
-            'imio.schedule.interfaces.ISettings.working_days'
-        ) or []
+        days = (
+            api.portal.get_registry_record(
+                "imio.schedule.interfaces.ISettings.working_days"
+            )
+            or []
+        )
         return [matching[d] for d in days]

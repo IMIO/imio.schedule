@@ -84,8 +84,8 @@ class TaskStartingDate(StartDate):
         """
         history = self.task.workflow_history.values()[0]
         for state_history in history:
-            if status_by_state[state_history.get('review_state')] is STARTED:
-                return state_history['time']
+            if status_by_state[state_history.get("review_state")] is STARTED:
+                return state_history["time"]
 
 
 class SubtaskHighestDueDate(MacroTaskStartDate):
@@ -111,6 +111,7 @@ class AssignTaskUser(TaskLogic):
     Register adapters inheriting this class in the products using
     imio.schedule and override 'user_id' method.
     """
+
     implements(IDefaultTaskUser)
 
     def user_id(self):
@@ -156,6 +157,7 @@ class AssignTaskGroup(TaskLogic):
     Register adapters inheriting this class in the products using
     imio.schedule and override 'group_id' method.
     """
+
     implements(IDefaultTaskGroup)
 
     def group_id(self):

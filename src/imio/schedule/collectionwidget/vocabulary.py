@@ -16,21 +16,24 @@ class ScheduleCollectionVocabulary(CollectionVocabulary):
         """
         Return all the DashboardCollections in the 'schedule' folder.
         """
-        configs_UID = IAnnotations(context).get('imio.schedule.schedule_configs', [])
-        catalog = api.portal.get_tool('portal_catalog')
+        configs_UID = IAnnotations(context).get("imio.schedule.schedule_configs", [])
+        catalog = api.portal.get_tool("portal_catalog")
         config_brains = catalog(UID=configs_UID)
         collections_brains = []
         for brain in config_brains:
             config = brain.getObject()
             brains = catalog(
                 path={
-                    'query': '/'.join(config.getPhysicalPath()),
+                    "query": "/".join(config.getPhysicalPath()),
                 },
-                object_provides='plone.app.collection.interfaces.ICollection',
-                sort_on='getObjPositionInParent'
+                object_provides="plone.app.collection.interfaces.ICollection",
+                sort_on="getObjPositionInParent",
             )
             collections_brains.extend(brains)
-        collections_brains = [b for b in collections_brains if b.getObject().aq_parent.enabled]
+        collections_brains = [
+            b for b in collections_brains if b.getObject().aq_parent.enabled
+        ]
         return collections_brains
+
 
 ScheduleCollectionVocabularyFactory = ScheduleCollectionVocabulary()

@@ -13,8 +13,7 @@ class IDisplayTaskStatus(Interface):
     """
 
     def render(self):
-        """
-        """
+        """ """
 
 
 class ISimpleDisplayTaskStatus(Interface):
@@ -24,9 +23,8 @@ class ISimpleDisplayTaskStatus(Interface):
     """
 
     def render(self):
-        """
-        """
+        """ """
 
 
 class IStatusColumn(IColumn):
-    """ Marker interface for Task Status columns."""
+    """Marker interface for Task Status columns."""

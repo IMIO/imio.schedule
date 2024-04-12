@@ -23,7 +23,7 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
 
         self.assertEquals(
             [self.empty_schedule_config, self.schedule_config],
-            get_all_schedule_configs()
+            get_all_schedule_configs(),
         )
 
     def test_get_task_configs(self):
@@ -32,7 +32,10 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         """
         from imio.schedule.utils import get_task_configs
 
-        expected_UIDS = [task_config.UID() for task_config in self.schedule_config.get_all_task_configs()]
+        expected_UIDS = [
+            task_config.UID()
+            for task_config in self.schedule_config.get_all_task_configs()
+        ]
         folder = self.portal.config
         task_configs = get_task_configs(folder)
         task_config_UIDS = [task_config.UID() for task_config in task_configs]
@@ -69,7 +72,7 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         from imio.schedule.utils import tuple_to_interface
 
         expected_interface = IATFolder
-        interface_tuple = ('Products.ATContentTypes.interfaces.folder', 'IATFolder')
+        interface_tuple = ("Products.ATContentTypes.interfaces.folder", "IATFolder")
         interface = tuple_to_interface(interface_tuple)
         self.assertEqual(interface, expected_interface)
 
@@ -80,15 +83,15 @@ class TestUtils(ExampleScheduleIntegrationTestCase):
         """
         from imio.schedule.utils import interface_to_tuple
 
-        expected_tuple = ('Products.ATContentTypes.interfaces.folder', 'IATFolder')
+        expected_tuple = ("Products.ATContentTypes.interfaces.folder", "IATFolder")
         interface_tuple = interface_to_tuple(IATFolder)
         self.assertEqual(interface_tuple, expected_tuple)
 
 
 def TestWorkingDaysCalendar(ExampleScheduleIntegrationTestCase):
-
     def test_is_working_day(self):
         from imio.schedule.utils import WorkingDaysCalendar
+
         calendar = WorkingDaysCalendar()
         # Basic holiday
         self.assertTrue(calendar.is_working_day(date(2017, 1, 1)))

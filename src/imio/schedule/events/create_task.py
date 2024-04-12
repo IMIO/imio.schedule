@@ -18,7 +18,7 @@ def create_new_tasks(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -28,7 +28,7 @@ def create_new_tasks(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             if config.is_main_taskconfig():
                 if config.should_create_task(task_container):
@@ -40,7 +40,9 @@ def create_new_tasks(task_container, event):
             else:
                 macro_config = config.getParentNode()
                 parent_task = macro_config.get_open_task(task_container)
-                if parent_task and config.should_create_task(task_container, parent_container=parent_task):
+                if parent_task and config.should_create_task(
+                    task_container, parent_container=parent_task
+                ):
                     try:
                         config.create_task(task_container, creation_place=parent_task)
                     except TaskAlreadyExists:

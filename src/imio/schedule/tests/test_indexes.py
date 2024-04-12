@@ -16,7 +16,7 @@ class TestIndexes(ExampleScheduleIntegrationTestCase):
         """
         schedule_config = self.schedule_config
         task = self.task
-        catalog = api.portal.get_tool('portal_catalog')
+        catalog = api.portal.get_tool("portal_catalog")
 
         task_brains = catalog(schedule_config_UID=schedule_config.UID())
         msg = "should have found at least one indexed task"
@@ -29,7 +29,7 @@ class TestIndexes(ExampleScheduleIntegrationTestCase):
         """
         task_config = self.task_config
         task = self.task
-        catalog = api.portal.get_tool('portal_catalog')
+        catalog = api.portal.get_tool("portal_catalog")
 
         task_brains = catalog(task_config_UID=task_config.UID())
         msg = "should have found at least one indexed task"

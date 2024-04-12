@@ -61,8 +61,8 @@ class BaseVocabularyFactory(object):
         """
         request = context.REQUEST
         try:
-            add_view = request.get('PUBLISHED', request['PARENTS'][-1])
-            if hasattr(add_view, 'form_instance'):
+            add_view = request.get("PUBLISHED", request["PARENTS"][-1])
+            if hasattr(add_view, "form_instance"):
                 form = add_view.form_instance
                 portal_type = form.portal_type
             else:
@@ -78,7 +78,7 @@ class BaseVocabularyFactory(object):
         Return the fti of the (future?) context.
         """
         portal_type = self.get_portal_type(context)
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         fti = portal_types.getTypeInfo(portal_type)
         return fti
 
@@ -128,9 +128,7 @@ class ScheduledContentTypeVocabulary(object):
 
         for portal_type, interface in content_types.iteritems():
             key = self.to_vocabulary_key(portal_type, interface)
-            voc_terms.append(
-                SimpleTerm(key, key, message_factory(portal_type))
-            )
+            voc_terms.append(SimpleTerm(key, key, message_factory(portal_type)))
 
         vocabulary = SimpleVocabulary(voc_terms)
 
@@ -181,8 +179,9 @@ class AssignedGroupVocabularyFactory(object):
         for scheduled_interface in scheduled_interfaces:
             for adapter in gsm.registeredAdapters():
                 implements_IGroup = adapter.provided is IDefaultTaskGroup
-                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                    issubclass(scheduled_interface, adapter.required[0])
+                specific_enough = adapter.required[0].implementedBy(
+                    scheduled_interface
+                ) or issubclass(scheduled_interface, adapter.required[0])
                 if implements_IGroup and specific_enough:
                     voc_terms.append(
                         SimpleTerm(adapter.name, adapter.name, _(adapter.name))
@@ -215,8 +214,9 @@ class AssignedUserVocabularyFactory(object):
         for scheduled_interface in scheduled_interfaces:
             for adapter in gsm.registeredAdapters():
                 implements_IUser = adapter.provided is IDefaultTaskUser
-                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                    issubclass(scheduled_interface, adapter.required[0])
+                specific_enough = adapter.required[0].implementedBy(
+                    scheduled_interface
+                ) or issubclass(scheduled_interface, adapter.required[0])
                 if implements_IUser and specific_enough:
                     voc_terms.append(
                         SimpleTerm(adapter.name, adapter.name, _(adapter.name))
@@ -225,10 +225,17 @@ class AssignedUserVocabularyFactory(object):
         # enrich the vocabulary with available users
         for user in api.user.get_users():
             voc_terms.append(
-                SimpleTerm(user.id, user.id, user.getProperty('fullname') or user.getUserName())
+                SimpleTerm(
+                    user.id, user.id, user.getProperty("fullname") or user.getUserName()
+                )
             )
 
-        vocabulary = SimpleVocabulary(sorted(unify_vocabularies(voc_terms), key=lambda term: term.title.decode('utf-8')))
+        vocabulary = SimpleVocabulary(
+            sorted(
+                unify_vocabularies(voc_terms),
+                key=lambda term: term.title.decode("utf-8"),
+            )
+        )
         return vocabulary
 
 
@@ -246,12 +253,14 @@ class ContainerStateVocabularyFactory(object):
         if not portal_type:
             return SimpleVocabulary([])
 
-        wf_tool = api.portal.get_tool('portal_workflow')
+        wf_tool = api.portal.get_tool("portal_workflow")
         request = api.portal.get().REQUEST
 
         workfow = wf_tool.get(wf_tool.getChainForPortalType(portal_type)[0])
         voc_terms = [
-            SimpleTerm(state_id, state_id, translate(state.title, 'plone', context=request))
+            SimpleTerm(
+                state_id, state_id, translate(state.title, "plone", context=request)
+            )
             for state_id, state in workfow.states.items()
         ]
 
@@ -277,10 +286,10 @@ class TaskMarkerInterfacesVocabulary(object):
                     marker_interface.__doc__,
                     utranslate(
                         msgid=marker_interface.__doc__,
-                        domain='imio.schedule',
+                        domain="imio.schedule",
                         context=context,
-                        default=marker_interface.__doc__
-                    )
+                        default=marker_interface.__doc__,
+                    ),
                 )
             )
 
@@ -298,8 +307,16 @@ class BooleanVocabulary(object):
     def __call__(self, context):
         request = api.portal.get().REQUEST
         items = [
-            SimpleTerm('True', 'True', translate('Doable alone', 'imio.schedule', context=request)),
-            SimpleTerm('False', 'False', translate('Subtasks dependencies', 'imio.schedule', context=request)),
+            SimpleTerm(
+                "True",
+                "True",
+                translate("Doable alone", "imio.schedule", context=request),
+            ),
+            SimpleTerm(
+                "False",
+                "False",
+                translate("Subtasks dependencies", "imio.schedule", context=request),
+            ),
         ]
 
         return SimpleVocabulary(items)
@@ -326,10 +343,12 @@ class TaskLogicVocabularyFactory(object):
         terms = []
         for scheduled_interface in scheduled_interfaces:
             for adapter in gsm.registeredAdapters():
-                implements_interface = issubclass(adapter.provided, ITaskLogic) and \
-                    issubclass(self.provides_interface, adapter.provided)
-                specific_enough = adapter.required[0].implementedBy(scheduled_interface) or \
-                    issubclass(scheduled_interface, adapter.required[0])
+                implements_interface = issubclass(
+                    adapter.provided, ITaskLogic
+                ) and issubclass(self.provides_interface, adapter.provided)
+                specific_enough = adapter.required[0].implementedBy(
+                    scheduled_interface
+                ) or issubclass(scheduled_interface, adapter.required[0])
                 if implements_interface and specific_enough:
                     terms.append(
                         SimpleTerm(adapter.name, adapter.name, _(adapter.name))
@@ -398,6 +417,7 @@ class RecurrenceConditionVocabularyFactory(TaskLogicVocabularyFactory):
     Vocabulary factory for 'recurrence_conditions' field.
     Return recurrence conditions for a task config.
     """
+
     provides_interface = IRecurrenceCondition
 
 
@@ -406,6 +426,7 @@ class CalculationDelayVocabularyFactory(TaskLogicVocabularyFactory):
     Vocabulary factory for 'calculation_delay' field.
     Return calculation delay methods for a task config.
     """
+
     provides_interface = ICalculationDelay
 
 
@@ -446,35 +467,35 @@ class MacroTaskStartDateVocabularyFactory(TaskLogicVocabularyFactory):
 
 
 class LogicalOperatorVocabularyFactory(BaseVocabularyFactory):
-
     def __call__(self, context):
-        return dict_list_2_vocabulary([
-            {'AND': _(u'and')},
-            {'OR': _(u'or')},
-        ])
+        return dict_list_2_vocabulary(
+            [
+                {"AND": _(u"and")},
+                {"OR": _(u"or")},
+            ]
+        )
 
 
 class WeekDaysRoundingVocabulary(object):
-    """
-    """
+    """ """
 
     def __call__(self, context):
         raw_terms = [
-            ('0', '0', _('None')),
-            ('1', '1', _('Next Monday')),
-            ('2', '2', _('Next Tuesday')),
-            ('3', '3', _('Next Wednesday')),
-            ('4', '4', _('Next Thursday')),
-            ('5', '5', _('Next Friday')),
-            ('6', '6', _('Next Saturday')),
-            ('7', '7', _('Next Sunday')),
-            ('-1', '-1', _('Previous Monday')),
-            ('-2', '-2', _('Previous Tuesday')),
-            ('-3', '-3', _('Previous Wednesday')),
-            ('-4', '-4', _('Previous Thursday')),
-            ('-5', '-5', _('Previous Friday')),
-            ('-6', '-6', _('Previous Saturday')),
-            ('-7', '-7', _('Previous Sunday')),
+            ("0", "0", _("None")),
+            ("1", "1", _("Next Monday")),
+            ("2", "2", _("Next Tuesday")),
+            ("3", "3", _("Next Wednesday")),
+            ("4", "4", _("Next Thursday")),
+            ("5", "5", _("Next Friday")),
+            ("6", "6", _("Next Saturday")),
+            ("7", "7", _("Next Sunday")),
+            ("-1", "-1", _("Previous Monday")),
+            ("-2", "-2", _("Previous Tuesday")),
+            ("-3", "-3", _("Previous Wednesday")),
+            ("-4", "-4", _("Previous Thursday")),
+            ("-5", "-5", _("Previous Friday")),
+            ("-6", "-6", _("Previous Saturday")),
+            ("-7", "-7", _("Previous Sunday")),
         ]
         voc_terms = [SimpleTerm(*term) for term in raw_terms]
         vocabulary = SimpleVocabulary(voc_terms)
@@ -483,20 +504,21 @@ class WeekDaysRoundingVocabulary(object):
 
 
 class TaskOwnerSource(PrincipalSource):
-
     def __init__(self, context):
         super(TaskOwnerSource, self).__init__(context)
 
     def _search(self, id=None, exact_match=True):
         users = api.user.get_users(self.context.assigned_group)
         if id is not None:
-            return sorted([{'id': u.id} for u in users if u.id == id], key=lambda u_id: u_id['id'])
-        return sorted([{'id': u.id} for u in users], key=lambda u_id: u_id['id'])
+            return sorted(
+                [{"id": u.id} for u in users if u.id == id], key=lambda u_id: u_id["id"]
+            )
+        return sorted([{"id": u.id} for u in users], key=lambda u_id: u_id["id"])
 
 
 class TaskOwnerSourceBinder(object):
-    """Bind the principal source with either users or groups
-    """
+    """Bind the principal source with either users or groups"""
+
     implements(IContextSourceBinder)
 
     def __call__(self, context):

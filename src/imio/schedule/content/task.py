@@ -5,21 +5,17 @@ from collective.task.behaviors import ITask
 from collective.task.behaviors import get_parent_assigned_group
 from collective.task.behaviors import get_users_vocabulary
 from collective.task.field import LocalRoleMasterSelectField
-
-from plone import api
-from plone.autoform import directives
-from plone.dexterity.content import Container
-from plone.dexterity.content import Item
-
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
 from imio.schedule.config import STARTED
 from imio.schedule.config import status_by_state
 from imio.schedule.interfaces import ScheduleConfigNotFound
 from imio.schedule.interfaces import TaskConfigNotFound
-
+from plone import api
+from plone.autoform import directives
+from plone.dexterity.content import Container
+from plone.dexterity.content import Item
 from plone.memoize.request import cache
-
 from zope.interface import implements
 
 
@@ -28,21 +24,22 @@ class IAutomatedTask(ITask):
     AutomatedTask dexterity schema.
     """
 
-    directives.order_before(assigned_group='assigned_user')
-    directives.order_before(assigned_group='ITask.assigned_user')
+    directives.order_before(assigned_group="assigned_user")
+    directives.order_before(assigned_group="ITask.assigned_user")
     assigned_group = LocalRoleMasterSelectField(
         title=CTMF(u"Assigned group"),
         required=True,
         vocabulary="collective.task.AssignedGroups",
         slave_fields=(
-            {'name': 'ITask.assigned_user',
-             'slaveID': '#form-widgets-ITask-assigned_user',
-             'action': 'vocabulary',
-             'vocab_method': get_users_vocabulary,
-             'control_param': 'group',
-             },
+            {
+                "name": "ITask.assigned_user",
+                "slaveID": "#form-widgets-ITask-assigned_user",
+                "action": "vocabulary",
+                "vocab_method": get_users_vocabulary,
+                "control_param": "group",
+            },
         ),
-        defaultFactory=get_parent_assigned_group
+        defaultFactory=get_parent_assigned_group,
     )
 
 
@@ -51,8 +48,8 @@ class BaseAutomatedTask(object):
     Base class for AutomatedTask content types.
     """
 
-    task_config_UID = ''
-    schedule_config_UID = ''
+    task_config_UID = ""
+    schedule_config_UID = ""
 
     def get_container(self):
         """
@@ -80,29 +77,25 @@ class BaseAutomatedTask(object):
         """
         Return associated schedule config.
         """
-        catalog = api.portal.get_tool('portal_catalog')
+        catalog = api.portal.get_tool("portal_catalog")
         brains = catalog(UID=self.schedule_config_UID)
         if brains:
             return brains[0].getObject()
         else:
-            raise ScheduleConfigNotFound(
-                'UID {}'.format(self.schedule_config_UID)
-            )
+            raise ScheduleConfigNotFound("UID {}".format(self.schedule_config_UID))
 
-    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request="self.REQUEST")
     def get_task_config(self):
         """
         Return associated task config.
         """
-        catalog = api.portal.get_tool('portal_catalog')
-        with api.env.adopt_roles(['Manager']):
+        catalog = api.portal.get_tool("portal_catalog")
+        with api.env.adopt_roles(["Manager"]):
             brains = catalog.unrestrictedSearchResults(UID=self.task_config_UID)
             if brains:
                 return brains[0].getObject()
             else:
-                raise TaskConfigNotFound(
-                    'UID {}'.format(self.task_config_UID)
-                )
+                raise TaskConfigNotFound("UID {}".format(self.task_config_UID))
 
     def get_status(self):
         """
@@ -110,7 +103,7 @@ class BaseAutomatedTask(object):
         """
         return status_by_state[self.get_state()]
 
-    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request="self.REQUEST")
     def start_conditions_status(self):
         """
         See start_conditions_status of TaskConfig.
@@ -120,10 +113,9 @@ class BaseAutomatedTask(object):
         status = task_config.start_conditions_status(container, self)
         return status
 
-    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request="self.REQUEST")
     def starting_states_status(self):
-        """
-        """
+        """ """
         config = self.get_task_config()
         starting_states = config.starting_states
         if not starting_states:
@@ -133,7 +125,7 @@ class BaseAutomatedTask(object):
         container_state = api.content.get_state(container)
         return (container_state, starting_states)
 
-    @cache(get_key=lambda m, task: task.id, get_request='self.REQUEST')
+    @cache(get_key=lambda m, task: task.id, get_request="self.REQUEST")
     def end_conditions_status(self):
         """
         See end_conditions_status of TaskConfig.
@@ -144,8 +136,7 @@ class BaseAutomatedTask(object):
         return status
 
     def ending_states_status(self):
-        """
-        """
+        """ """
         config = self.get_task_config()
         ending_states = config.ending_states
         if not ending_states:
@@ -166,13 +157,12 @@ class BaseAutomatedTask(object):
 
     @property
     def end_date(self):
-        """
-        """
+        """ """
         if self.get_status() == DONE:
-            wf_history = self.workflow_history['task_workflow'][::-1]
+            wf_history = self.workflow_history["task_workflow"][::-1]
             for action in wf_history:
-                if status_by_state[action['review_state']] is DONE:
-                    end_date = action['time']
+                if status_by_state[action["review_state"]] is DONE:
+                    end_date = action["time"]
                     return end_date.asdatetime()
         return None
 
@@ -213,7 +203,7 @@ class BaseAutomatedTask(object):
         Delegate end operation to the task_config
         """
         task_config = self.get_task_config()
-        with api.env.adopt_roles(['Manager']):
+        with api.env.adopt_roles(["Manager"]):
             task_config.end_task(self)
 
     def _freeze(self):
@@ -232,8 +222,7 @@ class BaseAutomatedTask(object):
 
 
 class AutomatedTask(Item, BaseAutomatedTask):
-    """
-    """
+    """ """
 
     implements(IAutomatedTask)
 
@@ -245,8 +234,7 @@ class IAutomatedMacroTask(IAutomatedTask):
 
 
 class AutomatedMacroTask(Container, BaseAutomatedTask):
-    """
-    """
+    """ """
 
     implements(IAutomatedMacroTask)
 

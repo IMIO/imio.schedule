@@ -16,16 +16,12 @@ class TaskWorkflowStates(object):
 
     def __call__(self, context):
 
-        states = ['created', 'to_do', 'closed']
+        states = ["created", "to_do", "closed"]
 
         vocabulary_terms = []
         for state in states:
             vocabulary_terms.append(
-                SimpleTerm(
-                    state,
-                    state,
-                    _(state, 'collective.task', context.REQUEST)
-                )
+                SimpleTerm(state, state, _(state, "collective.task", context.REQUEST))
             )
 
         vocabulary = SimpleVocabulary(vocabulary_terms)
@@ -39,7 +35,7 @@ class TaskPortalTypes(object):
 
     def __call__(self, context):
 
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         vocabulary_terms = []
 
         for task_type in task_types:
@@ -48,7 +44,7 @@ class TaskPortalTypes(object):
                 SimpleTerm(
                     task_type,
                     task_type,
-                    _(p_type.Title(), 'imio.schedule', context.REQUEST)
+                    _(p_type.Title(), "imio.schedule", context.REQUEST),
                 )
             )
 

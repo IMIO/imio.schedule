@@ -19,7 +19,7 @@ class CloseTaskForm(Form):
     fields = field.Fields(ICloseTask)
     ignoreContext = True
 
-    @button.buttonAndHandler(_(u'Confirm'))
+    @button.buttonAndHandler(_(u"Confirm"))
     def handleApply(self, action):
         messages = IStatusMessage(self.request)
         data, errors = self.extractData()
@@ -28,10 +28,10 @@ class CloseTaskForm(Form):
             messages.addStatusMessage(self.status, type="error")
             return
         self.context._end()
-        self.context.reindex_parent_tasks(idxs=['is_solvable_task'])
-        self.status = _(u'Task Closed')
+        self.context.reindex_parent_tasks(idxs=["is_solvable_task"])
+        self.status = _(u"Task Closed")
 
 
 class CloseTaskView(FormWrapper):
     form = CloseTaskForm
-    index = ViewPageTemplateFile('templates/close_task.pt')
+    index = ViewPageTemplateFile("templates/close_task.pt")

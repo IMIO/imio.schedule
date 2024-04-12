@@ -14,7 +14,9 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing import z2
 
 from imio.schedule.events import zope_registration
-from imio.schedule.events.zope_registration import unsubscribe_task_configs_for_content_type
+from imio.schedule.events.zope_registration import (
+    unsubscribe_task_configs_for_content_type,
+)
 
 import transaction
 
@@ -30,85 +32,68 @@ class NakedPloneLayer(PloneSandboxLayer):
     def setUpZope(self, app, configurationContext):
         """Set up Zope."""
         # Load ZCML
-        self.loadZCML(package=imio.schedule,
-                      name='testing.zcml')
+        self.loadZCML(package=imio.schedule, name="testing.zcml")
         # need to do this for archetypes products having 'initialize'
         # method for their content types in their __init__.py
-        z2.installProduct(app, 'imio.dashboard')
+        z2.installProduct(app, "imio.dashboard")
 
     def tearDownZope(self, app):
         """Tear down Zope."""
-        z2.uninstallProduct(app, 'imio.dashboard')
+        z2.uninstallProduct(app, "imio.dashboard")
 
-NAKED_PLONE_FIXTURE = NakedPloneLayer(
-    name='NAKED_PLONE_FIXTURE'
-)
+
+NAKED_PLONE_FIXTURE = NakedPloneLayer(name="NAKED_PLONE_FIXTURE")
 
 NAKED_PLONE_INTEGRATION = IntegrationTesting(
-    bases=(NAKED_PLONE_FIXTURE,),
-    name='NAKED_PLONE_INTEGRATION'
+    bases=(NAKED_PLONE_FIXTURE,), name="NAKED_PLONE_INTEGRATION"
 )
 
 
 class ScheduleLayer(NakedPloneLayer):
-
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'Products.CMFPlone:plone')
-        applyProfile(portal, 'imio.schedule:default')
+        applyProfile(portal, "Products.CMFPlone:plone")
+        applyProfile(portal, "imio.schedule:default")
 
         # Login and create some test content
-        setRoles(portal, TEST_USER_ID, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ["Manager"])
         login(portal, TEST_USER_NAME)
 
         # Commit so that the test browser sees these objects
         transaction.commit()
 
 
-TEST_INSTALL_FIXTURE = ScheduleLayer(
-    name='TEST_INSTALL_FIXTURE'
-)
+TEST_INSTALL_FIXTURE = ScheduleLayer(name="TEST_INSTALL_FIXTURE")
 
 TEST_INSTALL_INTEGRATION = IntegrationTesting(
-    bases=(TEST_INSTALL_FIXTURE,),
-    name='TEST_INSTALL_INTEGRATION'
+    bases=(TEST_INSTALL_FIXTURE,), name="TEST_INSTALL_INTEGRATION"
 )
 
 
 TEST_INSTALL_FUNCTIONAL = FunctionalTesting(
-    bases=(TEST_INSTALL_FIXTURE,),
-    name='TEST_INSTALL_FUNCTIONAL'
+    bases=(TEST_INSTALL_FIXTURE,), name="TEST_INSTALL_FUNCTIONAL"
 )
 
 
 class ExampleScheduleLayer(ScheduleLayer):
-
     def setUpPloneSite(self, portal):
         super(ExampleScheduleLayer, self).setUpPloneSite(portal)
 
-        applyProfile(portal, 'imio.schedule:testing')
+        applyProfile(portal, "imio.schedule:testing")
 
         # delete macro tasks
-        api.content.delete(
-            portal.config.test_scheduleconfig.test_macrotaskconfig
-        )
-        api.content.delete(
-            portal.test_taskcontainer.TASK_test_macrotaskconfig
-        )
+        api.content.delete(portal.config.test_scheduleconfig.test_macrotaskconfig)
+        api.content.delete(portal.test_taskcontainer.TASK_test_macrotaskconfig)
 
 
-EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(
-    name='EXAMPLE_SCHEDULE_FIXTURE'
-)
+EXAMPLE_SCHEDULE_FIXTURE = ExampleScheduleLayer(name="EXAMPLE_SCHEDULE_FIXTURE")
 
 EXAMPLE_SCHEDULE_INTEGRATION = IntegrationTesting(
-    bases=(EXAMPLE_SCHEDULE_FIXTURE,),
-    name='EXAMPLE_SCHEDULE_INTEGRATION'
+    bases=(EXAMPLE_SCHEDULE_FIXTURE,), name="EXAMPLE_SCHEDULE_INTEGRATION"
 )
 
 
 EXAMPLE_SCHEDULE_FUNCTIONAL = FunctionalTesting(
-    bases=(EXAMPLE_SCHEDULE_FIXTURE,),
-    name='EXAMPLE_SCHEDULE_FUNCTIONAL'
+    bases=(EXAMPLE_SCHEDULE_FIXTURE,), name="EXAMPLE_SCHEDULE_FUNCTIONAL"
 )
 
 
@@ -118,7 +103,7 @@ class BaseTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
 
 
 class BrowserTest(BaseTest):
@@ -133,15 +118,14 @@ class BrowserTest(BaseTest):
 
     def browser_login(self, user, password):
         login(self.portal, user)
-        self.browser.open(self.portal.absolute_url() + '/logout')
-        self.browser.open(self.portal.absolute_url() + '/login_form')
-        self.browser.getControl(name='__ac_name').value = user
-        self.browser.getControl(name='__ac_password').value = password
-        self.browser.getControl(name='submit').click()
+        self.browser.open(self.portal.absolute_url() + "/logout")
+        self.browser.open(self.portal.absolute_url() + "/login_form")
+        self.browser.getControl(name="__ac_name").value = user
+        self.browser.getControl(name="__ac_password").value = password
+        self.browser.getControl(name="submit").click()
 
 
 class ExampleScheduleTestBase(BrowserTest):
-
     def setUp(self):
         super(ExampleScheduleTestBase, self).setUp()
 
@@ -185,42 +169,32 @@ class ExampleScheduleFunctionalTestCase(ExampleScheduleTestBase):
 
 
 class MacrotaskScheduleLayer(ScheduleLayer):
-
     def setUpPloneSite(self, portal):
         super(MacrotaskScheduleLayer, self).setUpPloneSite(portal)
 
-        applyProfile(portal, 'Products.CMFPlone:dependencies')
+        applyProfile(portal, "Products.CMFPlone:dependencies")
         # ponr skin for robot tests
-        applyProfile(portal, 'plonetheme.sunburst:default')
-        applyProfile(portal, 'imio.schedule:testing')
+        applyProfile(portal, "plonetheme.sunburst:default")
+        applyProfile(portal, "imio.schedule:testing")
 
         # delete simple tasks
-        api.content.delete(
-            portal.config.test_scheduleconfig.test_taskconfig
-        )
-        api.content.delete(
-            portal.test_taskcontainer.TASK_test_taskconfig
-        )
+        api.content.delete(portal.config.test_scheduleconfig.test_taskconfig)
+        api.content.delete(portal.test_taskcontainer.TASK_test_taskconfig)
 
 
-MACROTASK_SCHEDULE_FIXTURE = MacrotaskScheduleLayer(
-    name='MACROTASK_SCHEDULE_FIXTURE'
-)
+MACROTASK_SCHEDULE_FIXTURE = MacrotaskScheduleLayer(name="MACROTASK_SCHEDULE_FIXTURE")
 
 MACROTASK_SCHEDULE_INTEGRATION = IntegrationTesting(
-    bases=(MACROTASK_SCHEDULE_FIXTURE,),
-    name='MACROTASK_SCHEDULE_INTEGRATION'
+    bases=(MACROTASK_SCHEDULE_FIXTURE,), name="MACROTASK_SCHEDULE_INTEGRATION"
 )
 
 
 MACROTASK_SCHEDULE_FUNCTIONAL = FunctionalTesting(
-    bases=(MACROTASK_SCHEDULE_FIXTURE,),
-    name='MACROTASK_SCHEDULE_FUNCTIONAL'
+    bases=(MACROTASK_SCHEDULE_FIXTURE,), name="MACROTASK_SCHEDULE_FUNCTIONAL"
 )
 
 
 class MacroTaskScheduleTestBase(BrowserTest):
-
     def setUp(self):
         super(MacroTaskScheduleTestBase, self).setUp()
 

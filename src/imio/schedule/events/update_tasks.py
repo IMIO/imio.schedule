@@ -10,7 +10,6 @@ from imio.schedule.utils import get_container_open_tasks
 
 
 class TaskEventHandler(object):
-
     def __init__(self, task_container, event):
         self.container = task_container
         self.event = event
@@ -22,7 +21,7 @@ class TaskEventHandler(object):
         if not self.task_configs:
             return
 
-        with api.env.adopt_roles(['Manager']):
+        with api.env.adopt_roles(["Manager"]):
             self.handle()
 
     @property
@@ -32,14 +31,13 @@ class TaskEventHandler(object):
         modification so we need to ensured that the container really exists
         (more than just created in portal_factory).
         """
-        if hasattr(aq_base(self.container), 'checkCreationFlag'):
+        if hasattr(aq_base(self.container), "checkCreationFlag"):
             if self.container.checkCreationFlag():
                 return False
         return True
 
     def handle(self):
-        """
-        """
+        """ """
         raise NotImplementedError
 
 
@@ -52,7 +50,7 @@ def start_tasks(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -61,7 +59,7 @@ def start_tasks(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             task = config.get_created_task(task_container)
             if task and config.should_start_task(task_container, task):
@@ -72,7 +70,7 @@ def start_tasks(task_container, event):
                 # update due date after the task has started, because some date
                 # computation can rely on the task starting date
                 task.due_date = config.compute_due_date(task_container, task)
-                task.reindexObject(idxs=('due_date',))
+                task.reindexObject(idxs=("due_date",))
 
 
 def end_tasks(task_container, event):
@@ -84,7 +82,7 @@ def end_tasks(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -93,7 +91,7 @@ def end_tasks(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             task = config.get_open_task(task_container)
             if task and config.should_end_task(task_container, task):
@@ -111,7 +109,7 @@ def freeze_tasks(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -120,7 +118,7 @@ def freeze_tasks(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             task = config.get_open_task(task_container)
             if task and config.should_freeze_task(task_container, task):
@@ -130,7 +128,7 @@ def freeze_tasks(task_container, event):
 
                 # update due date after the task has frozen
                 task.due_date = config.compute_due_date(task_container, task)
-                task.reindexObject(idxs=('due_date',))
+                task.reindexObject(idxs=("due_date",))
 
 
 def thaw_tasks(task_container, event):
@@ -142,7 +140,7 @@ def thaw_tasks(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -151,7 +149,7 @@ def thaw_tasks(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             task = config.get_frozen_task(task_container)
             if task and config.should_thaw_task(task_container, task):
@@ -162,7 +160,7 @@ def thaw_tasks(task_container, event):
                 # update due date after the task has thawed, because some date
                 # computation can rely on the task thawing date
                 task.due_date = config.compute_due_date(task_container, task)
-                task.reindexObject(idxs=('due_date',))
+                task.reindexObject(idxs=("due_date",))
 
 
 def update_due_date(task_container, event):
@@ -174,7 +172,7 @@ def update_due_date(task_container, event):
     # This handler can be triggered for archetypes containers by the
     # workflow modification event but we want to create tasks only if
     # the container really exists (more than just created in portal_factory...)
-    if hasattr(aq_base(task_container), 'checkCreationFlag'):
+    if hasattr(aq_base(task_container), "checkCreationFlag"):
         if task_container.checkCreationFlag():
             return
 
@@ -183,16 +181,15 @@ def update_due_date(task_container, event):
     if not task_configs:
         return
 
-    with api.env.adopt_roles(['Manager']):
+    with api.env.adopt_roles(["Manager"]):
         for config in task_configs:
             task = config.get_open_task(task_container)
             if task:
                 task.due_date = config.compute_due_date(task_container, task)
-                task.reindexObject(idxs=('due_date',))
+                task.reindexObject(idxs=("due_date",))
 
 
 class UpdateRecurrenceHandler(TaskEventHandler):
-
     def handle(self):
         open_tasks = get_container_open_tasks(self.container)
         open_tasks_by_cfg_UIDs = dict([(t.task_config_UID, t) for t in open_tasks])

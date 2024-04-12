@@ -173,8 +173,7 @@ class CreateIfSubtaskCanBeCreated(MacroTaskCreationCondition):
     """
 
     def evaluate(self):
-        """
-        """
+        """ """
 
 
 class CreateIfAllSubtasksCanBeCreated(MacroTaskCreationCondition):
@@ -183,8 +182,7 @@ class CreateIfAllSubtasksCanBeCreated(MacroTaskCreationCondition):
     """
 
     def evaluate(self):
-        """
-        """
+        """ """
 
 
 class StartIfAnySubtaskStarted(MacroTaskStartCondition):
@@ -193,8 +191,7 @@ class StartIfAnySubtaskStarted(MacroTaskStartCondition):
     """
 
     def evaluate(self):
-        """
-        """
+        """ """
 
 
 class StartIfAllSubtasksStarted(MacroTaskStartCondition):
@@ -203,19 +200,16 @@ class StartIfAllSubtasksStarted(MacroTaskStartCondition):
     """
 
     def evaluate(self):
-        """
-        """
+        """ """
 
 
 class RecurrencyCondition(Condition):
-
     def __init__(self, task_container, task_config):
         self.task_container = task_container
         self.task_config = task_config
 
 
 class NoRecurencyCondition(RecurrencyCondition):
-
     def evaluate(self):
         return False
 

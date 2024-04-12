@@ -46,19 +46,19 @@ from zope.interface import implements
 class ICreationConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.creation_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.creation_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -66,19 +66,19 @@ class ICreationConditionSchema(Interface):
 class IStartConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.start_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.start_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -86,19 +86,19 @@ class IStartConditionSchema(Interface):
 class IEndConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.end_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.end_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -106,19 +106,19 @@ class IEndConditionSchema(Interface):
 class IRecurrenceConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.creation_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.creation_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -126,19 +126,19 @@ class IRecurrenceConditionSchema(Interface):
 class IFreezeConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.freeze_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.freeze_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -146,19 +146,19 @@ class IFreezeConditionSchema(Interface):
 class IThawConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.thaw_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.thaw_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -169,243 +169,256 @@ class ITaskConfig(model.Schema):
     """
 
     model.fieldset(
-        'general',
+        "general",
         label=_(u"General informations"),
         fields=[
-            'enabled', 'default_assigned_group',
-            'default_assigned_user', 'marker_interfaces'
-        ]
+            "enabled",
+            "default_assigned_group",
+            "default_assigned_user",
+            "marker_interfaces",
+        ],
     )
 
     enabled = schema.Bool(
-        title=_(u'Enabled'),
+        title=_(u"Enabled"),
         default=True,
         required=False,
     )
 
     default_assigned_group = schema.Choice(
-        title=_(u'Assigned group'),
-        description=_(u'Select default group assigned to this task.'),
-        vocabulary='schedule.assigned_group',
+        title=_(u"Assigned group"),
+        description=_(u"Select default group assigned to this task."),
+        vocabulary="schedule.assigned_group",
         required=False,
     )
 
     default_assigned_user = schema.Choice(
-        title=_(u'Assigned user'),
-        description=_(u'Select default user assigned to this task.'),
-        vocabulary='schedule.assigned_user',
+        title=_(u"Assigned user"),
+        description=_(u"Select default user assigned to this task."),
+        vocabulary="schedule.assigned_user",
         required=True,
     )
 
     marker_interfaces = schema.Set(
-        title=_(u'Marker interfaces'),
-        description=_(u'Custom marker interfaces for this task.'),
-        value_type=schema.Choice(source='schedule.task_marker_interfaces'),
+        title=_(u"Marker interfaces"),
+        description=_(u"Custom marker interfaces for this task."),
+        value_type=schema.Choice(source="schedule.task_marker_interfaces"),
         required=False,
     )
 
     model.fieldset(
-        'creation',
+        "creation",
         label=_(u"Creation"),
-        fields=['creation_state', 'creation_conditions']
+        fields=["creation_state", "creation_conditions"],
     )
 
     creation_state = schema.Set(
-        title=_(u'Task container creation state'),
-        description=_(u'Select the state of the container where the task is automatically created.'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container creation state"),
+        description=_(
+            u"Select the state of the container where the task is automatically created."
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     creation_conditions = schema.List(
-        title=_(u'Creation conditions'),
-        description=_(u'Select creation conditions of the task'),
+        title=_(u"Creation conditions"),
+        description=_(u"Select creation conditions of the task"),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=ICreationConditionSchema,
         ),
         required=False,
     )
 
     model.fieldset(
-        'start',
-        label=_(u"Start"),
-        fields=['starting_states', 'start_conditions']
+        "start", label=_(u"Start"), fields=["starting_states", "start_conditions"]
     )
 
     starting_states = schema.Set(
-        title=_(u'Task container start states'),
-        description=_(u'Select the state of the container where the task is automatically started.'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container start states"),
+        description=_(
+            u"Select the state of the container where the task is automatically started."
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     start_conditions = schema.List(
-        title=_(u'Start conditions'),
-        description=_(u'Select start conditions of the task'),
+        title=_(u"Start conditions"),
+        description=_(u"Select start conditions of the task"),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IStartConditionSchema,
         ),
         required=False,
     )
 
     model.fieldset(
-        'ending',
-        label=_(u"Ending"),
-        fields=['ending_states', 'end_conditions']
+        "ending", label=_(u"Ending"), fields=["ending_states", "end_conditions"]
     )
 
     ending_states = schema.Set(
-        title=_(u'Task container end states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container end states"),
+        description=_(
+            u"Select the states of the container where the task is automatically closed."
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     end_conditions = schema.List(
-        title=_(u'End conditions'),
-        description=_(u'Select end conditions of the task.'),
+        title=_(u"End conditions"),
+        description=_(u"Select end conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IEndConditionSchema,
         ),
         required=False,
     )
 
     model.fieldset(
-        'delay',
-        label=_(u'Calculation delay'),
+        "delay",
+        label=_(u"Calculation delay"),
         fields=[
-            'start_date', 'warning_delay',
-            'calculation_delay', 'additional_delay', 'additional_delay_type',
-            'round_to_day'
+            "start_date",
+            "warning_delay",
+            "calculation_delay",
+            "additional_delay",
+            "additional_delay_type",
+            "round_to_day",
         ],
     )
 
     start_date = schema.Choice(
-        title=_(u'Start date'),
-        description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='schedule.start_date',
+        title=_(u"Start date"),
+        description=_(u"Select the start date used to compute the due date."),
+        vocabulary="schedule.start_date",
         required=True,
     )
 
     warning_delay = schema.Int(
-        title=_(u'Warning delay'),
+        title=_(u"Warning delay"),
         required=False,
     )
 
     calculation_delay = schema.List(
-        title=_(u'Calculation delay method'),
+        title=_(u"Calculation delay method"),
         value_type=schema.Choice(
-            title=_(u'Calculation delay'),
-            vocabulary='schedule.calculation_delay',
-            default='schedule.calculation_default_delay',
+            title=_(u"Calculation delay"),
+            vocabulary="schedule.calculation_delay",
+            default="schedule.calculation_default_delay",
         ),
         required=True,
     )
 
     additional_delay = schema.Int(
-        title=_(u'Additional delay'),
-        description=_(u'This delay is added to the due date of the task.'),
+        title=_(u"Additional delay"),
+        description=_(u"This delay is added to the due date of the task."),
         required=False,
         default=0,
     )
 
     additional_delay_type = schema.Choice(
-        title=_(u'Additional delay type'),
-        description=_(u'Define the calculation method for the additional delay'),
-        vocabulary='imio.schedule.additional_delay_type',
+        title=_(u"Additional delay type"),
+        description=_(u"Define the calculation method for the additional delay"),
+        vocabulary="imio.schedule.additional_delay_type",
         required=True,
     )
 
     round_to_day = schema.Choice(
-        title=_(u'Round to week day'),
-        vocabulary='schedule.vocabulary.week_days_rounding',
-        default='0',
+        title=_(u"Round to week day"),
+        vocabulary="schedule.vocabulary.week_days_rounding",
+        default="0",
         required=True,
     )
 
     model.fieldset(
-        'freeze',
-        label=_(u'Freeze'),
+        "freeze",
+        label=_(u"Freeze"),
         fields=[
-            'freeze_states',
-            'freeze_conditions',
+            "freeze_states",
+            "freeze_conditions",
         ],
     )
 
     freeze_states = schema.Set(
-        title=_(u'Task container freeze states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container freeze states"),
+        description=_(
+            u"Select the states of the container where the task is automatically closed."
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     freeze_conditions = schema.List(
-        title=_(u'Freeze conditions'),
-        description=_(u'Select freeze conditions of the task.'),
+        title=_(u"Freeze conditions"),
+        description=_(u"Select freeze conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IFreezeConditionSchema,
         ),
         required=False,
     )
 
     model.fieldset(
-        'thaw',
-        label=_(u'Thaw'),
+        "thaw",
+        label=_(u"Thaw"),
         fields=[
-            'thaw_states',
-            'thaw_conditions',
+            "thaw_states",
+            "thaw_conditions",
         ],
     )
 
     thaw_states = schema.Set(
-        title=_(u'Task container thaw states'),
-        description=_(u'Select the states of the container where the task is automatically closed.'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container thaw states"),
+        description=_(
+            u"Select the states of the container where the task is automatically closed."
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     thaw_conditions = schema.List(
-        title=_(u'Thaw conditions'),
-        description=_(u'Select thaw conditions of the task.'),
+        title=_(u"Thaw conditions"),
+        description=_(u"Select thaw conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IThawConditionSchema,
         ),
         required=False,
     )
 
     model.fieldset(
-        'recurrence',
-        label=_(u'Recurrence'),
+        "recurrence",
+        label=_(u"Recurrence"),
         fields=[
-            'activate_recurrency',
-            'recurrence_states',
-            'recurrence_conditions',
+            "activate_recurrency",
+            "recurrence_states",
+            "recurrence_conditions",
         ],
     )
 
     activate_recurrency = schema.Bool(
-        title=_(u'Activate recurrency'),
+        title=_(u"Activate recurrency"),
         required=False,
         default=False,
     )
 
     recurrence_states = schema.Set(
-        title=_(u'Task container recurrence states'),
-        description=_(u'Select the state of the container where the task should be recurred'),
-        value_type=schema.Choice(source='schedule.container_state'),
+        title=_(u"Task container recurrence states"),
+        description=_(
+            u"Select the state of the container where the task should be recurred"
+        ),
+        value_type=schema.Choice(source="schedule.container_state"),
         required=False,
     )
 
     recurrence_conditions = schema.List(
-        title=_(u'Recurrence condition'),
-        description=_(u'Select recurrence conditions of the task.'),
+        title=_(u"Recurrence condition"),
+        description=_(u"Select recurrence conditions of the task."),
         value_type=schema.Object(
-            title=_('Conditions'),
+            title=_("Conditions"),
             schema=IRecurrenceConditionSchema,
         ),
         required=False,
@@ -443,7 +456,7 @@ class BaseTaskConfig(object):
         from imio.schedule.content.schedule_config import IScheduleConfig
 
         context = self
-        while(not IScheduleConfig.providedBy(context)):
+        while not IScheduleConfig.providedBy(context):
             context = context.getParentNode()
 
         return context
@@ -472,9 +485,7 @@ class BaseTaskConfig(object):
         # try to get the adapter named 'group_id'
         default_group = None
         assign_group = queryMultiAdapter(
-            (task_container, task),
-            IDefaultTaskGroup,
-            name=group_id
+            (task_container, task), IDefaultTaskGroup, name=group_id
         )
         if assign_group:
             default_group = assign_group.group_id()
@@ -493,9 +504,7 @@ class BaseTaskConfig(object):
         # try to get the adapter named 'user_id'
         default_user = None
         assign_user = queryMultiAdapter(
-            (task_container, task),
-            IDefaultTaskUser,
-            name=user_id
+            (task_container, task), IDefaultTaskUser, name=user_id
         )
         if assign_user:
             default_user = assign_user.user_id()
@@ -513,12 +522,15 @@ class BaseTaskConfig(object):
         to_explore = [root_container]
         while to_explore:
             current = to_explore.pop()
-            if IAutomatedTask.providedBy(current) and current.task_config_UID == self.UID():
+            if (
+                IAutomatedTask.providedBy(current)
+                and current.task_config_UID == self.UID()
+            ):
                 if not states:
                     tasks.append(current)
                 elif api.content.get_state(current) in states:
                     tasks.append(current)
-            if hasattr(current, 'objectValues'):
+            if hasattr(current, "objectValues"):
                 to_explore.extend(current.objectValues())
         tasks = sorted(tasks, key=lambda x: x.created())
         return tasks
@@ -538,8 +550,7 @@ class BaseTaskConfig(object):
         TaskConfig in 'task_container' if it exists and is not started yet..
         """
         tasks = self.get_task_instances(
-            task_container,
-            states=states_by_status[CREATION]
+            task_container, states=states_by_status[CREATION]
         )
         task_instance = tasks and tasks[0] or None
         return task_instance
@@ -550,8 +561,7 @@ class BaseTaskConfig(object):
         TaskConfig in 'task_container' if it exists and is started.
         """
         tasks = self.get_task_instances(
-            task_container,
-            states=states_by_status[STARTED]
+            task_container, states=states_by_status[STARTED]
         )
         task_instance = tasks and tasks[0] or None
         return task_instance
@@ -562,10 +572,7 @@ class BaseTaskConfig(object):
         TaskConfig in 'task_container' if it exists and is not closed yet.
         """
         states = states_by_status[CREATION] + states_by_status[STARTED]
-        tasks = self.get_task_instances(
-            task_container,
-            states=states
-        )
+        tasks = self.get_task_instances(task_container, states=states)
         task_instance = tasks and tasks[0] or None
         return task_instance
 
@@ -574,10 +581,7 @@ class BaseTaskConfig(object):
         Return all the closed automatedTask objects created from this
         TaskConfig in 'task_container' .
         """
-        tasks = self.get_task_instances(
-            task_container,
-            states=states_by_status[DONE]
-        )
+        tasks = self.get_task_instances(task_container, states=states_by_status[DONE])
         return tasks
 
     def get_closed_task(self, task_container):
@@ -594,10 +598,7 @@ class BaseTaskConfig(object):
         Return the unique AutomatedTask object created from this
         TaskConfig in 'task_container' if it exists and is frozen.
         """
-        tasks = self.get_task_instances(
-            task_container,
-            states=states_by_status[FROZEN]
-        )
+        tasks = self.get_task_instances(task_container, states=states_by_status[FROZEN])
         task_instance = tasks and tasks[0] or None
         return task_instance
 
@@ -608,8 +609,7 @@ class BaseTaskConfig(object):
         return self.get_task_instances(task_container)
 
     def evaluate_conditions(self, conditions, to_adapt, interface):
-        """
-        """
+        """ """
         value = True
         for condition_object in conditions or []:
             value = self.evaluate_one_condition(
@@ -621,10 +621,10 @@ class BaseTaskConfig(object):
 
             # in these cases, its useless to evaluate further because:
             # TRUE or (... ) <=> TRUE
-            if operator == 'OR' and value is True:
+            if operator == "OR" and value is True:
                 return True
             # FALSE and (... ) <=> FALSE
-            elif operator == 'AND' and value is False:
+            elif operator == "AND" and value is False:
                 return False
             # else, just continue to loop to evaluate the rest of the expression because:
             # FALSE or (... ) <=> (... )
@@ -635,13 +635,8 @@ class BaseTaskConfig(object):
         return value
 
     def evaluate_one_condition(self, to_adapt, interface, name):
-        """
-        """
-        condition = getMultiAdapter(
-            to_adapt,
-            interface=interface,
-            name=name
-        )
+        """ """
+        condition = getMultiAdapter(to_adapt, interface=interface, name=name)
         value = condition.evaluate() and True or False
         return value
 
@@ -655,7 +650,7 @@ class BaseTaskConfig(object):
         matched = []
         not_matched = []
         for condition_object in conditions or []:
-            if not getattr(condition_object, 'display_status', True):
+            if not getattr(condition_object, "display_status", True):
                 continue
             value = self.evaluate_one_condition(
                 to_adapt=to_adapt,
@@ -701,8 +696,7 @@ class BaseTaskConfig(object):
         return True
 
     def match_creation_state(self, task_container):
-        """
-        """
+        """ """
         if not self.creation_state:
             return True
 
@@ -710,8 +704,7 @@ class BaseTaskConfig(object):
         return container_state in (self.creation_state or [])
 
     def match_creation_conditions(self, task_container):
-        """
-        """
+        """ """
         return self.evaluate_conditions(
             conditions=self.creation_conditions,
             to_adapt=(task_container, self),
@@ -741,8 +734,7 @@ class BaseTaskConfig(object):
         return True
 
     def match_starting_states(self, task_container):
-        """
-        """
+        """ """
         if not self.starting_states:
             return True
 
@@ -750,8 +742,7 @@ class BaseTaskConfig(object):
         return container_state in (self.starting_states or [])
 
     def match_start_conditions(self, task_container, task):
-        """
-        """
+        """ """
         return self.evaluate_conditions(
             conditions=self.start_conditions,
             to_adapt=(task_container, task),
@@ -791,12 +782,15 @@ class BaseTaskConfig(object):
         return True
 
     def match_ending_states(self, task_container):
-        """
-        """
+        """ """
         default_ending_states = queryAdapter(task_container, IDefaultEndingStates)
         default_ending_states = default_ending_states and default_ending_states() or []
 
-        ending_states = self.ending_states and list(default_ending_states) + list(self.ending_states) or []
+        ending_states = (
+            self.ending_states
+            and list(default_ending_states) + list(self.ending_states)
+            or []
+        )
 
         if not ending_states:
             return True
@@ -805,8 +799,7 @@ class BaseTaskConfig(object):
         return container_state in ending_states
 
     def match_end_conditions(self, task_container, task):
-        """
-        """
+        """ """
         return self.evaluate_conditions(
             conditions=self.end_conditions,
             to_adapt=(task_container, task),
@@ -850,18 +843,18 @@ class BaseTaskConfig(object):
         return True
 
     def match_freeze_states(self, task_container):
-        """
-        """
+        """ """
         default_freeze_states = queryAdapter(task_container, IDefaultFreezeStates)
         default_freeze_states = default_freeze_states and default_freeze_states() or []
-        freeze_states = list(default_freeze_states) + list(self.freeze_states or []) or []
+        freeze_states = (
+            list(default_freeze_states) + list(self.freeze_states or []) or []
+        )
 
         container_state = api.content.get_state(task_container)
         return container_state in freeze_states
 
     def match_freeze_conditions(self, task_container, task):
-        """
-        """
+        """ """
         return self.evaluate_conditions(
             conditions=self.freeze_conditions,
             to_adapt=(task_container, task),
@@ -903,8 +896,7 @@ class BaseTaskConfig(object):
         return True
 
     def match_thaw_states(self, task_container):
-        """
-        """
+        """ """
         default_thaw_states = queryAdapter(task_container, IDefaultThawStates)
         default_thaw_states = default_thaw_states and default_thaw_states() or []
         thaw_states = list(default_thaw_states) + list(self.thaw_states or []) or []
@@ -913,8 +905,7 @@ class BaseTaskConfig(object):
         return container_state in thaw_states
 
     def match_thaw_conditions(self, task_container, task):
-        """
-        """
+        """ """
         return self.evaluate_conditions(
             conditions=self.thaw_conditions,
             to_adapt=(task_container, task),
@@ -941,13 +932,13 @@ class BaseTaskConfig(object):
         if not schedule_config.enabled:
             return False
 
-        if getattr(self, 'activate_recurrency', False) is False:
+        if getattr(self, "activate_recurrency", False) is False:
             return False
 
         if self.match_recurrence_states(task_container) is False:
             return False
 
-        if not getattr(self, 'recurrence_conditions', None):
+        if not getattr(self, "recurrence_conditions", None):
             return True
 
         return self.evaluate_conditions(
@@ -957,8 +948,7 @@ class BaseTaskConfig(object):
         )
 
     def match_recurrence_states(self, task_container):
-        """
-        """
+        """ """
         if not self.recurrence_states:
             return True
 
@@ -974,27 +964,27 @@ class BaseTaskConfig(object):
         """
         Default implementation is to put the task on the state 'to_do'.
         """
-        with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(task) == 'created':
-                api.content.transition(obj=task, transition='do_to_assign')
-            if api.content.get_state(task) == 'to_assign' and task.assigned_user:
-                api.content.transition(obj=task, transition='do_to_do')
-        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+        with api.env.adopt_roles(["Manager"]):
+            if api.content.get_state(task) == "created":
+                api.content.transition(obj=task, transition="do_to_assign")
+            if api.content.get_state(task) == "to_assign" and task.assigned_user:
+                api.content.transition(obj=task, transition="do_to_do")
+        task.reindex_parent_tasks(idxs=["is_solvable_task"])
 
     def end_task(self, task):
         """
         Default implementation is to put the task on the state 'closed'.
         """
-        if api.content.get_state(task) == 'created':
-            api.content.transition(obj=task, transition='do_to_assign')
-        if api.content.get_state(task) == 'to_assign':
-            api.content.transition(obj=task, transition='do_to_do')
-        if api.content.get_state(task) == 'to_do':
-            api.content.transition(obj=task, transition='do_realized')
-        if api.content.get_state(task) == 'realized':
-            with api.env.adopt_roles(['Reviewer']):
-                api.content.transition(obj=task, transition='do_closed')
-        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+        if api.content.get_state(task) == "created":
+            api.content.transition(obj=task, transition="do_to_assign")
+        if api.content.get_state(task) == "to_assign":
+            api.content.transition(obj=task, transition="do_to_do")
+        if api.content.get_state(task) == "to_do":
+            api.content.transition(obj=task, transition="do_realized")
+        if api.content.get_state(task) == "realized":
+            with api.env.adopt_roles(["Reviewer"]):
+                api.content.transition(obj=task, transition="do_closed")
+        task.reindex_parent_tasks(idxs=["is_solvable_task"])
 
     def freeze_task(self, task):
         """
@@ -1002,25 +992,25 @@ class BaseTaskConfig(object):
         """
         annotations = IAnnotations(task)
         freeze_infos = annotations.get(
-            'imio.schedule.freeze_task',
+            "imio.schedule.freeze_task",
             {
-                'freeze_date': None,
-                'previous_state': task.get_state(),
-                'previous_freeze_duration': 0
-            }
+                "freeze_date": None,
+                "previous_state": task.get_state(),
+                "previous_freeze_duration": 0,
+            },
         )
-        freeze_infos['freeze_date'] = str(datetime.now().date())
-        freeze_infos['freeze_state'] = task.get_state()
-        annotations['imio.schedule.freeze_task'] = freeze_infos
+        freeze_infos["freeze_date"] = str(datetime.now().date())
+        freeze_infos["freeze_state"] = task.get_state()
+        annotations["imio.schedule.freeze_task"] = freeze_infos
 
-        portal_workflow = api.portal.get_tool('portal_workflow')
+        portal_workflow = api.portal.get_tool("portal_workflow")
         workflow_def = portal_workflow.getWorkflowsFor(task)[0]
         workflow_id = workflow_def.getId()
         workflow_state = portal_workflow.getStatusOf(workflow_id, task)
-        workflow_state['review_state'] = 'frozen'
+        workflow_state["review_state"] = "frozen"
         portal_workflow.setStatusOf(workflow_id, task, workflow_state.copy())
 
-        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+        task.reindex_parent_tasks(idxs=["is_solvable_task"])
 
     def thaw_task(self, task):
         """
@@ -1028,25 +1018,25 @@ class BaseTaskConfig(object):
         """
 
         annotations = IAnnotations(task)
-        freeze_infos = annotations['imio.schedule.freeze_task']
+        freeze_infos = annotations["imio.schedule.freeze_task"]
         calculator = getMultiAdapter(
             (task.get_container(), task),
             interface=IFreezeDuration,
-            name='schedule.freeze_duration',
+            name="schedule.freeze_duration",
         )
         new_freeze_duration = calculator.freeze_duration
         new_freeze_infos = freeze_infos.copy()
-        new_freeze_infos['previous_freeze_duration'] = new_freeze_duration
-        annotations['imio.schedule.freeze_task'] = new_freeze_infos
+        new_freeze_infos["previous_freeze_duration"] = new_freeze_duration
+        annotations["imio.schedule.freeze_task"] = new_freeze_infos
 
-        portal_workflow = api.portal.get_tool('portal_workflow')
+        portal_workflow = api.portal.get_tool("portal_workflow")
         workflow_def = portal_workflow.getWorkflowsFor(task)[0]
         workflow_id = workflow_def.getId()
         workflow_state = portal_workflow.getStatusOf(workflow_id, task)
-        workflow_state['review_state'] = freeze_infos['previous_state']
+        workflow_state["review_state"] = freeze_infos["previous_state"]
         portal_workflow.setStatusOf(workflow_id, task, workflow_state.copy())
 
-        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+        task.reindex_parent_tasks(idxs=["is_solvable_task"])
 
     def compute_due_date(self, task_container, task):
         """
@@ -1054,10 +1044,10 @@ class BaseTaskConfig(object):
         This should be checked in a zope event to automatically compute and set the
         due date of 'task'.
         """
-        adapters = getattr(self, 'calculation_delay', [])
+        adapters = getattr(self, "calculation_delay", [])
         # Backward compatibility
         if not adapters:
-            adapters = ['schedule.calculation_default_delay']
+            adapters = ["schedule.calculation_default_delay"]
         due_date = None
         for adapter in adapters:
             calculator = getMultiAdapter(
@@ -1068,17 +1058,19 @@ class BaseTaskConfig(object):
             due_date = calculator.due_date
 
         additional_delay = self.additional_delay or 0
-        delay_type = getattr(self, 'additional_delay_type', 'absolute')
-        if additional_delay and delay_type == 'working_days':
+        delay_type = getattr(self, "additional_delay_type", "absolute")
+        if additional_delay and delay_type == "working_days":
             calendar = WorkingDaysCalendar()
             due_date = calendar.add_working_days(due_date, additional_delay)
         elif additional_delay:
             due_date = due_date + relativedelta(days=+additional_delay)
 
         annotations = IAnnotations(task)
-        freeze_infos = annotations.get('imio.schedule.freeze_task', None)
+        freeze_infos = annotations.get("imio.schedule.freeze_task", None)
         if freeze_infos:
-            due_date = due_date + relativedelta(days=+freeze_infos['previous_freeze_duration'])
+            due_date = due_date + relativedelta(
+                days=+freeze_infos["previous_freeze_duration"]
+            )
 
         round_day = int(self.round_to_day)
         if round_day:
@@ -1098,7 +1090,7 @@ class BaseTaskConfig(object):
             raise TaskAlreadyExists(task_id)
 
         task_portal_type = self.get_task_type()
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         type_info = portal_types.getTypeInfo(task_portal_type)
 
         task = type_info._constructInstance(
@@ -1109,14 +1101,14 @@ class BaseTaskConfig(object):
             task_config_UID=self.UID(),
         )
 
-        marker_interfaces = [getInterface('', i) for i in self.marker_interfaces or []]
+        marker_interfaces = [getInterface("", i) for i in self.marker_interfaces or []]
         alsoProvides(task, *marker_interfaces)
 
         return task
 
     @property
     def default_task_id(self):
-        return 'TASK_{0}'.format(self.id)
+        return "TASK_{0}".format(self.id)
 
     def create_recurring_task(self, task_container, creation_place=None):
         """
@@ -1124,15 +1116,18 @@ class BaseTaskConfig(object):
         """
         creation_place = creation_place or task_container
         object_ids = creation_place.objectIds()
-        related_ids = [i for i in object_ids
-                       if i.startswith(self.default_task_id)
-                       and creation_place[i].get_task_config() == self]
+        related_ids = [
+            i
+            for i in object_ids
+            if i.startswith(self.default_task_id)
+            and creation_place[i].get_task_config() == self
+        ]
         if len(related_ids) > 0:
             object_id = related_ids[-1]
-            if api.content.get_state(creation_place[object_id]) != 'closed':
+            if api.content.get_state(creation_place[object_id]) != "closed":
                 return
         if self.default_task_id in object_ids:
-            task_id = '{0}-{1}'.format(
+            task_id = "{0}-{1}".format(
                 self.default_task_id,
                 len(related_ids),
             )
@@ -1156,7 +1151,7 @@ class TaskConfig(Container, BaseTaskConfig):
         """
         Return the content type of task to create.
         """
-        return 'AutomatedTask'
+        return "AutomatedTask"
 
     def create_task(self, task_container, creation_place=None, task_id=None):
         """
@@ -1170,7 +1165,7 @@ class TaskConfig(Container, BaseTaskConfig):
         task.assigned_user = self.user_to_assign(task_container, task)
         task.due_date = self.compute_due_date(task_container, task)
         task.reindexObject()
-        task.reindex_parent_tasks(idxs=['is_solvable_task'])
+        task.reindex_parent_tasks(idxs=["is_solvable_task"])
 
         return task
 
@@ -1178,19 +1173,19 @@ class TaskConfig(Container, BaseTaskConfig):
 class IMacroCreationConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_creation_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_creation_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1198,19 +1193,19 @@ class IMacroCreationConditionSchema(Interface):
 class IMacroStartConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_start_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_start_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1218,19 +1213,19 @@ class IMacroStartConditionSchema(Interface):
 class IMacroEndConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_end_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_end_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1238,19 +1233,19 @@ class IMacroEndConditionSchema(Interface):
 class IMacroFreezeConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_freeze_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_freeze_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1258,19 +1253,19 @@ class IMacroFreezeConditionSchema(Interface):
 class IMacroThawConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_thaw_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_thaw_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1278,19 +1273,19 @@ class IMacroThawConditionSchema(Interface):
 class IMacroRecurrenceConditionSchema(Interface):
 
     condition = SubFormContextChoice(
-        title=_(u'Condition'),
-        vocabulary='schedule.macrotask_creation_conditions',
+        title=_(u"Condition"),
+        vocabulary="schedule.macrotask_creation_conditions",
         required=True,
     )
 
     operator = schema.Choice(
-        title=_(u'Operator'),
-        vocabulary='schedule.logical_operator',
-        default='AND',
+        title=_(u"Operator"),
+        vocabulary="schedule.logical_operator",
+        default="AND",
     )
 
     display_status = schema.Bool(
-        title=_(u'display_status'),
+        title=_(u"display_status"),
         default=True,
     )
 
@@ -1301,67 +1296,67 @@ class IMacroTaskConfig(ITaskConfig):
     """
 
     start_date = schema.Choice(
-        title=_(u'Start date'),
-        description=_(u'Select the start date used to compute the due date.'),
-        vocabulary='schedule.macrotask_start_date',
+        title=_(u"Start date"),
+        description=_(u"Select the start date used to compute the due date."),
+        vocabulary="schedule.macrotask_start_date",
         required=True,
     )
 
     creation_conditions = schema.List(
-        title=_(u'Creation conditions'),
-        description=_(u'Select creation conditions of the task'),
+        title=_(u"Creation conditions"),
+        description=_(u"Select creation conditions of the task"),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IMacroCreationConditionSchema,
         ),
         required=False,
     )
 
     start_conditions = schema.List(
-        title=_(u'Start conditions'),
-        description=_(u'Select start conditions of the task'),
+        title=_(u"Start conditions"),
+        description=_(u"Select start conditions of the task"),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IMacroStartConditionSchema,
         ),
         required=False,
     )
 
     end_conditions = schema.List(
-        title=_(u'End conditions'),
-        description=_(u'Select end conditions of the task.'),
+        title=_(u"End conditions"),
+        description=_(u"Select end conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IMacroEndConditionSchema,
         ),
         required=False,
     )
 
     freeze_conditions = schema.List(
-        title=_(u'Freeze conditions'),
-        description=_(u'Select freeze conditions of the task.'),
+        title=_(u"Freeze conditions"),
+        description=_(u"Select freeze conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IMacroFreezeConditionSchema,
         ),
         required=False,
     )
 
     thaw_conditions = schema.List(
-        title=_(u'Thaw conditions'),
-        description=_(u'Select thaw conditions of the task.'),
+        title=_(u"Thaw conditions"),
+        description=_(u"Select thaw conditions of the task."),
         value_type=schema.Object(
-            title=_(u'Conditions'),
+            title=_(u"Conditions"),
             schema=IMacroThawConditionSchema,
         ),
         required=False,
     )
 
     recurrence_conditions = schema.List(
-        title=_(u'Recurrence condition'),
-        description=_(u'Select recurrence conditions of the task.'),
+        title=_(u"Recurrence condition"),
+        description=_(u"Select recurrence conditions of the task."),
         value_type=schema.Object(
-            title=_('Conditions'),
+            title=_("Conditions"),
             schema=IMacroRecurrenceConditionSchema,
         ),
         required=False,
@@ -1379,19 +1374,19 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         """
         Return the content type of task to create.
         """
-        return 'AutomatedMacroTask'
+        return "AutomatedMacroTask"
 
     def get_subtask_configs(self):
         """
         Return all the subtasks configs of this macro task.
         """
-        catalog = api.portal.get_tool('portal_catalog')
-        config_path = '/'.join(self.getPhysicalPath())
+        catalog = api.portal.get_tool("portal_catalog")
+        config_path = "/".join(self.getPhysicalPath())
 
         query = {
-            'object_provides': ITaskConfig.__identifier__,
-            'path': {'query': config_path, 'depth': 1},
-            'sort_on': 'getObjPositionInParent',
+            "object_provides": ITaskConfig.__identifier__,
+            "path": {"query": config_path, "depth": 1},
+            "sort_on": "getObjPositionInParent",
         }
 
         config_brains = catalog(**query)
@@ -1434,7 +1429,9 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         if not task_done:
             return False
 
-        subtasks_done = all([subtask.get_status() == DONE for subtask in task.get_subtasks()])
+        subtasks_done = all(
+            [subtask.get_status() == DONE for subtask in task.get_subtasks()]
+        )
         if not subtasks_done:
             return False
 
@@ -1445,7 +1442,9 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         Default implementation is to put the task  and all its subtasks on the
         state 'frozen'.
         """
-        subtasks_to_freeze = [tsk for tsk in task.get_subtasks() if tsk.get_status() not in [FROZEN, DONE]]
+        subtasks_to_freeze = [
+            tsk for tsk in task.get_subtasks() if tsk.get_status() not in [FROZEN, DONE]
+        ]
         for subtask in subtasks_to_freeze:
             subtask_config = subtask.get_task_config()
             subtask_config.freeze_task(subtask)
@@ -1457,7 +1456,9 @@ class MacroTaskConfig(Container, BaseTaskConfig):
         Default implementation is to resume the task and all its subtasks on their
         previous state.
         """
-        subtasks_to_thaw = [tsk for tsk in task.get_subtasks() if tsk.get_status() == FROZEN]
+        subtasks_to_thaw = [
+            tsk for tsk in task.get_subtasks() if tsk.get_status() == FROZEN
+        ]
         for subtask in subtasks_to_thaw:
             subtask_config = subtask.get_task_config()
             subtask_config.thaw_task(subtask)

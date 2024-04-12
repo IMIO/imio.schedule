@@ -15,4 +15,4 @@ class AssignAuthenticatedUsersGroup(AssignTaskGroup):
         """
         Return the id of AuthenticatedUsers group.
         """
-        return api.group.get('AuthenticatedUsers')
+        return api.group.get("AuthenticatedUsers")

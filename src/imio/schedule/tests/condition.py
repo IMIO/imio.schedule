@@ -13,7 +13,7 @@ class TestCreationCondition(CreationCondition):
     """
 
     def evaluate(self):
-        return 'Should start'
+        return "Should start"
 
 
 class TestNegativeCreationCondition(CreationCondition):
@@ -31,7 +31,7 @@ class TestStartCondition(StartCondition):
     """
 
     def evaluate(self):
-        return 'Should start'
+        return "Should start"
 
 
 class TestNegativeStartCondition(StartCondition):
@@ -49,7 +49,7 @@ class TestEndCondition(EndCondition):
     """
 
     def evaluate(self):
-        return 'Should end'
+        return "Should end"
 
 
 class TestNegativeEndCondition(EndCondition):
@@ -67,7 +67,7 @@ class TestFreezeCondition(FreezeCondition):
     """
 
     def evaluate(self):
-        return 'Should freeze'
+        return "Should freeze"
 
 
 class TestNegativeFreezeCondition(FreezeCondition):
@@ -85,7 +85,7 @@ class TestThawCondition(ThawCondition):
     """
 
     def evaluate(self):
-        return 'Should thaw'
+        return "Should thaw"
 
 
 class TestNegativeThawCondition(ThawCondition):

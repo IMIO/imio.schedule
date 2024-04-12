@@ -23,26 +23,26 @@ class BaseConditionObject(object):
     Base class for condition objects.
     """
 
-    __name__ = ''
+    __name__ = ""
     __parent__ = None
 
     def __init__(self, condition=None, operator=None, display_status=True):
         if condition is not None:
-            self.__dict__['condition'] = condition
+            self.__dict__["condition"] = condition
         if operator is not None:
-            self.__dict__['operator'] = operator
-        self.__dict__['display_status'] = display_status
+            self.__dict__["operator"] = operator
+        self.__dict__["display_status"] = display_status
 
     def getId(self):
-        return self.__name__ or ''
+        return self.__name__ or ""
 
 
 class CreationConditionObject(BaseConditionObject):
     implements(ICreationConditionSchema)
 
-    condition = FieldProperty(ICreationConditionSchema['condition'])
-    operator = FieldProperty(ICreationConditionSchema['operator'])
-    display_status = FieldProperty(ICreationConditionSchema['display_status'])
+    condition = FieldProperty(ICreationConditionSchema["condition"])
+    operator = FieldProperty(ICreationConditionSchema["operator"])
+    display_status = FieldProperty(ICreationConditionSchema["display_status"])
 
 
 class CreationConditionAdapter(FactoryAdapter):
@@ -52,9 +52,9 @@ class CreationConditionAdapter(FactoryAdapter):
 class StartConditionObject(BaseConditionObject):
     implements(IStartConditionSchema)
 
-    condition = FieldProperty(IStartConditionSchema['condition'])
-    operator = FieldProperty(IStartConditionSchema['operator'])
-    display_status = FieldProperty(IStartConditionSchema['display_status'])
+    condition = FieldProperty(IStartConditionSchema["condition"])
+    operator = FieldProperty(IStartConditionSchema["operator"])
+    display_status = FieldProperty(IStartConditionSchema["display_status"])
 
 
 class StartConditionAdapter(FactoryAdapter):
@@ -64,9 +64,9 @@ class StartConditionAdapter(FactoryAdapter):
 class EndConditionObject(BaseConditionObject):
     implements(IEndConditionSchema)
 
-    condition = FieldProperty(IEndConditionSchema['condition'])
-    operator = FieldProperty(IEndConditionSchema['operator'])
-    display_status = FieldProperty(IEndConditionSchema['display_status'])
+    condition = FieldProperty(IEndConditionSchema["condition"])
+    operator = FieldProperty(IEndConditionSchema["operator"])
+    display_status = FieldProperty(IEndConditionSchema["display_status"])
 
 
 class EndConditionAdapter(FactoryAdapter):
@@ -76,9 +76,9 @@ class EndConditionAdapter(FactoryAdapter):
 class FreezeConditionObject(BaseConditionObject):
     implements(IFreezeConditionSchema)
 
-    condition = FieldProperty(IFreezeConditionSchema['condition'])
-    operator = FieldProperty(IFreezeConditionSchema['operator'])
-    display_status = FieldProperty(IFreezeConditionSchema['display_status'])
+    condition = FieldProperty(IFreezeConditionSchema["condition"])
+    operator = FieldProperty(IFreezeConditionSchema["operator"])
+    display_status = FieldProperty(IFreezeConditionSchema["display_status"])
 
 
 class FreezeConditionAdapter(FactoryAdapter):
@@ -88,9 +88,9 @@ class FreezeConditionAdapter(FactoryAdapter):
 class ThawConditionObject(BaseConditionObject):
     implements(IThawConditionSchema)
 
-    condition = FieldProperty(IThawConditionSchema['condition'])
-    operator = FieldProperty(IThawConditionSchema['operator'])
-    display_status = FieldProperty(IThawConditionSchema['display_status'])
+    condition = FieldProperty(IThawConditionSchema["condition"])
+    operator = FieldProperty(IThawConditionSchema["operator"])
+    display_status = FieldProperty(IThawConditionSchema["display_status"])
 
 
 class ThawConditionAdapter(FactoryAdapter):
@@ -100,9 +100,9 @@ class ThawConditionAdapter(FactoryAdapter):
 class MacroCreationConditionObject(BaseConditionObject):
     implements(IMacroCreationConditionSchema)
 
-    condition = FieldProperty(IMacroCreationConditionSchema['condition'])
-    operator = FieldProperty(IMacroCreationConditionSchema['operator'])
-    display_status = FieldProperty(IMacroCreationConditionSchema['display_status'])
+    condition = FieldProperty(IMacroCreationConditionSchema["condition"])
+    operator = FieldProperty(IMacroCreationConditionSchema["operator"])
+    display_status = FieldProperty(IMacroCreationConditionSchema["display_status"])
 
 
 class MacroCreationConditionAdapter(FactoryAdapter):
@@ -112,9 +112,9 @@ class MacroCreationConditionAdapter(FactoryAdapter):
 class MacroStartConditionObject(BaseConditionObject):
     implements(IMacroStartConditionSchema)
 
-    condition = FieldProperty(IMacroStartConditionSchema['condition'])
-    operator = FieldProperty(IMacroStartConditionSchema['operator'])
-    display_status = FieldProperty(IMacroStartConditionSchema['display_status'])
+    condition = FieldProperty(IMacroStartConditionSchema["condition"])
+    operator = FieldProperty(IMacroStartConditionSchema["operator"])
+    display_status = FieldProperty(IMacroStartConditionSchema["display_status"])
 
 
 class MacroStartConditionAdapter(FactoryAdapter):
@@ -124,9 +124,9 @@ class MacroStartConditionAdapter(FactoryAdapter):
 class MacroEndConditionObject(BaseConditionObject):
     implements(IMacroEndConditionSchema)
 
-    condition = FieldProperty(IMacroEndConditionSchema['condition'])
-    operator = FieldProperty(IMacroEndConditionSchema['operator'])
-    display_status = FieldProperty(IMacroEndConditionSchema['display_status'])
+    condition = FieldProperty(IMacroEndConditionSchema["condition"])
+    operator = FieldProperty(IMacroEndConditionSchema["operator"])
+    display_status = FieldProperty(IMacroEndConditionSchema["display_status"])
 
 
 class MacroEndConditionAdapter(FactoryAdapter):
@@ -136,9 +136,9 @@ class MacroEndConditionAdapter(FactoryAdapter):
 class MacroFreezeConditionObject(BaseConditionObject):
     implements(IMacroFreezeConditionSchema)
 
-    condition = FieldProperty(IMacroFreezeConditionSchema['condition'])
-    operator = FieldProperty(IMacroFreezeConditionSchema['operator'])
-    display_status = FieldProperty(IMacroFreezeConditionSchema['display_status'])
+    condition = FieldProperty(IMacroFreezeConditionSchema["condition"])
+    operator = FieldProperty(IMacroFreezeConditionSchema["operator"])
+    display_status = FieldProperty(IMacroFreezeConditionSchema["display_status"])
 
 
 class MacroFreezeConditionAdapter(FactoryAdapter):
@@ -148,9 +148,9 @@ class MacroFreezeConditionAdapter(FactoryAdapter):
 class MacroThawConditionObject(BaseConditionObject):
     implements(IMacroThawConditionSchema)
 
-    condition = FieldProperty(IMacroThawConditionSchema['condition'])
-    operator = FieldProperty(IMacroThawConditionSchema['operator'])
-    display_status = FieldProperty(IMacroThawConditionSchema['display_status'])
+    condition = FieldProperty(IMacroThawConditionSchema["condition"])
+    operator = FieldProperty(IMacroThawConditionSchema["operator"])
+    display_status = FieldProperty(IMacroThawConditionSchema["display_status"])
 
 
 class MacroThawConditionAdapter(FactoryAdapter):
@@ -160,9 +160,9 @@ class MacroThawConditionAdapter(FactoryAdapter):
 class RecurrenceConditionObject(BaseConditionObject):
     implements(IRecurrenceConditionSchema)
 
-    condition = FieldProperty(IRecurrenceConditionSchema['condition'])
-    operator = FieldProperty(IRecurrenceConditionSchema['operator'])
-    display_status = FieldProperty(IRecurrenceConditionSchema['display_status'])
+    condition = FieldProperty(IRecurrenceConditionSchema["condition"])
+    operator = FieldProperty(IRecurrenceConditionSchema["operator"])
+    display_status = FieldProperty(IRecurrenceConditionSchema["display_status"])
 
 
 class RecurrenceConditionAdapter(FactoryAdapter):
@@ -172,9 +172,9 @@ class RecurrenceConditionAdapter(FactoryAdapter):
 class MacroRecurrenceConditionObject(BaseConditionObject):
     implements(IMacroRecurrenceConditionSchema)
 
-    condition = FieldProperty(IMacroRecurrenceConditionSchema['condition'])
-    operator = FieldProperty(IMacroRecurrenceConditionSchema['operator'])
-    display_status = FieldProperty(IMacroRecurrenceConditionSchema['display_status'])
+    condition = FieldProperty(IMacroRecurrenceConditionSchema["condition"])
+    operator = FieldProperty(IMacroRecurrenceConditionSchema["operator"])
+    display_status = FieldProperty(IMacroRecurrenceConditionSchema["display_status"])
 
 
 class MacroRecurrenceConditionAdapter(FactoryAdapter):

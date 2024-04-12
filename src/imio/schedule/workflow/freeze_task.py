@@ -20,7 +20,7 @@ class FreezeTaskWorkflowAdaptation(object):
 
     def patch_workflow(self, workflow_name, **parameters):
 
-        wtool = api.portal.get_tool('portal_workflow')
+        wtool = api.portal.get_tool("portal_workflow")
         workflow = wtool[workflow_name]
 
         self.create_frozen_state(workflow, **parameters)
@@ -32,12 +32,12 @@ class FreezeTaskWorkflowAdaptation(object):
         """
         create a 'frozen' state
         """
-        if 'frozen' not in workflow.states:
-            workflow.states.addState('frozen')
+        if "frozen" not in workflow.states:
+            workflow.states.addState("frozen")
 
-        frozen_state = workflow.states['frozen']
+        frozen_state = workflow.states["frozen"]
         default_mapping = workflow.states.objectValues()[0].permission_roles.copy()
-        frozen_state.title = 'frozen'
+        frozen_state.title = "frozen"
         frozen_state.permission_roles = default_mapping
         frozen_state.group_roles = PersistentMapping()
         frozen_state.var_values = PersistentMapping()

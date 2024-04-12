@@ -8,7 +8,7 @@ from plone.z3cform import layout
 class CustomViewForm(DefaultEditForm):
     mode = DISPLAY_MODE
 
-    _actions_keys = ['save', 'cancel']
+    _actions_keys = ["save", "cancel"]
 
     def update(self):
         super(CustomViewForm, self).update()

@@ -219,10 +219,10 @@ class IToIcon(Interface):
 class ISettings(model.Schema):
 
     working_days = schema.List(
-        title=_(u'List of working days'),
+        title=_(u"List of working days"),
         value_type=schema.Choice(
-            title=_(u'Day'),
-            vocabulary='imio.schedule.working_days',
+            title=_(u"Day"),
+            vocabulary="imio.schedule.working_days",
         ),
         required=True,
     )
