@@ -3,15 +3,15 @@
 from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
 from imio.schedule.config import FROZEN
 from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
-from imio.schedule.content.task import IAutomatedTask
 from imio.schedule.content.subform_context_choice import SubFormContextChoice
+from imio.schedule.content.task import IAutomatedTask
+from imio.schedule.interfaces import ICalculationDelay
 from imio.schedule.interfaces import ICreationCondition
 from imio.schedule.interfaces import IDefaultEndingStates
 from imio.schedule.interfaces import IDefaultFreezeStates
@@ -24,22 +24,19 @@ from imio.schedule.interfaces import IFreezeDuration
 from imio.schedule.interfaces import IStartCondition
 from imio.schedule.interfaces import IThawCondition
 from imio.schedule.interfaces import TaskAlreadyExists
-from imio.schedule.interfaces import ICalculationDelay
-from imio.schedule.utils import round_to_weekday
 from imio.schedule.utils import WorkingDaysCalendar
-
+from imio.schedule.utils import round_to_weekday
 from plone import api
 from plone.dexterity.content import Container
 from plone.supermodel import model
-
 from zope import schema
 from zope.annotation import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.component.interface import getInterface
-from zope.interface import alsoProvides
 from zope.interface import Interface
+from zope.interface import alsoProvides
 from zope.interface import implements
 
 
