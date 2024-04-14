@@ -41,9 +41,7 @@ class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         """
 
         task_config = api.content.create(
-            type='TaskConfig',
-            id='task_config_2',
-            container=self.schedule_config
+            type="TaskConfig", id="task_config_2", container=self.schedule_config
         )
 
         folder = self.portal.config
@@ -61,9 +59,7 @@ class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         """
 
         task_config = api.content.create(
-            type='TaskConfig',
-            id='task_config_2',
-            container=self.schedule_config
+            type="TaskConfig", id="task_config_2", container=self.schedule_config
         )
 
         # to test unregistration, we have to be sure something was registered
@@ -87,20 +83,23 @@ class TestIToTaskConfigAdaptersRegistration(ExampleScheduleFunctionalTestCase):
         schedule_config = self.schedule_config
         task_config = self.task_config
         folder = self.portal.config
-        document = api.content.create(type='Document', id='doc', container=self.portal)
+        document = api.content.create(type="Document", id="doc", container=self.portal)
 
         # the adapter should be registered for IATFolder
         adapter = getAdapter(folder, IToTaskConfig, task_config.UID())
         msg = "an adapter providing IToTaskConfig should have been registered for IATFolder"
         self.assertTrue(adapter is not None, msg)
 
-        #... but not for IATDocument
+        # ... but not for IATDocument
         adapter = queryAdapter(document, IToTaskConfig, task_config.UID())
         msg = "not adapter should have been registered for IATDocument yet..."
         self.assertTrue(adapter is None, msg)
 
         # modify 'scheduled_contenttype' then manually trigger the modification event
-        schedule_config.scheduled_contenttype = ('Document', interface_to_tuple(IATDocument))
+        schedule_config.scheduled_contenttype = (
+            "Document",
+            interface_to_tuple(IATDocument),
+        )
         notify(ObjectModifiedEvent(schedule_config))
 
         # old IToTaskConfig adapter should be unregistered for IATFolder
@@ -127,9 +126,7 @@ class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
         should be registered.
         """
         adapter = queryAdapter(
-            self.portal,
-            ICompoundCriterionFilter,
-            self.schedule_config.UID()
+            self.portal, ICompoundCriterionFilter, self.schedule_config.UID()
         )
         msg = "an criterion adapter should have been registered when creating a new ScheduleConfig"
         self.assertTrue(adapter is not None, msg)
@@ -140,19 +137,25 @@ class TestDashboardCriterionRegistration(ExampleScheduleFunctionalTestCase):
         unregistered.
         """
         schedule_config = api.content.create(
-            type='ScheduleConfig',
-            id='schedule_config_2',
+            type="ScheduleConfig",
+            id="schedule_config_2",
             container=self.portal.config,
             scheduled_contenttype=self.schedule_config.scheduled_contenttype,
         )
 
         # to test unregistration, we have to be sure something was registered
-        adapter = queryAdapter(self.portal, ICompoundCriterionFilter, schedule_config.UID())
-        msg = "an adapter providing ICompoundCriterionFilter should have been registered"
+        adapter = queryAdapter(
+            self.portal, ICompoundCriterionFilter, schedule_config.UID()
+        )
+        msg = (
+            "an adapter providing ICompoundCriterionFilter should have been registered"
+        )
         self.assertTrue(adapter is not None, msg)
 
         schedule_config_UID = schedule_config.UID()
         api.content.delete(schedule_config)
-        adapter = queryAdapter(self.portal, ICompoundCriterionFilter, schedule_config_UID)
+        adapter = queryAdapter(
+            self.portal, ICompoundCriterionFilter, schedule_config_UID
+        )
         msg = "the ICompoundCriterionFilter adapter should have been unregistered when deleting the ScheduleConfig"
         self.assertTrue(adapter is None, msg)

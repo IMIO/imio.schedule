@@ -30,9 +30,9 @@ class TestTaskConfig(unittest.TestCase):
     layer = TEST_INSTALL_INTEGRATION
 
     def test_TaskConfig_portal_type_is_registered(self):
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('TaskConfig' in registered_types)
+        self.assertTrue("TaskConfig" in registered_types)
 
 
 class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
@@ -46,6 +46,7 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         from imio.schedule.content.task_config import TaskConfig
+
         self.assertTrue(self.task_config.__class__ == TaskConfig)
 
     def test_schema_registration(self):
@@ -53,13 +54,13 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         Check if the schema Interface of the content type TaskConfig is the
         correct one.
         """
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         taskconfig_type = portal_types.get(self.task_config.portal_type)
-        self.assertTrue('ITaskConfig' in taskconfig_type.schema)
+        self.assertTrue("ITaskConfig" in taskconfig_type.schema)
 
     def test_enabled_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'enabled'))
+        self.assertTrue(hasattr(task_config, "enabled"))
 
     def test_enabled_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -67,17 +68,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'enabled' is not displayed"
         self.assertTrue('id="form-widgets-enabled"' in contents, msg)
         msg = "field 'enabled' is not translated"
-        self.assertTrue('Activé' in contents, msg)
+        self.assertTrue("Activé" in contents, msg)
 
     def test_enabled_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'enabled' is not editable"
-        self.assertTrue('Activé' in contents, msg)
+        self.assertTrue("Activé" in contents, msg)
 
     def test_default_assigned_user_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'default_assigned_user'))
+        self.assertTrue(hasattr(task_config, "default_assigned_user"))
 
     def test_default_assigned_user_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -85,17 +86,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'default_assigned_user' is not displayed"
         self.assertTrue('id="form-widgets-default_assigned_user"' in contents, msg)
         msg = "field 'default_assigned_user' is not translated"
-        self.assertTrue('Responsable de la tâche' in contents, msg)
+        self.assertTrue("Responsable de la tâche" in contents, msg)
 
     def test_default_assigned_user_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'default_assigned_user' is not editable"
-        self.assertTrue('Responsable de la tâche' in contents, msg)
+        self.assertTrue("Responsable de la tâche" in contents, msg)
 
     def test_creation_conditions_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'creation_conditions'))
+        self.assertTrue(hasattr(task_config, "creation_conditions"))
 
     def test_creation_conditions_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -103,17 +104,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'creation_conditions' is not displayed"
         self.assertTrue('id="form-widgets-creation_conditions"' in contents, msg)
         msg = "field 'creation_conditions' is not translated"
-        self.assertTrue('Conditions de création' in contents, msg)
+        self.assertTrue("Conditions de création" in contents, msg)
 
     def test_creation_conditions_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'creation_conditions' is not editable"
-        self.assertTrue('Conditions de création' in contents, msg)
+        self.assertTrue("Conditions de création" in contents, msg)
 
     def test_creation_state_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'creation_state'))
+        self.assertTrue(hasattr(task_config, "creation_state"))
 
     def test_creation_state_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -121,17 +122,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'creation_state' is not displayed"
         self.assertTrue('id="form-widgets-creation_state"' in contents, msg)
         msg = "field 'creation_state' is not translated"
-        self.assertTrue('État de création de la tâche' in contents, msg)
+        self.assertTrue("État de création de la tâche" in contents, msg)
 
     def test_creation_state_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'creation_state' is not editable"
-        self.assertTrue('État de création de la tâche' in contents, msg)
+        self.assertTrue("État de création de la tâche" in contents, msg)
 
     def test_start_conditions_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'start_conditions'))
+        self.assertTrue(hasattr(task_config, "start_conditions"))
 
     def test_start_conditions_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -139,17 +140,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_conditions' is not displayed"
         self.assertTrue('id="form-widgets-start_conditions"' in contents, msg)
         msg = "field 'start_conditions' is not translated"
-        self.assertTrue('Conditions de création' in contents, msg)
+        self.assertTrue("Conditions de création" in contents, msg)
 
     def test_start_conditions_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'start_conditions' is not editable"
-        self.assertTrue('Conditions de création' in contents, msg)
+        self.assertTrue("Conditions de création" in contents, msg)
 
     def test_starting_states_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'starting_states'))
+        self.assertTrue(hasattr(task_config, "starting_states"))
 
     def test_starting_states_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -157,17 +158,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'starting_states' is not displayed"
         self.assertTrue('id="form-widgets-starting_states"' in contents, msg)
         msg = "field 'starting_states' is not translated"
-        self.assertTrue('État(s) de démarrage de la tâche' in contents, msg)
+        self.assertTrue("État(s) de démarrage de la tâche" in contents, msg)
 
     def test_starting_states_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'starting_states' is not editable"
-        self.assertTrue('État(s) de démarrage de la tâche' in contents, msg)
+        self.assertTrue("État(s) de démarrage de la tâche" in contents, msg)
 
     def test_end_conditions_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'end_conditions'))
+        self.assertTrue(hasattr(task_config, "end_conditions"))
 
     def test_end_conditions_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -175,17 +176,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'end_conditions' is not displayed"
         self.assertTrue('id="form-widgets-end_conditions"' in contents, msg)
         msg = "field 'end_conditions' is not translated"
-        self.assertTrue('Conditions de clôture' in contents, msg)
+        self.assertTrue("Conditions de clôture" in contents, msg)
 
     def test_end_conditions_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'end_conditions' is not editable"
-        self.assertTrue('Conditions de clôture' in contents, msg)
+        self.assertTrue("Conditions de clôture" in contents, msg)
 
     def test_ending_states_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'ending_states'))
+        self.assertTrue(hasattr(task_config, "ending_states"))
 
     def test_ending_states_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -193,17 +194,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'ending_states' is not displayed"
         self.assertTrue('id="form-widgets-ending_states"' in contents, msg)
         msg = "field 'ending_states' is not translated"
-        self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
+        self.assertTrue("État(s) de clôture de la tâche" in contents, msg)
 
     def test_ending_states_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'ending_states' is not editable"
-        self.assertTrue('État(s) de clôture de la tâche' in contents, msg)
+        self.assertTrue("État(s) de clôture de la tâche" in contents, msg)
 
     def test_freeze_conditions_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'freeze_conditions'))
+        self.assertTrue(hasattr(task_config, "freeze_conditions"))
 
     def test_freeze_conditions_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -211,17 +212,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'freeze_conditions' is not displayed"
         self.assertTrue('id="form-widgets-freeze_conditions"' in contents, msg)
         msg = "field 'freeze_conditions' is not translated"
-        self.assertTrue('Conditions de gel' in contents, msg)
+        self.assertTrue("Conditions de gel" in contents, msg)
 
     def test_freeze_conditions_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'freeze_conditions' is not editable"
-        self.assertTrue('Conditions de gel' in contents, msg)
+        self.assertTrue("Conditions de gel" in contents, msg)
 
     def test_freeze_states_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'freeze_states'))
+        self.assertTrue(hasattr(task_config, "freeze_states"))
 
     def test_freeze_states_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -229,17 +230,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'freeze_states' is not displayed"
         self.assertTrue('id="form-widgets-freeze_states"' in contents, msg)
         msg = "field 'freeze_states' is not translated"
-        self.assertTrue('État(s) de gel de la tâche' in contents, msg)
+        self.assertTrue("État(s) de gel de la tâche" in contents, msg)
 
     def test_freeze_states_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'freeze_states' is not editable"
-        self.assertTrue('État(s) de gel de la tâche' in contents, msg)
+        self.assertTrue("État(s) de gel de la tâche" in contents, msg)
 
     def test_thaw_conditions_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'thaw_conditions'))
+        self.assertTrue(hasattr(task_config, "thaw_conditions"))
 
     def test_thaw_conditions_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -247,17 +248,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'thaw_conditions' is not displayed"
         self.assertTrue('id="form-widgets-thaw_conditions"' in contents, msg)
         msg = "field 'thaw_conditions' is not translated"
-        self.assertTrue('Conditions de dégel' in contents, msg)
+        self.assertTrue("Conditions de dégel" in contents, msg)
 
     def test_thaw_conditions_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'thaw_conditions' is not editable"
-        self.assertTrue('Conditions de dégel' in contents, msg)
+        self.assertTrue("Conditions de dégel" in contents, msg)
 
     def test_thaw_states_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'thaw_states'))
+        self.assertTrue(hasattr(task_config, "thaw_states"))
 
     def test_thaw_states_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -265,17 +266,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'thaw_states' is not displayed"
         self.assertTrue('id="form-widgets-thaw_states"' in contents, msg)
         msg = "field 'thaw_states' is not translated"
-        self.assertTrue('État(s) de dégel de la tâche' in contents, msg)
+        self.assertTrue("État(s) de dégel de la tâche" in contents, msg)
 
     def test_thaw_states_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'thaw_states' is not editable"
-        self.assertTrue('État(s) de dégel de la tâche' in contents, msg)
+        self.assertTrue("État(s) de dégel de la tâche" in contents, msg)
 
     def test_start_date_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'start_date'))
+        self.assertTrue(hasattr(task_config, "start_date"))
 
     def test_start_date_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -283,17 +284,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'start_date' is not displayed"
         self.assertTrue('id="form-widgets-start_date"' in contents, msg)
         msg = "field 'start_date' is not translated"
-        self.assertTrue('Date de départ' in contents, msg)
+        self.assertTrue("Date de départ" in contents, msg)
 
     def test_start_date_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'start_date' is not editable"
-        self.assertTrue('Date de départ' in contents, msg)
+        self.assertTrue("Date de départ" in contents, msg)
 
     def test_calculation_delay_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'additional_delay'))
+        self.assertTrue(hasattr(task_config, "additional_delay"))
 
     def test_calculation_delay_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -301,17 +302,17 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'calculation_delay' is not displayed"
         self.assertTrue('id="form-widgets-calculation_delay"' in contents, msg)
         msg = "field 'calculation_delay' is not translated"
-        self.assertTrue('Calcul du délai' in contents, msg)
+        self.assertTrue("Calcul du délai" in contents, msg)
 
     def test_calculation_delay_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'calculation_delay' is not editable"
-        self.assertTrue('Calcul du délai' in contents, msg)
+        self.assertTrue("Calcul du délai" in contents, msg)
 
     def test_additional_delay_attribute(self):
         task_config = aq_base(self.task_config)
-        self.assertTrue(hasattr(task_config, 'additional_delay'))
+        self.assertTrue(hasattr(task_config, "additional_delay"))
 
     def test_additional_delay_field_display(self):
         self.browser.open(self.task_config.absolute_url())
@@ -319,13 +320,13 @@ class TestTaskConfigFields(ExampleScheduleIntegrationTestCase):
         msg = "field 'additional_delay' is not displayed"
         self.assertTrue('id="form-widgets-additional_delay"' in contents, msg)
         msg = "field 'additional_delay' is not translated"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
+        self.assertTrue("Délai supplémentaire" in contents, msg)
 
     def test_additional_delay_field_edit(self):
-        self.browser.open(self.task_config.absolute_url() + '/edit')
+        self.browser.open(self.task_config.absolute_url() + "/edit")
         contents = self.browser.contents
         msg = "field 'additional_delay' is not editable"
-        self.assertTrue('Délai supplémentaire' in contents, msg)
+        self.assertTrue("Délai supplémentaire" in contents, msg)
 
 
 class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
@@ -357,7 +358,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         Should return 'AutomatedTask'
         """
         task_type = self.task_config.get_task_type()
-        expected_type = 'AutomatedTask'
+        expected_type = "AutomatedTask"
         self.assertEquals(task_type, expected_type)
 
     def test_is_main_taskconfig(self):
@@ -381,7 +382,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         'scheduled_contenttype' of the parent ScheduleConfig.
         """
         portal_type = self.task_config.get_scheduled_portal_type()
-        expected_type = 'Folder'
+        expected_type = "Folder"
         self.assertEquals(portal_type, expected_type)
 
     def test_get_scheduled_interfaces(self):
@@ -404,7 +405,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         user = task_config.user_to_assign(task_container, task)
-        expected_user = 'test-user'
+        expected_user = "test-user"
         msg = "should have return '{}' user id".format(expected_user)
         self.assertEquals(user, expected_user, msg)
 
@@ -465,7 +466,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_found)
 
         # start the task
-        api.content.transition(obj=task, transition='do_to_assign')
+        api.content.transition(obj=task, transition="do_to_assign")
 
         task_found = task_config.get_started_task(task_container)
         msg = "should have found the started task"
@@ -485,7 +486,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertEquals(task_found, task, msg)
 
         # start the task
-        api.content.transition(obj=task, transition='do_to_assign')
+        api.content.transition(obj=task, transition="do_to_assign")
 
         task_found = task_config.get_open_task(task_container)
         msg = "should have found the started task"
@@ -603,20 +604,32 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         # set the task_config field 'creation_conditions' with a negative condition
         # => task should not be created
         task_config.enabled = True
-        task_config.creation_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_creation_condition',
-            'operator': 'AND',
-        })()]
+        task_config.creation_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_creation_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
         msg = "Task should not be created because the creation condition is not matched"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not be created
-        task_config.creation_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.test_creation_condition',
-            'operator': 'AND',
-        })()]
-        task_config.creation_state = 'pending'
+        task_config.creation_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.test_creation_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        task_config.creation_state = "pending"
         msg = "Task should not be created because the creation state does not match container state"
         self.assertFalse(task_config.should_create_task(empty_task_container), msg)
 
@@ -634,7 +647,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
         # normal case
-        api.content.transition(obj=task_container, transition='submit')
+        api.content.transition(obj=task_container, transition="submit")
         msg = "Task should be started"
         start = task_config.should_start_task(task_container, task)
         self.assertTrue(start, msg)
@@ -652,21 +665,33 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'start_conditions' with a negative condition
         # => task should not start
-        task.assigned_user = 'user'
-        task_config.start_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_start_condition',
-            'operator': 'AND',
-        })()]
+        task.assigned_user = "user"
+        task_config.start_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_start_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
         msg = "Task should not be started because the start condition is not matched"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
         # set the task_config starting_states field to a state different from
         # the task_container state => task should not start
-        task_config.start_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.test_start_condition',
-            'operator': 'AND',
-        })()]
-        task_config.starting_states = ('published',)
+        task_config.start_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.test_start_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        task_config.starting_states = ("published",)
         msg = "Task should not be started because the starting state does not match container state"
         self.assertFalse(task_config.should_start_task(task_container, task), msg)
 
@@ -678,17 +703,27 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == ['schedule.test_start_condition'])
+        matched_conditions, unmatched_conditions = task_config.start_conditions_status(
+            task_container, task
+        )
+        self.assertTrue(matched_conditions == ["schedule.test_start_condition"])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.start_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_start_condition',
-            'operator': 'AND',
-        })()]
-        matched_conditions, unmatched_conditions = task_config.start_conditions_status(task_container, task)
+        task_config.start_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_start_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        matched_conditions, unmatched_conditions = task_config.start_conditions_status(
+            task_container, task
+        )
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == ['schedule.negative_start_condition'])
+        self.assertTrue(unmatched_conditions == ["schedule.negative_start_condition"])
 
     def test_should_end_task(self):
         """
@@ -704,7 +739,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
         # normal case
-        api.content.transition(obj=task_container, transition='publish')
+        api.content.transition(obj=task_container, transition="publish")
         msg = "Task should be ended"
         end = task_config.should_end_task(task_container, task)
         self.assertTrue(end, msg)
@@ -716,16 +751,22 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'end_conditions' with a negative condition
         # => task should not end
-        task_config.end_conditions = [type('object', (object, ), {
-            'condition': 'schedule.negative_end_condition',
-            'operator': 'AND',
-        })()]
+        task_config.end_conditions = [
+            type(
+                "object",
+                (object,),
+                {
+                    "condition": "schedule.negative_end_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
         msg = "Task should not be ended because the end condition is not matched"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
         # set the task_config ending_states field to a state different from
         # the task_container state => task should not end
-        task_config.ending_states = ('pending',)
+        task_config.ending_states = ("pending",)
         msg = "Task should not be ended because the ending state does not match container state"
         self.assertFalse(task_config.should_end_task(task_container, task), msg)
 
@@ -737,17 +778,27 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == ['schedule.test_end_condition'])
+        matched_conditions, unmatched_conditions = task_config.end_conditions_status(
+            task_container, task
+        )
+        self.assertTrue(matched_conditions == ["schedule.test_end_condition"])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.end_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_end_condition',
-            'operator': 'AND',
-        })()]
-        matched_conditions, unmatched_conditions = task_config.end_conditions_status(task_container, task)
+        task_config.end_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_end_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        matched_conditions, unmatched_conditions = task_config.end_conditions_status(
+            task_container, task
+        )
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == ['schedule.negative_end_condition'])
+        self.assertTrue(unmatched_conditions == ["schedule.negative_end_condition"])
 
     def test_should_freeze_task(self):
         """
@@ -765,7 +816,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_config.should_freeze_task(task_container, task), msg)
 
         # normal case
-        task_config.freeze_states = ['private']
+        task_config.freeze_states = ["private"]
         msg = "Task should be frozen"
         freeze = task_config.should_freeze_task(task_container, task)
         self.assertTrue(freeze, msg)
@@ -777,11 +828,17 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'freeze_conditions' with a negative condition
         # => task should not freeze
-        task_config.freeze_states = ['private']
-        task_config.freeze_conditions = [type('object', (object, ), {
-            'condition': 'schedule.negative_freeze_condition',
-            'operator': 'AND',
-        })()]
+        task_config.freeze_states = ["private"]
+        task_config.freeze_conditions = [
+            type(
+                "object",
+                (object,),
+                {
+                    "condition": "schedule.negative_freeze_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
         msg = "Task should not be frozen because the freeze condition is not matched"
         freeze = task_config.should_freeze_task(task_container, task)
         self.assertFalse(freeze, msg)
@@ -789,7 +846,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         # set the task_config freeze_states field to a state different from
         # the task_container state => task should not freeze
         task_config.freeze_conditions = []
-        task_config.freeze_states = ('pending',)
+        task_config.freeze_states = ("pending",)
         msg = "Task should not be frozen because the freeze state does not match container state"
         freeze = task_config.should_freeze_task(task_container, task)
         self.assertFalse(freeze, msg)
@@ -802,17 +859,27 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task_container = self.task_container
         task = self.task
 
-        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == ['schedule.test_freeze_condition'])
+        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(
+            task_container, task
+        )
+        self.assertTrue(matched_conditions == ["schedule.test_freeze_condition"])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.freeze_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_freeze_condition',
-            'operator': 'AND',
-        })()]
-        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(task_container, task)
+        task_config.freeze_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_freeze_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        matched_conditions, unmatched_conditions = task_config.freeze_conditions_status(
+            task_container, task
+        )
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == ['schedule.negative_freeze_condition'])
+        self.assertTrue(unmatched_conditions == ["schedule.negative_freeze_condition"])
 
     def test_should_thaw_task(self):
         """
@@ -823,7 +890,9 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
         # freeze task befor thaw tests
         task_config.freeze_task(task)
-        self.assertEquals(api.content.get_state(task), 'frozen', 'task should be frozen')
+        self.assertEquals(
+            api.content.get_state(task), "frozen", "task should be frozen"
+        )
 
         # task container state is different from the states selected on
         # task_config 'thaw_states' => task should not thaw
@@ -831,7 +900,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertFalse(task_config.should_thaw_task(task_container, task), msg)
 
         # normal case
-        task_config.thaw_states = ['private']
+        task_config.thaw_states = ["private"]
         msg = "Task should be thawed"
         thaw = task_config.should_thaw_task(task_container, task)
         self.assertTrue(thaw, msg)
@@ -843,11 +912,17 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # set the task_config field 'thaw_conditions' with a negative condition
         # => task should not thaw
-        task_config.thaw_states = ['private']
-        task_config.thaw_conditions = [type('object', (object, ), {
-            'condition': 'schedule.negative_thaw_condition',
-            'operator': 'AND',
-        })()]
+        task_config.thaw_states = ["private"]
+        task_config.thaw_conditions = [
+            type(
+                "object",
+                (object,),
+                {
+                    "condition": "schedule.negative_thaw_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
         msg = "Task should not be thawed because the thaw condition is not matched"
         thaw = task_config.should_thaw_task(task_container, task)
         self.assertFalse(thaw, msg)
@@ -855,7 +930,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         # set the task_config thaw_states field to a state different from
         # the task_container state => task should not thaw
         task_config.thaw_conditions = []
-        task_config.thaw_states = ('pending',)
+        task_config.thaw_states = ("pending",)
         msg = "Task should not be thawed because the thaw state does not match container state"
         thaw = task_config.should_thaw_task(task_container, task)
         self.assertFalse(thaw, msg)
@@ -869,19 +944,31 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
         # freeze task befor thaw tests
         task_config.freeze_task(task)
-        self.assertEquals(api.content.get_state(task), 'frozen', 'task should be frozen')
+        self.assertEquals(
+            api.content.get_state(task), "frozen", "task should be frozen"
+        )
 
-        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(task_container, task)
-        self.assertTrue(matched_conditions == ['schedule.test_thaw_condition'])
+        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(
+            task_container, task
+        )
+        self.assertTrue(matched_conditions == ["schedule.test_thaw_condition"])
         self.assertTrue(unmatched_conditions == [])
 
-        task_config.thaw_conditions = [type('condition', (object, ), {
-            'condition': 'schedule.negative_thaw_condition',
-            'operator': 'AND',
-        })()]
-        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(task_container, task)
+        task_config.thaw_conditions = [
+            type(
+                "condition",
+                (object,),
+                {
+                    "condition": "schedule.negative_thaw_condition",
+                    "operator": "AND",
+                },
+            )()
+        ]
+        matched_conditions, unmatched_conditions = task_config.thaw_conditions_status(
+            task_container, task
+        )
         self.assertTrue(matched_conditions == [])
-        self.assertTrue(unmatched_conditions == ['schedule.negative_thaw_condition'])
+        self.assertTrue(unmatched_conditions == ["schedule.negative_thaw_condition"])
 
     def test_create_task(self):
         """
@@ -896,7 +983,8 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         # should raise TaskAlreadyExists when trying to use same task id
         from imio.schedule.interfaces import TaskAlreadyExists
-        kwargs = {'task_container': task_container, 'task_id': created_task.id}
+
+        kwargs = {"task_container": task_container, "task_id": created_task.id}
         self.assertRaises(TaskAlreadyExists, task_config.create_task, **kwargs)
 
     def test_start_task(self):
@@ -907,12 +995,12 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         msg = "task should not be started yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
         task_config.start_task(task)
 
         msg = "task should have been started"
-        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertEquals(api.content.get_state(task), "to_do", msg)
 
     def test_end_task(self):
         """
@@ -922,12 +1010,12 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         msg = "task should not be ended yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
         task_config.end_task(task)
 
         msg = "task should have been ended"
-        self.assertEquals(api.content.get_state(task), 'closed', msg)
+        self.assertEquals(api.content.get_state(task), "closed", msg)
 
     def test_freeze_task(self):
         """
@@ -937,12 +1025,12 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         msg = "task should not be frozen yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
         task_config.freeze_task(task)
 
         msg = "task should have been frozen"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
     def test_thaw_task(self):
         """
@@ -952,17 +1040,17 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         msg = "task should be in created state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
         # freeze task befor thaw tests
         task_config.freeze_task(task)
         msg = "task should not be thawed yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
         task_config.thaw_task(task)
 
         msg = "task should have been thawed and put back in its original state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
     def test_thaw_task_stack_freeze_periods(self):
         """
@@ -973,27 +1061,31 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task = self.task
 
         msg = "task should be in created state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
         # freeze task befor thaw tests
         task_config.freeze_task(task)
         msg = "task should not be thawed yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
         # mock a previous freeze period of 5 days and mockput the current freeze date
         # as 10 days earlier to simulate a new 10 days freeze period
         annotations = IAnnotations(task)
-        freeze_infos = annotations['imio.schedule.freeze_task']
-        freeze_infos['previous_freeze_duration'] = 5
-        freeze_infos['freeze_date'] = str(datetime.now().date() + relativedelta(days=-10))
-        annotations['imio.schedule.freeze_task'] = freeze_infos
+        freeze_infos = annotations["imio.schedule.freeze_task"]
+        freeze_infos["previous_freeze_duration"] = 5
+        freeze_infos["freeze_date"] = str(
+            datetime.now().date() + relativedelta(days=-10)
+        )
+        annotations["imio.schedule.freeze_task"] = freeze_infos
 
         task_config.thaw_task(task)
 
         msg = "task should have been thawed and put back in its original state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
         msg = "task freeze duration should be the sum of the two freeze periods: 5 + 10"
-        freeze_period = annotations['imio.schedule.freeze_task']['previous_freeze_duration']
+        freeze_period = annotations["imio.schedule.freeze_task"][
+            "previous_freeze_duration"
+        ]
         self.assertEquals(freeze_period, 15, msg)
 
     def test_compute_due_date(self):
@@ -1029,7 +1121,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
 
-        task_config.additional_delay_type = 'working_days'
+        task_config.additional_delay_type = "working_days"
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, datetime(2017, 3, 15).date())
 
@@ -1047,7 +1139,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
 
         CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
 
-        task_config.additional_delay_type = 'working_days'
+        task_config.additional_delay_type = "working_days"
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, datetime(2017, 5, 2).date())
 
@@ -1065,10 +1157,10 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
 
         annotations = IAnnotations(task)
-        annotations['imio.schedule.freeze_task'] = {
-            'freeze_date': None,
-            'previous_state': task.get_state(),
-            'previous_freeze_duration': 10
+        annotations["imio.schedule.freeze_task"] = {
+            "freeze_date": None,
+            "previous_state": task.get_state(),
+            "previous_freeze_duration": 10,
         }
 
         due_date = task_config.compute_due_date(task_container, task)
@@ -1079,8 +1171,8 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         Evaluate conditions with AND operator
         """
         conditions = [
-            type('condition', (object, ), {'condition': 1, 'operator': 'AND'})(),
-            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
+            type("condition", (object,), {"condition": 1, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 2, "operator": "AND"})(),
         ]
         self.task_config.evaluate_one_condition = Mock(return_value=True)
         result = self.task_config.evaluate_conditions(conditions, None, None)
@@ -1095,8 +1187,8 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         Evaluate conditions with OR operator
         """
         conditions = [
-            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
-            type('condition', (object, ), {'condition': 2, 'operator': 'OR'})(),
+            type("condition", (object,), {"condition": 1, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 2, "operator": "OR"})(),
         ]
         self.task_config.evaluate_one_condition = Mock(return_value=True)
         result = self.task_config.evaluate_conditions(conditions, None, None)
@@ -1119,9 +1211,9 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         Evaluate conditions with AND and OR operators
         """
         conditions = [
-            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
-            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
-            type('condition', (object, ), {'condition': 3, 'operator': 'AND'})(),
+            type("condition", (object,), {"condition": 1, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 2, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 3, "operator": "AND"})(),
         ]
         self.task_config.evaluate_one_condition = Mock(side_effect=[True, False, False])
         result = self.task_config.evaluate_conditions(conditions, None, None)
@@ -1136,9 +1228,9 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.assertTrue(result)
 
         conditions = [
-            type('condition', (object, ), {'condition': 1, 'operator': 'OR'})(),
-            type('condition', (object, ), {'condition': 2, 'operator': 'AND'})(),
-            type('condition', (object, ), {'condition': 3, 'operator': 'OR'})(),
+            type("condition", (object,), {"condition": 1, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 2, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 3, "operator": "OR"})(),
         ]
         self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
         result = self.task_config.evaluate_conditions(conditions, None, None)
@@ -1161,7 +1253,7 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         task_config.activate_recurrency = True
         self.assertTrue(task_config.should_recurred(None))
 
-        task_config.recurrence_conditions = ['foo']
+        task_config.recurrence_conditions = ["foo"]
         task_config.evaluate_conditions = Mock(return_value=True)
         self.assertTrue(task_config.should_recurred(None))
 
@@ -1172,35 +1264,39 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.task_config.recurrence_states = []
         self.assertTrue(self.task_config.match_recurrence_states(None))
 
-        self.task_config.recurrence_states = ['foo']
-        api.content.get_state = Mock(return_value='foo')
+        self.task_config.recurrence_states = ["foo"]
+        api.content.get_state = Mock(return_value="foo")
         self.assertTrue(self.task_config.match_recurrence_states(None))
 
-        self.task_config.recurrence_states = ['bar']
+        self.task_config.recurrence_states = ["bar"]
         self.assertFalse(self.task_config.match_recurrence_states(None))
 
     def test_create_recurring_task(self):
         """
         Test different cases for the 'create_recurring_task' method
         """
-        container = type('container', (dict, ), {})()
-        container['TASK_test_taskconfig'] = None
-        api.content.get_state = Mock(return_value='foo')
-        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
-        self.assertIsNone(self.task_config.create_recurring_task(
-            container,
-            creation_place=container,
-        ))
+        container = type("container", (dict,), {})()
+        container["TASK_test_taskconfig"] = None
+        api.content.get_state = Mock(return_value="foo")
+        container.objectIds = Mock(return_value=["TASK_test_taskconfig"])
+        self.assertIsNone(
+            self.task_config.create_recurring_task(
+                container,
+                creation_place=container,
+            )
+        )
 
         container.objectIds = Mock(return_value=[])
         self.task_config.create_task = Mock(return_value=True)
-        self.assertTrue(self.task_config.create_recurring_task(
-            container,
-            creation_place=container,
-        ))
+        self.assertTrue(
+            self.task_config.create_recurring_task(
+                container,
+                creation_place=container,
+            )
+        )
 
-        container.objectIds = Mock(return_value=['TASK_test_taskconfig'])
-        api.content.get_state = Mock(return_value='closed')
+        container.objectIds = Mock(return_value=["TASK_test_taskconfig"])
+        api.content.get_state = Mock(return_value="closed")
         self.assertTrue(self.task_config.create_recurring_task(container))
 
 
@@ -1212,9 +1308,9 @@ class TestMacroTaskConfig(unittest.TestCase):
     layer = TEST_INSTALL_INTEGRATION
 
     def test_MacroTaskConfig_portal_type_is_registered(self):
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('MacroTaskConfig' in registered_types)
+        self.assertTrue("MacroTaskConfig" in registered_types)
 
 
 class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase):
@@ -1246,6 +1342,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         """
         from imio.schedule.content.task_config import MacroTaskConfig
         from imio.schedule.content.task_config import BaseTaskConfig
+
         msg = "MacroTaskConfig should inherits BaseTaskConfig"
         self.assertTrue(issubclass(MacroTaskConfig, BaseTaskConfig), msg)
 
@@ -1254,7 +1351,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         Should return 'AutomatedMacroTask'
         """
         task_type = self.macrotask_config.get_task_type()
-        expected_type = 'AutomatedMacroTask'
+        expected_type = "AutomatedMacroTask"
         self.assertEquals(task_type, expected_type)
 
     def test_get_subtask_configs(self):
@@ -1299,7 +1396,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         subtask = self.sub_task
 
         # normal case
-        api.content.transition(obj=task_container, transition='publish')
+        api.content.transition(obj=task_container, transition="publish")
 
         msg = "SubTask should be ended"
         end = subtask_config.should_end_task(task_container, macrotask)
@@ -1312,7 +1409,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         # re open the subtask => the macro task should not be ended as long
         # the subtask is open
 
-        api.content.transition(obj=subtask, transition='back_in_realized')
+        api.content.transition(obj=subtask, transition="back_in_realized")
         self.assertFalse(subtask.get_status() == DONE)
 
         msg = "MacroTask should not be ended as long its subtask is open"
@@ -1336,7 +1433,7 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         task_config.activate_recurrency = True
         self.assertTrue(task_config.should_recurred(None))
 
-        task_config.recurrence_conditions = ['foo']
+        task_config.recurrence_conditions = ["foo"]
         task_config.evaluate_conditions = Mock(return_value=True)
         self.assertTrue(task_config.should_recurred(None))
 
@@ -1349,10 +1446,10 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         macrotask_config.freeze_task(macrotask)
 
         msg = "MacroTask should be frozen"
-        self.assertEquals(macrotask.get_state(), 'frozen', msg)
+        self.assertEquals(macrotask.get_state(), "frozen", msg)
 
         msg = "SubTask should be frozen"
-        self.assertEquals(subtask.get_state(), 'frozen', msg)
+        self.assertEquals(subtask.get_state(), "frozen", msg)
 
     def test_thaw_macrotask(self):
         macrotask_config = self.macrotask_config
@@ -1365,9 +1462,9 @@ class TestMacroTaskConfigMethodsIntegration(MacroTaskScheduleIntegrationTestCase
         macrotask_config.freeze_task(macrotask)
 
         msg = "MacroTask should be frozen"
-        self.assertEquals(macrotask.get_state(), 'frozen', msg)
+        self.assertEquals(macrotask.get_state(), "frozen", msg)
         msg = "SubTask should be frozen"
-        self.assertEquals(subtask.get_state(), 'frozen', msg)
+        self.assertEquals(subtask.get_state(), "frozen", msg)
 
         # thaw macro task
         macrotask_config.thaw_task(macrotask)

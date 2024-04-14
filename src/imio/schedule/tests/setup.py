@@ -20,7 +20,7 @@ def schedule_example_install(context):
     """
     Example schedule install script.
     """
-    if context.readDataFile('imioschedule_testing.txt') is None:
+    if context.readDataFile("imioschedule_testing.txt") is None:
         return
 
     monkey_patch_scheduled_conttentype_vocabulary(context)
@@ -38,7 +38,8 @@ def monkey_patch_scheduled_conttentype_vocabulary(context):
     from imio.schedule.content.vocabulary import ScheduledContentTypeVocabulary
 
     def monkey_allowed_types(self):
-        return{'Folder': IATFolder}
+        return {"Folder": IATFolder}
+
     ScheduledContentTypeVocabulary.content_types = monkey_allowed_types
 
 
@@ -48,13 +49,10 @@ def add_empty_task_container(context):
     """
     site = api.portal.get()
 
-    folder_id = 'test_empty_taskcontainer'
+    folder_id = "test_empty_taskcontainer"
     if folder_id not in site.objectIds():
         api.content.create(
-            container=site,
-            type='Folder',
-            id=folder_id,
-            title='Empty Task container'
+            container=site, type="Folder", id=folder_id, title="Empty Task container"
         )
 
 
@@ -65,65 +63,62 @@ def add_schedule_config(context):
     site = api.portal.get()
 
     # create config folder for schedule config
-    folder_id = 'config'
+    folder_id = "config"
     if folder_id not in site.objectIds():
         api.content.create(
-            container=site,
-            type='Folder',
-            id=folder_id,
-            title='Task configs'
+            container=site, type="Folder", id=folder_id, title="Task configs"
         )
     cfg_folder = getattr(site, folder_id)
 
     # create empty schedule config
-    schedule_cfg_id = 'empty_scheduleconfig'
+    schedule_cfg_id = "empty_scheduleconfig"
     if schedule_cfg_id not in cfg_folder.objectIds():
         api.content.create(
             container=cfg_folder,
-            type='ScheduleConfig',
+            type="ScheduleConfig",
             id=schedule_cfg_id,
-            title='Empty ScheduleConfig',
-            scheduled_contenttype=('Folder', (interface_to_tuple(IATFile),)),
+            title="Empty ScheduleConfig",
+            scheduled_contenttype=("Folder", (interface_to_tuple(IATFile),)),
         )
 
     # create schedule config
-    schedule_cfg_id = 'test_scheduleconfig'
+    schedule_cfg_id = "test_scheduleconfig"
     if schedule_cfg_id not in cfg_folder.objectIds():
         api.content.create(
             container=cfg_folder,
-            type='ScheduleConfig',
+            type="ScheduleConfig",
             id=schedule_cfg_id,
-            title='Test ScheduleConfig',
-            scheduled_contenttype=('Folder', (interface_to_tuple(IATFolder),)),
+            title="Test ScheduleConfig",
+            scheduled_contenttype=("Folder", (interface_to_tuple(IATFolder),)),
         )
     schedule_config = getattr(cfg_folder, schedule_cfg_id)
 
     # create task config
-    task_cfg_id = 'test_taskconfig'
+    task_cfg_id = "test_taskconfig"
     creation_conditions = CreationConditionObject()
     creation_conditions.__dict__ = {
-        'condition': u'schedule.test_creation_condition',
-        'operator': 'AND',
+        "condition": u"schedule.test_creation_condition",
+        "operator": "AND",
     }
     start_conditions = StartConditionObject()
     start_conditions.__dict__ = {
-        'condition': u'schedule.test_start_condition',
-        'operator': 'AND',
+        "condition": u"schedule.test_start_condition",
+        "operator": "AND",
     }
     end_conditions = EndConditionObject()
     end_conditions.__dict__ = {
-        'condition': u'schedule.test_end_condition',
-        'operator': 'AND',
+        "condition": u"schedule.test_end_condition",
+        "operator": "AND",
     }
     freeze_conditions = FreezeConditionObject()
     freeze_conditions.__dict__ = {
-        'condition': u'schedule.test_freeze_condition',
-        'operator': 'AND',
+        "condition": u"schedule.test_freeze_condition",
+        "operator": "AND",
     }
     thaw_conditions = ThawConditionObject()
     thaw_conditions.__dict__ = {
-        'condition': u'schedule.test_thaw_condition',
-        'operator': 'AND',
+        "condition": u"schedule.test_thaw_condition",
+        "operator": "AND",
     }
     macro_creation_conditions = MacroCreationConditionObject()
     macro_creation_conditions.__dict__ = creation_conditions.__dict__
@@ -135,61 +130,61 @@ def add_schedule_config(context):
     if task_cfg_id not in schedule_config.objectIds():
         api.content.create(
             container=schedule_config,
-            type='TaskConfig',
+            type="TaskConfig",
             id=task_cfg_id,
-            title='Test TaskConfig',
-            default_assigned_user='schedule.assign_current_user',
-            default_assigned_group='schedule.assign_authenticatedusers_group',
+            title="Test TaskConfig",
+            default_assigned_user="schedule.assign_current_user",
+            default_assigned_group="schedule.assign_authenticatedusers_group",
             creation_conditions=[creation_conditions],
             start_conditions=[start_conditions],
             end_conditions=[end_conditions],
             freeze_conditions=[freeze_conditions],
             thaw_conditions=[thaw_conditions],
-            creation_state='private',
-            starting_states=('pending',),
-            ending_states=('published',),
-            start_date='schedule.start_date.creation_date',
+            creation_state="private",
+            starting_states=("pending",),
+            ending_states=("published",),
+            start_date="schedule.start_date.creation_date",
             additional_delay=10,
         )
 
     # create macro task config
-    macrotask_cfg_id = 'test_macrotaskconfig'
+    macrotask_cfg_id = "test_macrotaskconfig"
     if macrotask_cfg_id not in schedule_config.objectIds():
         api.content.create(
             container=schedule_config,
-            type='MacroTaskConfig',
+            type="MacroTaskConfig",
             id=macrotask_cfg_id,
-            title='Test MacroTaskConfig',
-            default_assigned_user='schedule.assign_current_user',
-            default_assigned_group='schedule.assign_authenticatedusers_group',
+            title="Test MacroTaskConfig",
+            default_assigned_user="schedule.assign_current_user",
+            default_assigned_group="schedule.assign_authenticatedusers_group",
             creation_conditions=[macro_creation_conditions],
             start_conditions=[macro_start_conditions],
             end_conditions=[macro_end_conditions],
-            creation_state='private',
-            starting_states=('pending',),
-            ending_states=('published',),
-            start_date='schedule.start_date.subtask_highest_due_date',
+            creation_state="private",
+            starting_states=("pending",),
+            ending_states=("published",),
+            start_date="schedule.start_date.subtask_highest_due_date",
             additional_delay=17,
         )
     macrotask_config = getattr(schedule_config, macrotask_cfg_id)
 
     # create sub task config
-    subtask_cfg_id = 'test_subtaskconfig'
+    subtask_cfg_id = "test_subtaskconfig"
     if subtask_cfg_id not in macrotask_config.objectIds():
         api.content.create(
             container=macrotask_config,
-            type='TaskConfig',
+            type="TaskConfig",
             id=subtask_cfg_id,
-            title='Test SubTaskConfig',
-            default_assigned_user='schedule.assign_current_user',
-            default_assigned_group='schedule.assign_authenticatedusers_group',
+            title="Test SubTaskConfig",
+            default_assigned_user="schedule.assign_current_user",
+            default_assigned_group="schedule.assign_authenticatedusers_group",
             creation_conditions=[creation_conditions],
             start_conditions=[start_conditions],
             end_conditions=[end_conditions],
-            creation_state='private',
-            starting_states=('pending',),
-            ending_states=('published',),
-            start_date='schedule.start_date.creation_date',
+            creation_state="private",
+            starting_states=("pending",),
+            ending_states=("published",),
+            start_date="schedule.start_date.creation_date",
             additional_delay=13,
         )
 
@@ -201,22 +196,19 @@ def add_task(context):
     """
     site = api.portal.get()
 
-    task_container_id = 'test_taskcontainer'
+    task_container_id = "test_taskcontainer"
     if task_container_id not in site.objectIds():
         api.content.create(
-            container=site,
-            type='Folder',
-            id=task_container_id,
-            title='Task container'
+            container=site, type="Folder", id=task_container_id, title="Task container"
         )
     task_container = getattr(site, task_container_id)
 
     # If no task was created automatically, create the task manually
     # to keep AutomatedTask tests alive
-    task_id = 'TASK_test_taskconfig'
+    task_id = "TASK_test_taskconfig"
     if task_id not in task_container.objectIds():
-        portal_types = api.portal.get_tool('portal_types')
-        type_info = portal_types.getTypeInfo('AutomatedTask')
+        portal_types = api.portal.get_tool("portal_types")
+        type_info = portal_types.getTypeInfo("AutomatedTask")
         schedule_config = site.config.test_scheduleconfig
         task_config = schedule_config.test_taskconfig
 
@@ -225,15 +217,15 @@ def add_task(context):
             id=task_id,
             title=task_config.Title(),
             schedule_config_UID=schedule_config.UID(),
-            task_config_UID=task_config.UID()
+            task_config_UID=task_config.UID(),
         )
 
     # If no task was created automatically, create the macrotask manually
     # to keep AutomatedMacroTask tests alive
-    macrotask_id = 'TASK_test_macrotaskconfig'
+    macrotask_id = "TASK_test_macrotaskconfig"
     if macrotask_id not in task_container.objectIds():
-        portal_types = api.portal.get_tool('portal_types')
-        type_info = portal_types.getTypeInfo('AutomatedMacroTask')
+        portal_types = api.portal.get_tool("portal_types")
+        type_info = portal_types.getTypeInfo("AutomatedMacroTask")
         schedule_config = site.config.test_scheduleconfig
         task_config = schedule_config.test_macrotaskconfig
 
@@ -242,16 +234,16 @@ def add_task(context):
             id=macrotask_id,
             title=task_config.Title(),
             schedule_config_UID=schedule_config.UID(),
-            task_config_UID=task_config.UID()
+            task_config_UID=task_config.UID(),
         )
     macro_task = getattr(task_container, macrotask_id)
 
     # If no task was created automatically, create the subtask manually
     # to keep AutomatedMacroTask tests alive
-    subtask_id = 'TASK_test_subtaskconfig'
+    subtask_id = "TASK_test_subtaskconfig"
     if subtask_id not in macro_task.objectIds():
-        portal_types = api.portal.get_tool('portal_types')
-        type_info = portal_types.getTypeInfo('AutomatedTask')
+        portal_types = api.portal.get_tool("portal_types")
+        type_info = portal_types.getTypeInfo("AutomatedTask")
         schedule_config = site.config.test_scheduleconfig
         task_config = schedule_config.test_macrotaskconfig.test_subtaskconfig
 
@@ -260,5 +252,5 @@ def add_task(context):
             id=subtask_id,
             title=task_config.Title(),
             schedule_config_UID=schedule_config.UID(),
-            task_config_UID=task_config.UID()
+            task_config_UID=task_config.UID(),
         )

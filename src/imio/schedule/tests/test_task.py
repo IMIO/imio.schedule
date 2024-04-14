@@ -14,6 +14,7 @@ from imio.schedule.testing import TEST_INSTALL_INTEGRATION
 from plone import api
 
 import unittest
+import transaction
 
 
 class TestAutomatedTask(unittest.TestCase):
@@ -24,9 +25,9 @@ class TestAutomatedTask(unittest.TestCase):
     layer = TEST_INSTALL_INTEGRATION
 
     def test_AutomatedTask_portal_type_is_registered(self):
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('AutomatedTask' in registered_types)
+        self.assertTrue("AutomatedTask" in registered_types)
 
 
 class TestAutomatedTaskFields(ExampleScheduleIntegrationTestCase):
@@ -40,6 +41,7 @@ class TestAutomatedTaskFields(ExampleScheduleIntegrationTestCase):
         correct one.
         """
         from imio.schedule.content.task import AutomatedTask
+
         self.assertTrue(self.task.__class__ == AutomatedTask)
 
     def test_schema_registration(self):
@@ -47,9 +49,9 @@ class TestAutomatedTaskFields(ExampleScheduleIntegrationTestCase):
         Check if the schema Interface of the content type AutomatedTask is the
         correct one.
         """
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         taskconfig_type = portal_types.get(self.task.portal_type)
-        self.assertTrue('IAutomatedTask' in taskconfig_type.schema)
+        self.assertTrue("IAutomatedTask" in taskconfig_type.schema)
 
 
 class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
@@ -195,10 +197,10 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         """
         task = self.task
         msg = "task should not be started yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
         task._start()
         msg = "task should have been started"
-        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertEquals(api.content.get_state(task), "to_do", msg)
 
     def test_end(self):
         """
@@ -206,10 +208,10 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         """
         task = self.task
         msg = "task should not be ended yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
         task._end()
         msg = "task should have been ended"
-        self.assertEquals(api.content.get_state(task), 'closed', msg)
+        self.assertEquals(api.content.get_state(task), "closed", msg)
 
     def test_freeze(self):
         """
@@ -217,10 +219,10 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         """
         task = self.task
         msg = "task should not be frozen yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
         task._freeze()
         msg = "task should have been frozen"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
     def test_thaw(self):
         """
@@ -228,16 +230,16 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         """
         task = self.task
         msg = "task should be in created state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
         # freeze task befor thaw tests
         task._freeze()
         msg = "task should not be thawed yet (for the sake of the test..)"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
         task._thaw()
 
         msg = "task should have been thawed and put back in its original state"
-        self.assertEquals(api.content.get_state(task), 'created', msg)
+        self.assertEquals(api.content.get_state(task), "created", msg)
 
 
 class TestAutomatedMacroTask(unittest.TestCase):
@@ -248,9 +250,9 @@ class TestAutomatedMacroTask(unittest.TestCase):
     layer = TEST_INSTALL_INTEGRATION
 
     def test_AutomatedMacroTask_portal_type_is_registered(self):
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         registered_types = portal_types.listContentTypes()
-        self.assertTrue('AutomatedMacroTask' in registered_types)
+        self.assertTrue("AutomatedMacroTask" in registered_types)
 
 
 class TestAutomatedMacroTaskFields(MacroTaskScheduleIntegrationTestCase):
@@ -264,6 +266,7 @@ class TestAutomatedMacroTaskFields(MacroTaskScheduleIntegrationTestCase):
         correct one.
         """
         from imio.schedule.content.task import AutomatedMacroTask
+
         self.assertTrue(self.macro_task.__class__ == AutomatedMacroTask)
 
     def test_schema_registration(self):
@@ -271,9 +274,9 @@ class TestAutomatedMacroTaskFields(MacroTaskScheduleIntegrationTestCase):
         Check if the schema Interface of the content type AutomatedMacroTask is the
         correct one.
         """
-        portal_types = api.portal.get_tool('portal_types')
+        portal_types = api.portal.get_tool("portal_types")
         taskconfig_type = portal_types.get(self.macro_task.portal_type)
-        self.assertTrue('IAutomatedTask' in taskconfig_type.schema)
+        self.assertTrue("IAutomatedTask" in taskconfig_type.schema)
 
 
 class TestAutomatedMacroTaskIntegration(MacroTaskScheduleIntegrationTestCase):

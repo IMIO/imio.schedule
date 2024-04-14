@@ -17,15 +17,16 @@ def update_marker_interfaces(task_config, event):
     When the 'marker_interfaces' field is updated, update the interface
     provided on all the tasks of this task config as well.
     """
-    catalog = api.portal.get_tool('portal_catalog')
+    catalog = api.portal.get_tool("portal_catalog")
 
-    vocname = ITaskConfig.get('marker_interfaces').value_type.vocabularyName
+    vocname = ITaskConfig.get("marker_interfaces").value_type.vocabularyName
     interfaces_voc = getUtility(IVocabularyFactory, vocname)(task_config)
-    marker_interfaces = dict([(i, getInterface('', i)) for i in interfaces_voc.by_value])
+    marker_interfaces = dict(
+        [(i, getInterface("", i)) for i in interfaces_voc.by_value]
+    )
 
     task_brains = catalog(
-        object_provides=IAutomatedTask.__identifier__,
-        task_config_UID=task_config.UID()
+        object_provides=IAutomatedTask.__identifier__, task_config_UID=task_config.UID()
     )
     sample_task = task_brains and task_brains[0].getObject() or None
 
@@ -38,7 +39,9 @@ def update_marker_interfaces(task_config, event):
             do_update = True
             break
         # old interface on the tasks no longer present on the config => update
-        elif interface_name not in (task_config.marker_interfaces or []) and is_provided:
+        elif (
+            interface_name not in (task_config.marker_interfaces or []) and is_provided
+        ):
             do_update = True
             break
 
@@ -46,10 +49,13 @@ def update_marker_interfaces(task_config, event):
         for task_brain in task_brains:
             task = task_brain.getObject()
 
-            for marker_interface_name, marker_interface in marker_interfaces.iteritems():
+            for (
+                marker_interface_name,
+                marker_interface,
+            ) in marker_interfaces.iteritems():
                 if marker_interface_name in task_config.marker_interfaces:
                     alsoProvides(task, marker_interface)
                 else:
                     noLongerProvides(task, marker_interface)
 
-            task.reindexObject(idxs=['object_provides'])
+            task.reindexObject(idxs=["object_provides"])

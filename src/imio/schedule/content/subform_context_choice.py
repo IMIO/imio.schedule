@@ -22,14 +22,13 @@ class SubFormContextChoice(schema.Choice):
     implements(ISubFormContextChoice)
 
     def __init__(self, *args, **kwargs):
-        kwargs['values'] = []
-        vocabulary_name = kwargs.pop('vocabulary')
+        kwargs["values"] = []
+        vocabulary_name = kwargs.pop("vocabulary")
         super(SubFormContextChoice, self).__init__(*args, **kwargs)
         self.vocabulary_name = vocabulary_name
 
 
 class SubFormContextSelectWidget(SelectWidget):
-
     def update(self):
         super(SubFormContextSelectWidget, self).update()
         self.field.vocabulary = self.terms.terms
@@ -42,7 +41,7 @@ def subform_context_select_field_widget(field, request):
 
 
 def subform_context_choice_terms(context, request, form, field, widget):
-    if hasattr(form, 'parentForm'):
+    if hasattr(form, "parentForm"):
         context = form.parentForm.context
     field = field.bind(context)
     voc = getUtility(IVocabularyFactory, name=field.vocabulary_name)

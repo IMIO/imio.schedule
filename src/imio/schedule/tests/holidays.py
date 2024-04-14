@@ -10,4 +10,4 @@ class CalendarExtraHolidays(object):
     implements(ICalendarExtraHolidays)
 
     def get_holidays(self, year):
-        return ((date(2017, 2, 1), 'Test holidays'), )
+        return ((date(2017, 2, 1), "Test holidays"),)

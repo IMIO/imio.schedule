@@ -15,8 +15,8 @@ from imio.schedule import _
 class ITaskChangeOwner(Interface):
 
     new_owner = schema.Choice(
-        title=_(u'New owner'),
-        vocabulary='schedule.task_owner',
+        title=_(u"New owner"),
+        vocabulary="schedule.task_owner",
         required=True,
     )
 
@@ -25,7 +25,7 @@ class TaskChangeOwnerForm(Form):
     fields = field.Fields(ITaskChangeOwner)
     ignoreContext = True
 
-    @button.buttonAndHandler(_(u'Confirm'))
+    @button.buttonAndHandler(_(u"Confirm"))
     def handleApply(self, action):
         messages = IStatusMessage(self.request)
         data, errors = self.extractData()
@@ -33,12 +33,12 @@ class TaskChangeOwnerForm(Form):
             self.status = self.formErrorsMessage
             messages.addStatusMessage(self.status, type="error")
             return
-        self.context.assigned_user = data.get('new_owner')
+        self.context.assigned_user = data.get("new_owner")
         self.context.reindexObject()
-        self.context.reindex_parent_tasks(idxs=['is_solvable_task'])
-        self.status = _(u'Owner changed')
+        self.context.reindex_parent_tasks(idxs=["is_solvable_task"])
+        self.status = _(u"Owner changed")
 
 
 class TaskChangeOwnerView(FormWrapper):
     form = TaskChangeOwnerForm
-    index = ViewPageTemplateFile('templates/task_change_owner.pt')
+    index = ViewPageTemplateFile("templates/task_change_owner.pt")

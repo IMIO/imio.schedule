@@ -8,13 +8,12 @@ from zope.component import queryAdapter
 
 
 class RenderScheduleTermView(RenderTermView):
-    """
-    """
+    """ """
 
-    selected_term = ''
+    selected_term = ""
 
     def get_icon(self):
         to_icon = queryAdapter(self.context, IToIcon)
         if to_icon:
             return to_icon.get_icon_url()
-        return ''
+        return ""

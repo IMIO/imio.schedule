@@ -16,12 +16,12 @@ class TaskCompletionView(BrowserView):
     Display if the starting/ending state is matched or not.
     """
 
-    subtask_title_label = 'Title'
-    subtask_todo_title_label = 'Title'
-    subtask_status_label = 'Status'
-    due_date_label = 'Due date'
-    end_date_label = 'End date'
-    assigned_user_label = 'Assigned to'
+    subtask_title_label = "Title"
+    subtask_todo_title_label = "Title"
+    subtask_status_label = "Status"
+    due_date_label = "Due date"
+    end_date_label = "End date"
+    assigned_user_label = "Assigned to"
 
     def __init__(self, context, request):
         self.context = context
@@ -34,12 +34,10 @@ class TaskCompletionView(BrowserView):
         """
 
     def get_state_status(self):
-        """
-        """
+        """ """
 
     def get_subtasks_status(self):
-        """
-        """
+        """ """
         created = []
         started = []
         done = []
@@ -65,18 +63,17 @@ class TaskCompletionView(BrowserView):
         Return the full name of the given user id.
         """
         user = api.user.get(user_id)
-        user_name = user and user.getProperty('fullname') or user_id
+        user_name = user and user.getProperty("fullname") or user_id
         return user_name
 
     def display_date(self, date):
-        """
-        """
+        """ """
         if not date:
-            return '-'
+            return "-"
         if date.year == 9999:
-            return u'\u221E'.encode('utf-8')
+            return u"\u221E".encode("utf-8")
 
-        return date.strftime('%d/%m/%Y')
+        return date.strftime("%d/%m/%Y")
 
 
 class TaskStartStatusView(TaskCompletionView):
@@ -94,8 +91,7 @@ class TaskStartStatusView(TaskCompletionView):
         return self.task.start_conditions_status()
 
     def get_state_status(self):
-        """
-        """
+        """ """
         return self.task.starting_states_status()
 
 
@@ -125,8 +121,7 @@ class TaskEndStatusView(TaskCompletionView):
         return self.task.end_conditions_status()
 
     def get_state_status(self):
-        """
-        """
+        """ """
         return self.task.ending_states_status()
 
 

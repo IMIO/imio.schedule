@@ -25,6 +25,7 @@ def upgrade_2_fix_schedule_collection(context):
 
 def upgrade_3_set_showNumberOfItems(context):
     from collective.eeafaceted.collectionwidget.interfaces import IDashboardCollection
+
     brains = api.content.find(
         object_provides=IDashboardCollection.__identifier__,
         id="dashboard_collection",
@@ -43,15 +44,17 @@ def upgrade_4_add_due_date_reminders(context):
     registry = getUtility(IRegistry)
 
     default_values = {
-        'color_orange_x_days_before_due_date': 10,
-        'color_red_x_days_before_due_date': 5,
+        "color_orange_x_days_before_due_date": 10,
+        "color_red_x_days_before_due_date": 5,
     }
 
-    base = 'imio.schedule.interfaces.IDueDateSettings'
+    base = "imio.schedule.interfaces.IDueDateSettings"
     for key, default_value in default_values.items():
         full_key = "{0}.{1}".format(base, key)
         if full_key not in registry.records:
-            registry_field = field.Int(title=IDueDateSettings[key].title, required=False, min=0)
+            registry_field = field.Int(
+                title=IDueDateSettings[key].title, required=False, min=0
+            )
             registry_record = Record(registry_field)
             registry_record.value = default_value
             registry.records[full_key] = registry_record

@@ -221,10 +221,10 @@ class IToIcon(Interface):
 class ISettings(model.Schema):
 
     working_days = schema.List(
-        title=_(u'List of working days'),
+        title=_(u"List of working days"),
         value_type=schema.Choice(
-            title=_(u'Day'),
-            vocabulary='imio.schedule.working_days',
+            title=_(u"Day"),
+            vocabulary="imio.schedule.working_days",
         ),
         required=True,
     )
@@ -251,11 +251,20 @@ class IDueDateSettings(Interface):
 
     @invariant
     def orange_is_before_red_invariant(data):
-        if data.color_orange_x_days_before_due_date is None or data.color_red_x_days_before_due_date is None:
+        if (
+            data.color_orange_x_days_before_due_date is None
+            or data.color_red_x_days_before_due_date is None
+        ):
             return
-        if data.color_orange_x_days_before_due_date < data.color_red_x_days_before_due_date:
+        if (
+            data.color_orange_x_days_before_due_date
+            < data.color_red_x_days_before_due_date
+        ):
             raise Invalid(
-                _(u"The orange value should be higher than the red one, as it is used as a first warning."))
+                _(
+                    u"The orange value should be higher than the red one, as it is used as a first warning."
+                )
+            )
 
 
 class ICalendarExtraHolidays(Interface):

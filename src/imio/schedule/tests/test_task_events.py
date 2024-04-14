@@ -66,8 +66,8 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         self.assertEquals(len(empty_task_container.objectValues()), 0, msg)
 
         # do workflow change
-        api.content.transition(empty_task_container, transition='submit')
-        api.content.transition(empty_task_container, transition='retract')
+        api.content.transition(empty_task_container, transition="submit")
+        api.content.transition(empty_task_container, transition="retract")
 
         created = empty_task_container.objectValues()
         created = created and created[0]
@@ -88,9 +88,7 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         and starting_states.
         """
         new_task_container = api.content.create(
-            type='Folder',
-            id='new_task_container',
-            container=self.portal
+            type="Folder", id="new_task_container", container=self.portal
         )
 
         created = new_task_container.objectValues()
@@ -110,15 +108,15 @@ class TestTaskCreation(ExampleScheduleFunctionalTestCase):
         Check that the assigned user is set on an
         automatically created task.
         """
-        msg = 'default assigned user should have been admin'
-        self.assertEquals(self.task.assigned_user, 'admin', msg)
+        msg = "default assigned user should have been admin"
+        self.assertEquals(self.task.assigned_user, "admin", msg)
 
     def test_due_date_is_set_on_created_task(self):
         """
         Check that the computed due date is set on an
         automatically created task.
         """
-        msg = 'default du date should have been today + 10 days'
+        msg = "default du date should have been today + 10 days"
         due_date = self.task.due_date
         expected_date = self.task_container.creation_date
         delay = relativedelta(days=self.task_config.additional_delay)
@@ -161,20 +159,20 @@ class TestTaskStarting(ExampleScheduleFunctionalTestCase):
         task = self.task
 
         # put the task container on 'pending' state to match 'starting states'
-        api.content.transition(task_container, transition='submit')
+        api.content.transition(task_container, transition="submit")
         # reopen the task to be sure it was not closed before the container
         # modification
-        if api.content.get_state(task) == 'to_do':
-            api.content.transition(task, 'back_in_to_assign')
+        if api.content.get_state(task) == "to_do":
+            api.content.transition(task, "back_in_to_assign")
         msg = "The task should not be started yet ! (for the sake of the test)"
-        self.assertNotEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertNotEquals(api.content.get_state(task), "to_do", msg)
 
         # simulate modification
         notify(ObjectModifiedEvent(task_container))
 
         # the task should have been started
         msg = "The task should have been started"
-        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertEquals(api.content.get_state(task), "to_do", msg)
 
     def test_task_starting_on_container_workflow_modification(self):
         """
@@ -186,14 +184,14 @@ class TestTaskStarting(ExampleScheduleFunctionalTestCase):
         task = self.task
 
         msg = "The task should not be closed yet ! (for the sake of the test)"
-        self.assertNotEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertNotEquals(api.content.get_state(task), "to_do", msg)
 
         # do workflow change
-        api.content.transition(task_container, transition='submit')
+        api.content.transition(task_container, transition="submit")
 
         # the task should have been started
         msg = "The task should have been started"
-        self.assertEquals(api.content.get_state(task), 'to_do', msg)
+        self.assertEquals(api.content.get_state(task), "to_do", msg)
 
 
 class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
@@ -238,11 +236,11 @@ class TestTaskUpdate(ExampleScheduleFunctionalTestCase):
         # simulate modification
         notify(ObjectModifiedEvent(task_container))
 
-        catalog = api.portal.get_tool('portal_catalog')
-        msg = 'catalog should not find anything with old due date'
+        catalog = api.portal.get_tool("portal_catalog")
+        msg = "catalog should not find anything with old due date"
         task_brain = catalog(due_date=old_due_date, UID=task.UID())
         self.assertFalse(task_brain, msg)
-        msg = 'new due date should have been reindexed'
+        msg = "new due date should have been reindexed"
         task_brain = catalog(due_date=task.due_date, UID=task.UID())
         self.assertTrue(task_brain, msg)
 
@@ -253,28 +251,32 @@ class TestMacroTaskUpdate(MacroTaskScheduleFunctionalTestCase):
     """
 
     def tearDown(self):
-        api.content.transition(obj=self.macro_task, to_state='created')
+        api.content.transition(obj=self.macro_task, to_state="created")
 
     def test_update_recurrence_handler(self):
         """
         When modifying a contenttype the recurrence should be evaluated
         """
-        transitions = ['do_to_assign', 'do_realized', 'do_closed']
+        transitions = ["do_to_assign", "do_realized", "do_closed"]
         self.macrotask_config.activate_recurrency = True
-        self.macrotask_config.recurrence_conditions = self.macrotask_config.creation_conditions
-        self.macrotask_config.recurrence_states = ('private', )
+        self.macrotask_config.recurrence_conditions = (
+            self.macrotask_config.creation_conditions
+        )
+        self.macrotask_config.recurrence_states = ("private",)
 
         self.subtask_config.activate_recurrency = True
-        self.subtask_config.recurrence_conditions = self.subtask_config.creation_conditions
-        self.subtask_config.recurrence_states = ('private', )
+        self.subtask_config.recurrence_conditions = (
+            self.subtask_config.creation_conditions
+        )
+        self.subtask_config.recurrence_states = ("private",)
 
         for transition in transitions:
             api.content.transition(obj=self.macro_task, transition=transition)
         notify(ObjectModifiedEvent(self.task_container))
 
-        self.assertTrue('TASK_test_macrotaskconfig-1' in self.task_container)
-        macro_task = self.task_container['TASK_test_macrotaskconfig-1']
-        self.assertTrue('TASK_test_subtaskconfig' in macro_task)
+        self.assertTrue("TASK_test_macrotaskconfig-1" in self.task_container)
+        macro_task = self.task_container["TASK_test_macrotaskconfig-1"]
+        self.assertTrue("TASK_test_subtaskconfig" in macro_task)
         for transition in transitions:
             api.content.transition(obj=macro_task, transition=transition)
 
@@ -294,20 +296,20 @@ class TestTaskEnding(ExampleScheduleFunctionalTestCase):
         task = self.task
 
         # put the task container on 'published' state to match 'ending states'
-        api.content.transition(task_container, transition='publish')
+        api.content.transition(task_container, transition="publish")
         # reopen the task to be sure it was not closed before the container
         # modification
-        if api.content.get_state(task) == 'closed':
-            api.content.transition(task, 'back_in_realized')
+        if api.content.get_state(task) == "closed":
+            api.content.transition(task, "back_in_realized")
         msg = "The task should not be closed yet ! (for the sake of the test)"
-        self.assertNotEquals(api.content.get_state(task), 'closed', msg)
+        self.assertNotEquals(api.content.get_state(task), "closed", msg)
 
         # simulate modification
         notify(ObjectModifiedEvent(task_container))
 
         # the task should have been ended
         msg = "The task should have been ended"
-        self.assertEquals(api.content.get_state(task), 'closed', msg)
+        self.assertEquals(api.content.get_state(task), "closed", msg)
 
     def test_task_ending_on_container_workflow_modification(self):
         """
@@ -319,14 +321,14 @@ class TestTaskEnding(ExampleScheduleFunctionalTestCase):
         task = self.task
 
         msg = "The task should not be closed yet ! (for the sake of the test)"
-        self.assertNotEquals(api.content.get_state(task), 'closed', msg)
+        self.assertNotEquals(api.content.get_state(task), "closed", msg)
 
         # do workflow change
-        api.content.transition(task_container, transition='publish')
+        api.content.transition(task_container, transition="publish")
 
         # the task should have been ended
         msg = "The task should have been ended"
-        self.assertEquals(api.content.get_state(task), 'closed', msg)
+        self.assertEquals(api.content.get_state(task), "closed", msg)
 
 
 class TestTaskFreezing(ExampleScheduleFunctionalTestCase):
@@ -343,21 +345,21 @@ class TestTaskFreezing(ExampleScheduleFunctionalTestCase):
         task_container = self.task_container
         task = self.task
         task_config = self.task_config
-        task_config.ending_states = ['published']
-        task_config.freeze_states = ['private']
+        task_config.ending_states = ["published"]
+        task_config.freeze_states = ["private"]
 
         msg = "The task should not be closed or frozen yet ! (for the sake of the test)"
-        self.assertNotEquals(task.get_state(), 'closed', msg)
-        self.assertNotEquals(task.get_state(), 'frozen', msg)
+        self.assertNotEquals(task.get_state(), "closed", msg)
+        self.assertNotEquals(task.get_state(), "frozen", msg)
         msg = "The task container should  be in private state"
-        self.assertEquals(api.content.get_state(task_container), 'private', msg)
+        self.assertEquals(api.content.get_state(task_container), "private", msg)
 
         # simulate modification
         notify(ObjectModifiedEvent(task_container))
 
         # the task should have been frozen
         msg = "The task should have been frozen"
-        self.assertEquals(api.content.get_state(task), 'frozen', msg)
+        self.assertEquals(api.content.get_state(task), "frozen", msg)
 
     def test_task_freezing_on_container_workflow_modification(self):
         """
@@ -368,19 +370,19 @@ class TestTaskFreezing(ExampleScheduleFunctionalTestCase):
         task_container = self.task_container
         task = self.task
         task_config = self.task_config
-        task_config.ending_states = ['private']
-        task_config.freeze_states = ['published']
+        task_config.ending_states = ["private"]
+        task_config.freeze_states = ["published"]
 
         msg = "The task should not be closed or frozen yet ! (for the sake of the test)"
-        self.assertNotEquals(task.get_state(), 'closed', msg)
-        self.assertNotEquals(task.get_state(), 'frozen', msg)
+        self.assertNotEquals(task.get_state(), "closed", msg)
+        self.assertNotEquals(task.get_state(), "frozen", msg)
 
         # do workflow change
-        api.content.transition(task_container, transition='publish')
+        api.content.transition(task_container, transition="publish")
 
         # the task should have been frozen
         msg = "The task should have been frozen"
-        self.assertEquals(task.get_state(), 'frozen', msg)
+        self.assertEquals(task.get_state(), "frozen", msg)
 
 
 class TestTaskThawing(ExampleScheduleFunctionalTestCase):
@@ -397,18 +399,18 @@ class TestTaskThawing(ExampleScheduleFunctionalTestCase):
         task_container = self.task_container
         task = self.task
         task_config = self.task_config
-        task_config.ending_states = ['published']
-        task_config.thaw_states = ['private']
+        task_config.ending_states = ["published"]
+        task_config.thaw_states = ["private"]
 
         task_original_state = task.get_state()
         msg = "The task original state should not be frozen! (for the sake of the test)"
-        self.assertNotEquals(task_original_state, 'frozen', msg)
+        self.assertNotEquals(task_original_state, "frozen", msg)
         msg = "The task container should  be in private state"
-        self.assertEquals(api.content.get_state(task_container), 'private', msg)
+        self.assertEquals(api.content.get_state(task_container), "private", msg)
 
         # freeze task
         task_config.freeze_task(task)
-        self.assertEquals(task.get_state(), 'frozen', msg)
+        self.assertEquals(task.get_state(), "frozen", msg)
         # simulate modification
         notify(ObjectModifiedEvent(task_container))
 
@@ -425,18 +427,18 @@ class TestTaskThawing(ExampleScheduleFunctionalTestCase):
         task_container = self.task_container
         task = self.task
         task_config = self.task_config
-        task_config.freeze_states = ['private']
-        task_config.thaw_states = ['published']
+        task_config.freeze_states = ["private"]
+        task_config.thaw_states = ["published"]
 
         task_original_state = task.get_state()
         msg = "The task original state should not be frozen! (for the sake of the test)"
-        self.assertNotEquals(task_original_state, 'frozen', msg)
+        self.assertNotEquals(task_original_state, "frozen", msg)
 
         # freeze task
         task_config.freeze_task(task)
-        self.assertEquals(task.get_state(), 'frozen', msg)
+        self.assertEquals(task.get_state(), "frozen", msg)
         # do workflow change
-        api.content.transition(task_container, transition='publish')
+        api.content.transition(task_container, transition="publish")
 
         # the task should have been thawed
         msg = "The task should have been thawed"

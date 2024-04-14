@@ -10,7 +10,6 @@ from imio.schedule.tests.due_date import ContainerCreationDate
 
 
 class TestCalculationDelay(ExampleScheduleFunctionalTestCase):
-
     def setUp(self):
         super(TestCalculationDelay, self).setUp()
         self._start_date = ContainerCreationDate.start_date
@@ -50,7 +49,9 @@ class TestCalculationDelay(ExampleScheduleFunctionalTestCase):
     def test_due_date(self):
         """Test 'due_date' property"""
         adapter = self.delay_adapter
-        ContainerCreationDate.start_date = Mock(return_value=datetime(2016, 1, 1).date())
+        ContainerCreationDate.start_date = Mock(
+            return_value=datetime(2016, 1, 1).date()
+        )
         due_date = datetime(2016, 1, 11).date()
         adapter.calculate_delay = Mock(return_value=10)
 
