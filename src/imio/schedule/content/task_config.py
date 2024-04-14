@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from Products.CMFCore.Expression import Expression
+from Products.PageTemplates.Expressions import getEngine
 from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from Products.PageTemplates.Expressions import getEngine
-from Products.CMFCore.Expression import Expression
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
@@ -38,10 +38,10 @@ from zope.component import queryAdapter
 from zope.component import queryMultiAdapter
 from zope.component.interface import getInterface
 from zope.interface import Interface
+from zope.interface import Invalid
 from zope.interface import alsoProvides
 from zope.interface import implements
 from zope.interface import invariant
-from zope.interface import Invalid
 
 import logging
 

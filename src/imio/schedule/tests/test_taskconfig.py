@@ -4,7 +4,6 @@ from Acquisition import aq_base
 from DateTime import DateTime
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
 from imio.schedule.config import DONE
 from imio.schedule.content.delay import CalculationDefaultDelay
 from imio.schedule.content.task import AutomatedMacroTask
@@ -12,10 +11,8 @@ from imio.schedule.content.task import AutomatedTask
 from imio.schedule.testing import ExampleScheduleIntegrationTestCase
 from imio.schedule.testing import MacroTaskScheduleIntegrationTestCase
 from imio.schedule.testing import TEST_INSTALL_INTEGRATION
-
 from mock import Mock
 from plone import api
-
 from zope.annotation import IAnnotations
 from zope.globalrequest import setRequest
 
