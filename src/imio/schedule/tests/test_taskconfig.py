@@ -337,6 +337,8 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self._evaluate_conditions = self.task_config.evaluate_conditions
         self._match_recurrence_states = self.task_config.match_recurrence_states
         self._create_task = self.task_config.create_task
+        self._additional_delay = self.task_config.additional_delay
+        self._additional_delay_tal = self.task_config.additional_delay_tal
         self._api_get_state = api.content.get_state
         self._adapter_computed_due_date = CalculationDefaultDelay.compute_due_date
         setRequest(self.portal.REQUEST)
@@ -346,6 +348,8 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         self.task_config.evaluate_conditions = self._evaluate_conditions
         self.task_config.match_recurrence_states = self._match_recurrence_states
         self.task_config.create_task = self._create_task
+        self.task_config.additional_delay = self._additional_delay
+        self.task_config.additional_delay_tal = self._additional_delay_tal
         api.content.get_state = self._api_get_state
         CalculationDefaultDelay.compute_due_date = self._adapter_computed_due_date
         super(TestTaskConfigMethodsIntegration, self).tearDown()
@@ -1102,6 +1106,48 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         expected_date = task_container.creation_date + computed_delay + additional_delay
         expected_date = expected_date.asdatetime().date()
 
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, expected_date)
+
+    def test_compute_due_date_additional_delay_basic(self):
+        """Ensure that basic (string/int) additional delay is working properly"""
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
+
+        expected_date = task_container.creation_date + 10
+        expected_date = expected_date.asdatetime().date()
+
+        task_config.additional_delay = 10
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, expected_date)
+
+        task_config.additional_delay = "10"
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, expected_date)
+
+    def test_compute_due_date_additional_delay_tal(self):
+        """Ensure that TAL expression are correctly interpreted"""
+        task_config = self.task_config
+        task_container = self.task_container
+        task = self.task
+
+        CalculationDefaultDelay.calculate_delay = Mock(return_value=0)
+
+        expected_date = task_container.creation_date + 10
+        expected_date = expected_date.asdatetime().date()
+
+        task_config.additional_delay = "python: 1 == 1 and 10 or 20"
+        task_config.additional_delay_tal = True
+        due_date = task_config.compute_due_date(task_container, task)
+        self.assertEquals(due_date, expected_date)
+
+        expected_date = task_container.creation_date + 20
+        expected_date = expected_date.asdatetime().date()
+
+        task_config.additional_delay = "python: 1 == 0 and 10 or 20"
         due_date = task_config.compute_due_date(task_container, task)
         self.assertEquals(due_date, expected_date)
 
