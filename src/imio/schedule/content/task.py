@@ -18,6 +18,11 @@ from plone.dexterity.content import Item
 from plone.memoize.request import cache
 from zope.interface import implements
 
+import logging
+import os
+
+logger = logging.getLogger("imio.schedule")
+
 
 class IAutomatedTask(ITask):
     """
@@ -50,6 +55,9 @@ class BaseAutomatedTask(object):
 
     task_config_UID = ""
     schedule_config_UID = ""
+    _debug_category = None
+    _previous_category = None
+    _debug_data = None  # Variable usefull for debugging computation
 
     def get_container(self):
         """
@@ -219,6 +227,36 @@ class BaseAutomatedTask(object):
         """
         task_config = self.get_task_config()
         task_config.thaw_task(self)
+
+    def _log_debug(self, **kwargs):
+        """Compute debug informations for the current task"""
+        if self._debug_category is None:
+            # logger.debug("Can not log without a log category")
+            return
+        self._debug_data[self._debug_category].update(kwargs)
+
+    def _set_log_debug(self, category, type=None):
+        """initialize debug log for a specific category"""
+        if not hasattr(self, "_debug_data") or self._debug_data is None:
+            self._debug_data = {}
+        if category not in self._debug_data:
+            if type == "condition":
+                self._debug_data[category] = {
+                    "status": None,
+                    "reason": "",
+                }
+            else:
+                self._debug_data[category] = {}
+        if self._debug_category is not None:
+            self._previous_category = self._debug_category
+        self._debug_category = category
+
+    def _unset_log_debug(self):
+        if self._previous_category is not None:
+            self._debug_category = self._previous_category
+            self._previous_category = None
+        else:
+            self._debug_category = None
 
 
 class AutomatedTask(Item, BaseAutomatedTask):
