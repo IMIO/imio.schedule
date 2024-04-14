@@ -3,6 +3,8 @@
 from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from Products.PageTemplates.Expressions import getEngine
+from Products.CMFCore.Expression import Expression
 from imio.schedule import _
 from imio.schedule.config import CREATION
 from imio.schedule.config import DONE
@@ -38,6 +40,13 @@ from zope.component.interface import getInterface
 from zope.interface import Interface
 from zope.interface import alsoProvides
 from zope.interface import implements
+from zope.interface import invariant
+from zope.interface import Invalid
+
+import logging
+
+
+logger = logging.getLogger("imio.schedule")
 
 
 class ICreationConditionSchema(Interface):
@@ -282,6 +291,7 @@ class ITaskConfig(model.Schema):
             "warning_delay",
             "calculation_delay",
             "additional_delay",
+            "additional_delay_tal",
             "additional_delay_type",
             "round_to_day",
         ],
@@ -309,12 +319,29 @@ class ITaskConfig(model.Schema):
         required=True,
     )
 
-    additional_delay = schema.Int(
+    additional_delay = schema.TextLine(
         title=_(u"Additional delay"),
         description=_(u"This delay is added to the due date of the task."),
         required=False,
-        default=0,
+        default=u"0",
     )
+
+    additional_delay_tal = schema.Bool(
+        title=_(u"Additional delay is a tal expression?"),
+        description=_(
+            u"Define if the additional delay should be interpreted as a tal expression"
+        ),
+        required=False,
+        default=False,
+    )
+
+    @invariant
+    def validate_additional_delay(task_config):
+        if task_config.additional_delay_tal is False:
+            try:
+                int(task_config.additional_delay)
+            except ValueError:
+                raise Invalid(_("The additional delay is not a valid integer"))
 
     additional_delay_type = schema.Choice(
         title=_(u"Additional delay type"),
@@ -1054,7 +1081,26 @@ class BaseTaskConfig(object):
             )
             due_date = calculator.due_date
 
-        additional_delay = self.additional_delay or 0
+        additional_delay = self.additional_delay or "0"
+        additional_delay_tal = getattr(self, "additional_delay_tal", False)
+        if additional_delay_tal is True:
+            data = {
+                "nothing": None,
+                "licence": task_container,
+                "task": task,
+                "request": getattr(task_container, "REQUEST", None),
+            }
+            ctx = getEngine().getContext(data)
+            try:
+                additional_delay = Expression(additional_delay)(ctx)
+            except Exception as e:
+                logger.warn(
+                    "The condition '%s' defined for element at '%s' is wrong!  Message is : %s"
+                    % (additional_delay, task.absolute_url(), e)
+                )
+                additional_delay = 0
+        else:
+            additional_delay = int(additional_delay)
         delay_type = getattr(self, "additional_delay_type", "absolute")
         if additional_delay and delay_type == "working_days":
             calendar = WorkingDaysCalendar()
