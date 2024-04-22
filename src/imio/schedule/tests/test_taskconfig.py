@@ -1319,7 +1319,9 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
         Test different cases for the 'create_recurring_task' method
         """
         container = type("container", (dict,), {})()
-        container["TASK_test_taskconfig"] = None
+        container["TASK_test_taskconfig"] = type("task", (dict,), {
+            "get_task_config": Mock(return_value=self.task_config),
+        })
         api.content.get_state = Mock(return_value="foo")
         container.objectIds = Mock(return_value=["TASK_test_taskconfig"])
         self.assertIsNone(

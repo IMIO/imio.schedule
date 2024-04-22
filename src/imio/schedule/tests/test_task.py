@@ -92,6 +92,7 @@ class TestAutomatedTaskIntegration(ExampleScheduleFunctionalTestCase):
         self.assertEquals(config, expected_config)
 
         api.content.delete(self.task_config)
+        task.id = "{0}_test".format(task.id)  # This reset the cache
         with self.assertRaises(TaskConfigNotFound):
             task.get_task_config()
 
