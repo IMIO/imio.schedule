@@ -20,3 +20,4 @@ output.xml
 *.swp
 log.html
 report.html
+pyvenv.cfg
