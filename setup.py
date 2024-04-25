@@ -20,7 +20,7 @@ long_description = (
 
 setup(
     name="imio.schedule",
-    version="2.2.2",
+    version="2.2.3.dev0",
     description="Schedule for imio products",
     long_description=long_description,
     long_description_content_type="text/x-rst",
