@@ -8,6 +8,25 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.2 (2024-04-25)
+------------------
+
+New features:
+
+
+- Allow additional delay to be a TAL expression
+  [mpeeters] (URB-3005)
+
+
+Internal:
+
+
+- Black
+  [mpeeters] (SUP-27104)
+- Fix tests
+  [mpeeters] (URB-3005)
+
+
 2.2.1 (2024-04-10)
 ------------------
 
