@@ -18,6 +18,7 @@
   <include package=".dashboard" />
   <include package=".events" />
   <include package=".workflow" />
+  <include package=".deserializer" />
 
   <include file="indexes.zcml" />
   <include file="vocabularies.zcml" />
