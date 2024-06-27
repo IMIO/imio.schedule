@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+1.8.3 (2024-06-27)
+------------------
+
+New features:
+
+
+- Add deserializer for condition objects
+  [jchandelle] (URB-3005)
+
+
 1.8.2 (2024-04-22)
 ------------------
 
