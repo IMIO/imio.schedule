@@ -7,3 +7,4 @@ include *.txt
 include Makefile
 exclude pyvenv.cfg
 prune news
+exclude *.toml

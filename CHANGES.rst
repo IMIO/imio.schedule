@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+1.8.4 (2024-07-04)
+------------------
+
+Bug fixes:
+
+
+- Fix duplicate serializer
+  [jchandelle] (URB-3005)
+
+
 1.8.3 (2024-06-27)
 ------------------
 
