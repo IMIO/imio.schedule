@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collective.eeafaceted.collectionwidget.vocabulary import CollectionVocabulary
+from imio.schedule.utils import MultiLevelOrdering
 
 from plone import api
 
@@ -22,14 +23,21 @@ class ScheduleCollectionVocabulary(CollectionVocabulary):
         collections_brains = []
         for brain in config_brains:
             config = brain.getObject()
-            brains = catalog(
+            config_collection_brains = catalog(
                 path={
                     "query": "/".join(config.getPhysicalPath()),
                 },
                 object_provides="plone.app.collection.interfaces.ICollection",
-                sort_on="getObjPositionInParent",
             )
-            collections_brains.extend(brains)
+
+            # sort the collections in the same way as in schedule config
+            mlo = MultiLevelOrdering(config)
+            config_collection_brains = sorted(
+                config_collection_brains,
+                key=lambda brain: mlo.get_order(brain.getPath().split("/")),
+            )
+
+            collections_brains.extend(config_collection_brains)
         collections_brains = [
             b for b in collections_brains if b.getObject().aq_parent.enabled
         ]
