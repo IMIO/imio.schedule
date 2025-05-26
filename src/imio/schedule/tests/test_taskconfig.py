@@ -1258,26 +1258,98 @@ class TestTaskConfigMethodsIntegration(ExampleScheduleIntegrationTestCase):
             type("condition", (object,), {"condition": 2, "operator": "AND"})(),
             type("condition", (object,), {"condition": 3, "operator": "AND"})(),
         ]
-        self.task_config.evaluate_one_condition = Mock(side_effect=[True, False, False])
-        result = self.task_config.evaluate_conditions(conditions, None, None)
-        self.assertTrue(result)
-
-        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
-        result = self.task_config.evaluate_conditions(conditions, None, None)
-        self.assertFalse(result)
-
-        self.task_config.evaluate_one_condition = Mock(side_effect=[False, True, True])
-        result = self.task_config.evaluate_conditions(conditions, None, None)
-        self.assertTrue(result)
+        evaluation_matrix = (
+            (True, [True, True, True]),
+            (True, [True, True, False]),
+            (True, [True, False, False]),
+            (True, [False, True, True]),
+            (False, [False, False, True]),
+            (False, [False, True, False]),
+            (False, [False, False, False]),
+        )
+        for expected_result, side_effect in evaluation_matrix:
+            self.task_config.evaluate_one_condition = Mock(side_effect=side_effect)
+            result = self.task_config.evaluate_conditions(conditions, None, None)
+            msg = "'{0}' is expected with side effect '{1}' for OR, AND, AND".format(
+                expected_result, side_effect
+            )
+            self.assertEqual(expected_result, result, msg=msg)
 
         conditions = [
             type("condition", (object,), {"condition": 1, "operator": "OR"})(),
             type("condition", (object,), {"condition": 2, "operator": "AND"})(),
-            type("condition", (object,), {"condition": 3, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 3, "operator": "OR"})(),  # Should be AND
         ]
-        self.task_config.evaluate_one_condition = Mock(side_effect=[False, False, True])
-        result = self.task_config.evaluate_conditions(conditions, None, None)
-        self.assertFalse(result)
+        # Evaluation remain the same because the last operator is ignored
+        for expected_result, side_effect in evaluation_matrix:
+            self.task_config.evaluate_one_condition = Mock(side_effect=side_effect)
+            result = self.task_config.evaluate_conditions(conditions, None, None)
+            msg = "'{0}' is expected with side effect '{1}' for OR, AND, OR".format(
+                expected_result, side_effect
+            )
+            self.assertEqual(expected_result, result, msg=msg)
+
+        conditions = [
+            type("condition", (object,), {"condition": 1, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 2, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 3, "operator": "AND"})(),
+        ]
+        evaluation_matrix = (
+            (True, [True, True, True]),
+            (True, [True, True, False]),
+            (True, [False, True, True]),
+            (True, [False, False, True]),
+            (False, [True, False, False]),
+            (False, [False, True, False]),
+            (False, [False, False, False]),
+        )
+        for expected_result, side_effect in evaluation_matrix:
+            self.task_config.evaluate_one_condition = Mock(side_effect=side_effect)
+            result = self.task_config.evaluate_conditions(conditions, None, None)
+            msg = "'{0}' is expected with side effect '{1}' for AND, OR, AND".format(
+                expected_result, side_effect
+            )
+            self.assertEqual(expected_result, result, msg=msg)
+
+        conditions = [
+            type("condition", (object,), {"condition": 1, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 2, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 3, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 4, "operator": "AND"})(),
+        ]
+        evaluation_matrix = (
+            (True, [True, True, True, True]),
+            (True, [True, True, False, False]),
+            (True, [True, True, True, False]),
+            (True, [False, True, True, True]),
+            (True, [False, False, True, True]),
+            (False, [True, False, False, False]),
+            (False, [False, True, False, False]),
+            (False, [False, False, True, False]),
+            (False, [False, False, False, True]),
+            (False, [False, False, False, False]),
+        )
+        for expected_result, side_effect in evaluation_matrix:
+            self.task_config.evaluate_one_condition = Mock(side_effect=side_effect)
+            result = self.task_config.evaluate_conditions(conditions, None, None)
+            msg = "'{0}' is expected with side effect '{1}' for AND, OR, AND, AND".format(
+                expected_result, side_effect
+            )
+            self.assertEqual(expected_result, result, msg=msg)
+
+        conditions = [
+            type("condition", (object,), {"condition": 1, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 2, "operator": "OR"})(),
+            type("condition", (object,), {"condition": 3, "operator": "AND"})(),
+            type("condition", (object,), {"condition": 4, "operator": "OR"})(),
+        ]
+        for expected_result, side_effect in evaluation_matrix:
+            self.task_config.evaluate_one_condition = Mock(side_effect=side_effect)
+            result = self.task_config.evaluate_conditions(conditions, None, None)
+            msg = "'{0}' is expected with side effect '{1}' for AND, OR, AND, OR".format(
+                expected_result, side_effect
+            )
+            self.assertEqual(expected_result, result, msg=msg)
 
     def test_should_recurred(self):
         """

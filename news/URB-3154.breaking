@@ -1,0 +1,1 @@
+Fix interpretation logic of conditions that was wrong in few case (e.g. AND, OR, AND)

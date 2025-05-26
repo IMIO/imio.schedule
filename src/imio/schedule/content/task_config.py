@@ -45,6 +45,7 @@ from zope.interface import invariant
 
 import logging
 import os
+import copy
 
 
 logger = logging.getLogger("imio.schedule")
@@ -638,6 +639,21 @@ class BaseTaskConfig(object):
         """
         return self.get_task_instances(task_container)
 
+    def _eval(self, current_evaluation, conditions):
+        """Return an evaluation based on current evaluated conditions
+        This avoid to do too much computation if not necessary"""
+        operators = [c.operator.lower() for c in conditions][:-1]
+        evaluation = copy.deepcopy(current_evaluation)
+        if len(evaluation) < len(operators) + 1:
+            # Fill current_evaluation with False
+            evaluation.extend(
+                [False for i in range(len(evaluation), len(operators) + 1)]
+            )
+        eval_str = str(evaluation[0])
+        for i, element in enumerate(evaluation[1:]):
+            eval_str = "{0} {1} {2}".format(eval_str, str(operators[i]), str(element))
+        return eval(eval_str)
+
     def evaluate_conditions(self, conditions, to_adapt, interface):
         """ """
         value = True
@@ -646,62 +662,30 @@ class BaseTaskConfig(object):
             task = to_adapt[-1]
             if not hasattr(task, "_log_debug"):
                 task = None
+        evaluation = []
         for condition_object in conditions or []:
             condition_name = condition_object.condition
-            value = self.evaluate_one_condition(
-                to_adapt=to_adapt,
-                interface=interface,
-                name=condition_name,
+            evaluation.append(
+                self.evaluate_one_condition(
+                    to_adapt=to_adapt,
+                    interface=interface,
+                    name=condition_name,
+                )
             )
-            operator = condition_object.operator
             if task:
                 task._log_debug(
                     conditions={
                         condition_name: {
                             "operator": condition_object.operator,
-                            "status": None
+                            "status": evaluation[-1]
                         }
                     }
                 )
-
-            # in these cases, its useless to evaluate further because:
-            # TRUE or (... ) <=> TRUE
-            if operator == "OR" and value is True:
-                if task:
-                    task._log_debug(
-                        conditions={
-                            condition_name: {
-                                "status": True
-                            }
-                        }
-                    )
+            value = self._eval(evaluation, conditions)
+            if value is True:
+                # Stop further computation
                 return True
-            # FALSE and (... ) <=> FALSE
-            elif operator == "AND" and value is False:
-                if task:
-                    task._log_debug(
-                        conditions={
-                            condition_name: {
-                                "status": False
-                            }
-                        }
-                    )
-                return False
 
-            if task:
-                task._log_debug(
-                    conditions={
-                        condition_name: {
-                            "status": True
-                        }
-                    }
-                )
-            # else, just continue to loop to evaluate the rest of the expression because:
-            # FALSE or (... ) <=> (... )
-            # TRUE and (... ) <=> (... )
-            # so only the remaining '(... )' expression is relevant
-
-        # return the last value
         return value
 
     def evaluate_one_condition(self, to_adapt, interface, name):
@@ -875,20 +859,28 @@ class BaseTaskConfig(object):
            Returns True only if ALL the conditions are matched.
         This should be checked in a zope event to automatically close a task.
         """
+        if self._debug_mode:
+            task._set_log_debug("end", type="condition")
 
         if not task.assigned_user:
+            if self._debug_mode:
+                task._log_debug(status=False, reason="no assigned user")
             return False
 
         # task container state match any ending_states value?
-        if not self.match_ending_states(task_container):
+        if not self.match_ending_states(task_container, task):
             return False
 
         if not self.match_end_conditions(task_container, task):
             return False
 
+        if self._debug_mode:
+            task._log_debug(status=True, reason="all conditions met")
+            task._unset_log_debug()
+
         return True
 
-    def match_ending_states(self, task_container):
+    def match_ending_states(self, task_container, task):
         """ """
         default_ending_states = queryAdapter(task_container, IDefaultEndingStates)
         default_ending_states = default_ending_states and default_ending_states() or []
@@ -900,28 +892,70 @@ class BaseTaskConfig(object):
         )
 
         if not ending_states:
+            task._log_debug(
+                end_state_condition=True,
+                reason="no ending states",
+                ending_states=self.ending_states,
+            )
             return True
 
         container_state = api.content.get_state(task_container)
-        return container_state in ending_states
+        status = container_state in ending_states
+
+        task._log_debug(
+            end_state_condition=status,
+            reason=(
+                status and "state in ending states"
+                or "state not in ending states"
+            ),
+            ending_states=self.ending_states,
+            default_ending_states=default_ending_states,
+        )
+
+        return status
 
     def match_end_conditions(self, task_container, task):
         """ """
-        return self.evaluate_conditions(
+        if self._debug_mode:
+            task._set_log_debug("end_conditions")
+        result = self.evaluate_conditions(
             conditions=self.end_conditions,
             to_adapt=(task_container, task),
             interface=IEndCondition,
         )
+        if self._debug_mode:
+            task._log_debug(
+                status=result,
+                reason=(
+                    result and "all conditions met"
+                    or "not all conditions met"
+                ),
+            )
+            task._unset_log_debug()
+        return result
 
     def end_conditions_status(self, task_container, task):
         """
         Return status of each end condition.
         """
-        return self.get_conditions_status(
+        if self._debug_mode:
+            task._set_log_debug("end_conditions")
+
+        result = self.get_conditions_status(
             conditions=self.end_conditions,
             to_adapt=(task_container, task),
             interface=IEndCondition,
         )
+        if self._debug_mode:
+            task._log_debug(
+                status=result,
+                reason=(
+                    result and "all conditions met"
+                    or "not all conditions met"
+                ),
+            )
+            task._unset_log_debug()
+        return result
 
     def should_freeze_task(self, task_container, task):
         """
