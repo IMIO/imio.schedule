@@ -8,6 +8,33 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0 (2025-05-27)
+------------------
+
+Breaking changes:
+
+
+- Fix interpretation logic of conditions that was wrong in few case (e.g. AND, OR, AND) (URB-3154)
+
+
+New features:
+
+
+- Allow additional delay to be a TAL expression
+  [mpeeters] (URB-3005)
+- Add debug functionality
+  [mpeeters] (URB-3070)
+
+
+Internal:
+
+
+- Black
+  [mpeeters] (SUP-27104)
+- Fix tests
+  [mpeeters] (URB-3005)
+
+
 2.2.2 (2024-04-25)
 ------------------
 
