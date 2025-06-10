@@ -47,12 +47,20 @@ class BaseCalculationDelay(TaskLogic):
         """Return the addition of the given date and the extra delay"""
         return date + relativedelta(days=+self.delta)
 
+    def get_complementary_delay(self):
+        if not hasattr(self, "task_container"):
+            return 0
+        licence = self.task_container
+        if not hasattr(licence, "get_complementary_delay"):
+            return 0
+        return sum([delay.getDelay() for delay in licence.get_complementary_delay()])
+
 
 class CalculationDefaultDelay(BaseCalculationDelay):
     """ """
 
     def calculate_delay(self):
-        return 0
+        return 0 + self.get_complementary_delay()
 
 
 class DefaultFreezeDuration(object):
