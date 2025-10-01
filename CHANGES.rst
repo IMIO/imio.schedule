@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.1 (2025-10-01)
+------------------
+
+Bug fixes:
+
+
+- Avoid an error during upgrade steps with collections recreated after a move or a delete
+  [mpeeters] (URBBDC-3204)
+
+
 3.0.0 (2025-05-27)
 ------------------
 
