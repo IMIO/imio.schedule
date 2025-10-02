@@ -64,6 +64,7 @@ class DueDateColumn(BaseColumn):
 
 class AssignedUserColumn(BaseColumn):
     """display licence address in SearchResultTable"""
+    escape = False
 
     def renderCell(self, item):
         username = item.assigned_user
