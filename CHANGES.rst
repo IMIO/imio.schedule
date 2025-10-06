@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.2 (2025-10-06)
+------------------
+
+Bug fixes:
+
+
+- Fix an issue where images were escaped for assign user column
+  [mpeeters] (URBBDC-3204)
+
+
 3.0.1 (2025-10-01)
 ------------------
 
