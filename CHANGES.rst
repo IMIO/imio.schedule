@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.3 (2025-11-25)
+------------------
+
+Bug fixes:
+
+
+- Fix a possible issue while comparing `datetime.date` and `datetime.datetime`
+  [mpeeters] (SUP-48926)
+
+
 3.0.2 (2025-10-06)
 ------------------
 

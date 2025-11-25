@@ -1,2 +1,0 @@
-Fix a possible issue while comparing `datetime.date` and `datetime.datetime`
-[mpeeters]
