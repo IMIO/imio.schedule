@@ -195,6 +195,8 @@ def close_or_past_date(date, by_days=7):
     """
     today = datetime.date.today()
     limit_date = date - datetime.timedelta(days=by_days)
+    if isinstance(limit_date, datetime.datetime):
+        limit_date = limit_date.date()
     return today >= limit_date
 
 
