@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from OFS.interfaces import IOrderedContainer
 from eea.facetednavigation.layout.interfaces import IFacetedLayout
 
 from imio.dashboard.browser.facetedcollectionportlet import Assignment
@@ -235,3 +236,49 @@ class WorkingDaysCalendar(Belgium):
             or []
         )
         return [matching[d] for d in days]
+
+
+class MultiLevelOrdering:
+    """
+    Initialize with a Folderish object as context.
+
+    Calling the `get_order` method with the path of a descendant of the context
+    will give its relative order among all the descendants of the context.
+    """
+
+    def __init__(self, context):
+        self.orders = {}
+        self.context = context
+        self.context_path = context.getPhysicalPath()
+        self._compute_orderings()
+
+    def _compute_orderings(self):
+        portal = api.portal.get()
+        portal.ZopeFindAndApply(
+            self.context, search_sub=True, apply_func=self._get_position_in_parent
+        )
+
+    def _get_position_in_parent(self, obj, path):
+        if not path:
+            return
+        parent = obj.__parent__
+        ordered = IOrderedContainer(parent, None)
+        if ordered is not None:
+            order = ordered.getObjectPosition(obj.getId())
+            if order is not None:
+                self.orders[path.lstrip("/")] = order
+        return
+
+    def get_order(self, path_tuple):
+        """
+        :param path_tuple: physical path parts pf a descendant of context
+        :rtype: tuple of position numbers
+
+        E.g. ("schedule", "reception", "dashboard_collection") => [2, 3, 0]
+        """
+        order_numbers = []
+        relative_path = path_tuple[len(self.context_path) :]
+        for i in range(len(relative_path)):
+            path_chunk = "/".join(relative_path[: i + 1])
+            order_numbers.append(self.orders[path_chunk])
+        return order_numbers
