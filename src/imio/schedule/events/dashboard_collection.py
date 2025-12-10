@@ -2,12 +2,7 @@
 
 from imio.schedule import _
 from imio.schedule.content.schedule_config import IScheduleConfig
-from imio.schedule.interfaces import IScheduleCollection
 from imio.schedule.utils import create_dashboard_collection
-
-from plone import api
-
-from zope.interface import alsoProvides
 
 
 def create(schedule_container, event):

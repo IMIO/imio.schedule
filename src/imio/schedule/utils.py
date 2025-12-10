@@ -10,7 +10,6 @@ from imio.schedule.config import CREATION
 from imio.schedule.config import STARTED
 from imio.schedule.config import states_by_status
 from imio.schedule.content.task import IAutomatedTask
-from imio.schedule.content.schedule_config import IScheduleConfig
 from imio.schedule.interfaces import IToTaskConfig
 from imio.schedule.interfaces import ICalendarExtraHolidays
 from imio.schedule.interfaces import IScheduleCollection
@@ -242,6 +241,8 @@ class WorkingDaysCalendar(Belgium):
 
 
 def create_dashboard_collection(schedule_container):
+    from imio.schedule.content.schedule_config import IScheduleConfig
+
     collection_id = "dashboard_collection"
     title = (
         IScheduleConfig.providedBy(schedule_container)
