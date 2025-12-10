@@ -13,8 +13,11 @@ def create(schedule_container, event):
     """ """
     # do not automatically re-create the collection during upgrade steps
     if (
-        "portal_setup/manage_importSteps" in schedule_container.REQUEST.URL
-        or "portal_setup/manage_doUpgrades" in schedule_container.REQUEST.URL
+        not schedule_container.REQUEST.form.get("force_creation", False)
+        and (
+            "portal_setup/manage_importSteps" in schedule_container.REQUEST.URL
+            or "portal_setup/manage_doUpgrades" in schedule_container.REQUEST.URL
+        )
     ):
         return
 
