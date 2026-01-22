@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.4 (2026-01-22)
+------------------
+
+Bug fixes:
+
+
+- Move create dashboard collection function in utils
+  Add way to force dashboard creation
+  Change dashboard collection function
+  [jchandelle] (URBBDC-3205)
+
+
 3.0.3 (2025-11-25)
 ------------------
 
